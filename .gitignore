@@ -1,0 +1,2 @@
+#Ignore the classpath file, as this is going to be different for everyone
+./.classpath
