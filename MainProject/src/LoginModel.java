@@ -17,11 +17,13 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.xml.bind.DatatypeConverter;
+
+import java.util.ArrayList;
 import java.util.Random;
 import java.sql.*;
 
 
-public class LoginSystem {
+public class LoginModel {
 
 	public static void main(String[] args) throws NoSuchAlgorithmException {
 		String password = "test";
@@ -37,71 +39,47 @@ public class LoginSystem {
 		System.out.println("SHA-256 Hash: "+hashValue);
 	}
 	
-	
-	public static void loginChecker(JTextField nameField, JPasswordField passwordField) {
+	/**
+	 * loginChecker()
+	 * Instantiates a DatabaseController
+	 * SELECTS all information from users table
+	 * Compares username against database entry
+	 * Hashes and salts user password input and compares to entry in database with stored salt
+	 * Stores other data from Row in database
+	 */
+	public static void loginChecker(JTextField nameField, JPasswordField passwordField) throws Exception {
+		DatabaseController dc = new DatabaseController();
+		
+		Boolean exists = false;
+		
 		String username = nameField.getText();
 		String password = new String(passwordField.getPassword());
+		
+		String[] queries = {"SELECT * FROM users WHERE username = \'"+username+"\'"};
+		String[] results = dc.executeQueries(queries).get(0);
+		
+		String userID;
+		String usernameInDB = null, passwordInDB = null, userType = null, salt = null;
+		
+		exists = (results.length > 0);
+		
+		if (exists) {
+			userID = results[0];
+			usernameInDB = results[1];
+			passwordInDB = results[2];
+			userType = results[3];
+			salt = results[4];
+		}
+		
+		if (salt != null) {
+			password = hash(password + salt);
+		}
   
-		String usernameInDB = "admin";
-		String passwordInDB = "test";
-  
-		if ((username.equals(usernameInDB)) && (password.equals(passwordInDB))) {
+		if ((username.equals(usernameInDB)) && (password.equals(passwordInDB)) && exists) {
 			JOptionPane.showMessageDialog(null, "Login successful");
 		} else {
 			JOptionPane.showMessageDialog(null, "Username and/or password were incorrect");
 		}
-	}
-	
-	public JPanel loginUI() {
-		JPanel loginForm = new JPanel();
-		
-		loginForm.setLayout(new GridBagLayout());
-		GridBagConstraints loginConstraints = new GridBagConstraints();
-
-		loginForm.setBorder(BorderFactory.createEmptyBorder(100, 100, 200, 100));
-		JLabel nameLabel = new JLabel("Username: ");
-		JLabel passwordLabel = new JLabel("Password: ");
-		JTextField nameField = new JTextField("",20);
-		JPasswordField passwordField = new JPasswordField("",20);
-		
-		loginConstraints.insets = new Insets(5,5,5,5);
-		
-		loginConstraints.fill = GridBagConstraints.HORIZONTAL;
-		loginConstraints.gridx = 0;
-		loginConstraints.gridy = 0;
-		loginForm.add(nameLabel, loginConstraints);
-		
-		loginConstraints.gridx = 1;
-		loginConstraints.gridy = 0;
-		loginForm.add(nameField, loginConstraints);
-		
-		loginConstraints.gridx = 0;
-		loginConstraints.gridy = 1;
-		loginForm.add(passwordLabel, loginConstraints);
-		
-		loginConstraints.gridx = 1;
-		loginConstraints.gridy = 1;
-		loginForm.add(passwordField, loginConstraints);
-		
-		loginConstraints.insets = new Insets(20,50,5,50);
-		JButton loginButton = new JButton("Log in");
-		loginButton.setPreferredSize(new Dimension(400,50));
-		
-		loginButton.addActionListener(new ActionListener()
-		{
-		  public void actionPerformed(ActionEvent e)
-		  {
-			  loginChecker(nameField,passwordField);
-		  }
-		});
-		
-		loginConstraints.gridx = 0;
-		loginConstraints.gridy = 2;
-		loginConstraints.gridwidth = 2;
-		loginButton.setPreferredSize(new Dimension(100,50));
-		loginForm.add(loginButton, loginConstraints);
-		
-		return loginForm;
 	}
 	
 	

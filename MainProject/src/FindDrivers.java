@@ -3,7 +3,7 @@ import java.util.*;
 
 public class FindDrivers {
 
-	public static void main(String[] args) throws Exception {
+	public static void initDrivers() throws Exception {
 	
 		System.out.println("\nDrivers loaded as properties:");
 		System.out.println(System.getProperty("jdbc.drivers"));
@@ -11,6 +11,9 @@ public class FindDrivers {
 		Enumeration<Driver> list = DriverManager.getDrivers();
 		while (list.hasMoreElements())
 			System.out.println(list.nextElement());
-		
+	}
+	
+	public static void main(String[] args) throws Exception {
+		initDrivers();
 	}
 }

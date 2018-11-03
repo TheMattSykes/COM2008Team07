@@ -3,13 +3,17 @@ import java.awt.*;
 
 public class GraphicsManager {
 	
-	public static void main(String[] args) {
+	public void runUI() {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				LoginSystem mainLogin = new LoginSystem();
-				JPanel loginUI = mainLogin.loginUI();
+				// Instantiate objects
+				LoginView loginView = new LoginView();
+				JPanel loginUI = loginView.loginUI();
 				
+				// Create main frame for UI
 				PrimaryFrame mainFrame = new PrimaryFrame("University System", loginUI);
+				
+				// Set frame properties
 				mainFrame.setSize(1000,800);
 				mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				mainFrame.setVisible(true);

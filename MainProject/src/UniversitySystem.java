@@ -1,25 +1,15 @@
 import java.sql.*;
 
 public class UniversitySystem {
-	public static void main(String[] args) {
-		Connection con = null;
-		String db = "jdbc:mysql://stusql.dcs.shef.ac.uk/team007?user=team007&password=412fe569";
+	public static void main(String[] args) throws Exception {
+		// admin dirk567 are username and password
 		
+		// Check drivers
 		FindDrivers fd = new FindDrivers();
+		fd.initDrivers();
 		
-		try {
-			con = DriverManager.getConnection(db);
-			System.out.println("DATABASE CONNECTION ESTABILISHED");
-			
-		} catch (SQLException ex) {
-			ex.printStackTrace();
-		} finally {
-			try {
-				con.close();
-				System.out.println("DATABASE CONNECTION TERMINATED");
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
+		// Run GUI
+		GraphicsManager gm = new GraphicsManager();
+		gm.runUI();
 	}
 }
