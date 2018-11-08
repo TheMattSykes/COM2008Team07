@@ -1,5 +1,8 @@
 import java.sql.*;
 
+import Controllers.GraphicsController;
+import Models.FindDrivers;
+
 public class UniversitySystem {
 	public static void main(String[] args) throws Exception {
 		// admin dirk567 are username and password
@@ -9,7 +12,7 @@ public class UniversitySystem {
 		fd.initDrivers();
 		
 		// Run GUI
-		GraphicsManager gm = new GraphicsManager();
+		GraphicsController gm = new GraphicsController();
 		gm.runUI();
 	}
 }
