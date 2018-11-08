@@ -16,9 +16,10 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import Models.LoginModel;
+import Users.User;
 
 public class LoginView {
-	public JPanel loginUI() {
+	public JPanel loginUI(User mainUser) {
 		LoginModel ls = new LoginModel();
 		
 		JPanel loginForm = new JPanel();
@@ -60,7 +61,7 @@ public class LoginView {
 			public void actionPerformed(ActionEvent e)
 			{
 				try {
-					ls.loginChecker(nameField,passwordField);
+					ls.loginChecker(mainUser, nameField,passwordField);
 				} catch (Exception error) {
 					error.printStackTrace();
 				}

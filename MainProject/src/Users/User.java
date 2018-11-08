@@ -6,11 +6,14 @@ public class User {
 	private String username;
 	private UserTypes userType;
 	
-	public User(int uID, String name, UserTypes type) {
+	public User() {
+		loggedIn = false;
+	}
+	
+	public void setUserDetails(int uID, String name, UserTypes type) {
 		userID = uID;
 		username = name;
 		userType = type;
-		loggedIn = false;
 	}
 	
 	public int getUserID() {

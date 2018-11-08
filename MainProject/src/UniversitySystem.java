@@ -2,6 +2,7 @@ import java.sql.*;
 
 import Controllers.GraphicsController;
 import Models.FindDrivers;
+import Users.User;
 
 public class UniversitySystem {
 	public static void main(String[] args) throws Exception {
@@ -11,8 +12,10 @@ public class UniversitySystem {
 		FindDrivers fd = new FindDrivers();
 		fd.initDrivers();
 		
+		User mainUser = new User();
+		
 		// Run GUI
 		GraphicsController gm = new GraphicsController();
-		gm.runUI();
+		gm.runUI(mainUser);
 	}
 }

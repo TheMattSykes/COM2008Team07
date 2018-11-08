@@ -1,6 +1,7 @@
 package Controllers;
 import javax.swing.*;
 
+import Users.User;
 import Views.LoginView;
 import Views.PrimaryFrame;
 
@@ -8,12 +9,12 @@ import java.awt.*;
 
 public class GraphicsController {
 	
-	public void runUI() {
+	public void runUI(User mainUser) {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				// Instantiate objects
 				LoginView loginView = new LoginView();
-				JPanel loginUI = loginView.loginUI();
+				JPanel loginUI = loginView.loginUI(mainUser);
 				
 				// Create main frame for UI
 				PrimaryFrame mainFrame = new PrimaryFrame("University System", loginUI);

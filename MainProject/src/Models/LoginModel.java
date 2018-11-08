@@ -26,6 +26,7 @@ import Users.UserTypes;
 import java.util.ArrayList;
 import java.util.Random;
 import java.sql.*;
+import java.text.MessageFormat;
 
 
 public class LoginModel {
@@ -52,7 +53,7 @@ public class LoginModel {
 	 * Hashes and salts user password input and compares to entry in database with stored salt
 	 * Stores other data from Row in database
 	 */
-	public static User loginChecker(JTextField nameField, JPasswordField passwordField) 
+	public static User loginChecker(User mainUser, JTextField nameField, JPasswordField passwordField) 
 			throws Exception {
 		DatabaseController dc = new DatabaseController();
 		
@@ -63,8 +64,14 @@ public class LoginModel {
 		String username = nameField.getText();
 		String password = new String(passwordField.getPassword());
 		
-		String[] queries = {"SELECT * FROM users WHERE username = \'"+username+"\'"};
-		String[] results = dc.executeQueries(queries).get(0);
+		String query = String.format("SELECT * FROM users WHERE username = ?");
+		String[][] values = new String[1][2];
+		values[0][0] = username;
+		values[0][1] = "true";
+		
+		
+		String[] queries = {query};
+		String[] results = dc.executeQuery(query,values);
 		
 		String userID = "";
 		String usernameInDB = null, passwordInDB = null, userType = null, salt = null;
@@ -84,9 +91,9 @@ public class LoginModel {
 		}
   
 		if ((username.equals(usernameInDB)) && (password.equals(passwordInDB)) && exists) {
-			newUser = new User(Integer.parseInt(userID),usernameInDB,UserTypes.valueOf(userType.toUpperCase()));
-			newUser.login();
-			JOptionPane.showMessageDialog(null, "Login successful");
+			mainUser.setUserDetails(Integer.parseInt(userID),usernameInDB,UserTypes.valueOf(userType.toUpperCase()));
+			mainUser.login();
+			JOptionPane.showMessageDialog(null, ("You are now logged in as "+mainUser.getUsername()));
 		} else {
 			JOptionPane.showMessageDialog(null, "Username and/or password were incorrect");
 		}
