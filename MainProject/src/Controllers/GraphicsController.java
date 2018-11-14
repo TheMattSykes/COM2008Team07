@@ -2,6 +2,7 @@ package Controllers;
 import javax.swing.*;
 
 import Users.User;
+import Views.LoggedInView;
 import Views.LoginView;
 import Views.PrimaryFrame;
 
@@ -14,10 +15,19 @@ public class GraphicsController {
 			public void run() {
 				// Instantiate objects
 				LoginView loginView = new LoginView();
-				JPanel loginUI = loginView.loginUI(mainUser);
+				LoggedInView menuView = new LoggedInView();
 				
-				// Create main frame for UI
-				PrimaryFrame mainFrame = new PrimaryFrame("University System", loginUI);
+				JPanel loginUI = loginView.loginUI(mainUser);
+				JPanel menuUI = menuView.loggedInUI(mainUser);
+				
+				PrimaryFrame mainFrame;
+				
+				if (!mainUser.isLoggedIn()) {
+					// Create main frame for UI
+					mainFrame = new PrimaryFrame("University System", loginUI);
+				} else {
+					mainFrame = new PrimaryFrame("University System", menuUI);
+				}
 				
 				// Set frame properties
 				mainFrame.setSize(1000,800);
