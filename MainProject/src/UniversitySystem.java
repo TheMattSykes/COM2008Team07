@@ -1,8 +1,8 @@
 import java.sql.*;
 
+import Controllers.FindDrivers;
 import Controllers.GraphicsController;
-import Models.FindDrivers;
-import Users.User;
+import Models.User;
 
 public class UniversitySystem {
 	

@@ -1,4 +1,4 @@
-package Models;
+package Controllers;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -12,6 +12,7 @@ import java.security.NoSuchAlgorithmException;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -19,9 +20,10 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.xml.bind.DatatypeConverter;
 
-import Controllers.DatabaseController;
-import Users.User;
-import Users.UserTypes;
+import Models.User;
+import Models.UserTypes;
+import Views.LoginView;
+import Views.PrimaryFrame;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -29,21 +31,41 @@ import java.sql.*;
 import java.text.MessageFormat;
 
 
-public class LoginModel {
+public class LoginController {
 
-	public static void main(String[] args) throws NoSuchAlgorithmException {
-		String password = "test";
+	private static User user;
+	private LoginView lv;
+
+	public LoginController(User mainUser, LoginView lview) {
+		user = mainUser;
+		lv = lview;
 		
-		String salt = generateSalt();
-		
-		String stringToHash = password + salt;
-		
-		String hashValue = hash(stringToHash);
-		
-		
-		System.out.println("Salt: "+salt);
-		System.out.println("SHA-256 Hash: "+hashValue);
+		initView();
 	}
+	
+	public User getUpdatedUser() {
+		return user;
+	}
+	
+	public void initView() {
+		lv.loginUI();
+	}
+	
+	public void initController() {		
+		lv.getLoginButton().addActionListener(e -> loginEvent());;
+		
+		lv.getPasswordField().addActionListener(e -> loginEvent());
+	}
+	
+	public void loginEvent() {
+		try {
+			loginChecker(lv.getNameField(), lv.getPasswordField());
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+	
 	
 	/**
 	 * loginChecker()
@@ -53,11 +75,11 @@ public class LoginModel {
 	 * Hashes and salts user password input and compares to entry in database with stored salt
 	 * Stores other data from Row in database
 	 */
-	public static User loginChecker(User mainUser, JTextField nameField, JPasswordField passwordField) 
+	public static void loginChecker(JTextField nameField, JPasswordField passwordField) 
 			throws Exception {
 		DatabaseController dc = new DatabaseController();
 		
-		User newUser = null;
+		User mainUser = new User();
 		
 		Boolean exists = false;
 		
@@ -91,14 +113,15 @@ public class LoginModel {
 		}
   
 		if ((username.equals(usernameInDB)) && (password.equals(passwordInDB)) && exists) {
+			
 			mainUser.setUserDetails(Integer.parseInt(userID),usernameInDB,UserTypes.valueOf(userType.toUpperCase()));
 			mainUser.login();
+			
+			user = mainUser;
 			JOptionPane.showMessageDialog(null, ("You are now logged in as "+mainUser.getUsername()));
 		} else {
 			JOptionPane.showMessageDialog(null, "Username and/or password were incorrect");
 		}
-		
-		return newUser;
 	}
 	
 	

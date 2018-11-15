@@ -1,4 +1,4 @@
-package Users;
+package Models;
 
 public class User {
 	private Boolean loggedIn;

@@ -1,13 +1,14 @@
-package Models;
+package Controllers;
 
 import java.util.Arrays;
 import java.util.List;
+
+import Models.Classification;
+import Models.GraduateType;
+import Models.Module;
+
 import java.util.Collection;
 import java.util.Collections;
-
-import Users.Classification;
-import Users.GraduateType;
-import Users.Module;
 
 public class StudentSystemModel {
 	public static void main(String[] args) {

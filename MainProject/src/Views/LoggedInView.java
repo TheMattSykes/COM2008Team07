@@ -10,9 +10,10 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import Users.User;
+import Models.User;
 
 public class LoggedInView {
+	
 	public JPanel loggedInUI(User mainUser) {
 		JPanel menuPanel = new JPanel();
 		

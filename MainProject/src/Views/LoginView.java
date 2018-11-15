@@ -1,4 +1,5 @@
 package Views;
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -15,12 +16,36 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import Models.LoginModel;
-import Users.User;
+import Controllers.LoginController;
+import Models.User;
 
-public class LoginView {
-	public JPanel loginUI(User mainUser) {
-		LoginModel ls = new LoginModel();
+public class LoginView extends JPanel {
+	
+	private PrimaryFrame frame;
+	
+	private JButton loginButton;
+	private JTextField nameField;
+	private JPasswordField passwordField;
+	
+	public LoginView(PrimaryFrame mf) {
+		frame = mf;
+	}
+	
+	
+	public JButton getLoginButton() {
+		return loginButton;
+	}
+	
+	public JTextField getNameField() {
+		return nameField;
+	}
+	
+	public JPasswordField getPasswordField() {
+		return passwordField;
+	}
+	
+	public void loginUI() {
+		// LoginController ls = new LoginController();
 		
 		JPanel loginForm = new JPanel();
 		
@@ -30,8 +55,8 @@ public class LoginView {
 		loginForm.setBorder(BorderFactory.createEmptyBorder(100, 100, 200, 100));
 		JLabel nameLabel = new JLabel("Username: ");
 		JLabel passwordLabel = new JLabel("Password: ");
-		JTextField nameField = new JTextField("",20);
-		JPasswordField passwordField = new JPasswordField("",20);
+		nameField = new JTextField("",20);
+		passwordField = new JPasswordField("",20);
 		
 		loginConstraints.insets = new Insets(5,5,5,5);
 		
@@ -53,24 +78,25 @@ public class LoginView {
 		loginForm.add(passwordField, loginConstraints);
 		
 		loginConstraints.insets = new Insets(20,50,5,50);
-		JButton loginButton = new JButton("Log in");
+		loginButton = new JButton("Log in");
 		loginButton.setPreferredSize(new Dimension(400,50));
 		
+		/*
 		// Create action for login authentication
 		Action loginAction = new AbstractAction() {
 			public void actionPerformed(ActionEvent e)
 			{
 				try {
-					ls.loginChecker(mainUser, nameField,passwordField);
+					// ls.loginChecker(nameField,passwordField);
 				} catch (Exception error) {
 					error.printStackTrace();
 				}
 			}
-		};
+		}; */
 		
 		// Add action listeners
-		loginButton.addActionListener(loginAction);
-		passwordField.addActionListener(loginAction);
+		//loginButton.addActionListener(loginAction);
+		//passwordField.addActionListener(loginAction);
 		
 		loginConstraints.gridx = 0;
 		loginConstraints.gridy = 2;
@@ -78,6 +104,6 @@ public class LoginView {
 		loginButton.setPreferredSize(new Dimension(100,50));
 		loginForm.add(loginButton, loginConstraints);
 		
-		return loginForm;
+		frame.add(loginForm, BorderLayout.CENTER);
 	}
 }
