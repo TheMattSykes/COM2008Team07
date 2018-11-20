@@ -1,18 +1,87 @@
 package Controllers;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import Models.Classification;
+import Models.Grades;
 import Models.GraduateType;
 import Models.Module;
+import Models.User;
+import Views.LoginView;
+import Views.StudentView;
 
 import java.util.Collection;
 import java.util.Collections;
 
-public class StudentSystemModel {
+public class StudentSystemController {
+	
+	User user;
+	StudentView sv;
+	
+	public StudentSystemController(User mainUser, StudentView sview) {
+		user = mainUser;
+		sv = sview;
+		
+		initView();
+	}
+	
 	public static void main(String[] args) {
 		// Main stuff
+	}
+	
+	
+	public void initController() {		
+		// lv.getLoginButton().addActionListener(e -> loginEvent());;
+		
+		// lv.getPasswordField().addActionListener(e -> loginEvent());
+	}
+	
+	public void initView() {
+		sv.setData(getTableData());
+		sv.loadUI();
+	}
+	
+	
+	public Object[][] getTableData() {
+		Object[][] data = new Object[50][8];
+		
+		ArrayList<Module> modules = new ArrayList<Module>();
+		
+		modules.add(new Module("COM1101","Web Design with Scratch",40,new int[]{20,40},new Grades[]{Grades.FAIL, Grades.PASS}, "", 1, GraduateType.UNDERGRADUATE));
+		modules.add(new Module("COM1103","BASIC Programming on a Typewriter",20,new int[]{90,0},new Grades[]{Grades.PASS, Grades.UNDEFINED}, "", 1, GraduateType.UNDERGRADUATE));
+		modules.add(new Module("COM1105","Lab Robots That Don't Work",20,new int[]{50,0},new Grades[]{Grades.PASS, Grades.UNDEFINED}, "", 1, GraduateType.UNDERGRADUATE));
+		modules.add(new Module("COM1106","Introduction to Dirk",20,new int[]{80,0},new Grades[]{Grades.PASS, Grades.UNDEFINED}, "", 1, GraduateType.UNDERGRADUATE));
+		modules.add(new Module("COM1107","Data Driven Ducks",20,new int[]{60,0},new Grades[]{Grades.PASS, Grades.UNDEFINED}, "", 1, GraduateType.UNDERGRADUATE));
+		
+		int row = 0;
+		for (Module module : modules) {
+			data[row][0] = module.getCode();
+			System.out.println("Code: "+data[row][0]);
+			data[row][1] = module.getName();
+			data[row][2] = module.getCredits();
+			
+			int[] scores = module.getScores();
+			Grades[] grades = module.getGrades();
+			
+			data[row][3] = scores[0];
+			data[row][4] = grades[0].toString();
+			
+			if (grades[1] == Grades.UNDEFINED) {
+				data[row][5] = "";
+				data[row][6] = "";
+			} else {
+				data[row][5] = scores[1];
+				data[row][6] = grades[1].toString();
+			}
+			
+			data[row][7] = module.getLevel();
+			
+			row++;
+		}
+		
+		return data;
 	}
 	
 	public int getMax(int[] scores) {

@@ -10,8 +10,17 @@ public class Module {
 	private int level;
 	private GraduateType type;
 	
-	public Module() {
-		
+	public Module() {}
+	
+	public Module(String c, String n, int cred, int[] sc, Grades[] gr, String tp, int l, GraduateType ty) {
+		code = c;
+		name = n;
+		credits = cred;
+		scores = sc;
+		grades = gr;
+		teachingPeriod = tp;
+		level = l;
+		type = ty;
 	}
 	
 	public String getCode() {

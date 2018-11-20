@@ -24,6 +24,7 @@ import Models.User;
 import Models.UserTypes;
 import Views.LoginView;
 import Views.PrimaryFrame;
+import Views.StudentView;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -57,9 +58,21 @@ public class LoginController {
 		lv.getPasswordField().addActionListener(e -> loginEvent());
 	}
 	
+	public void changeView() {
+		lv.viewChange();
+		
+		StudentView sv = new StudentView(lv.getFrame());
+		StudentSystemController sc = new StudentSystemController(user, sv);
+		sc.initController();
+	}
+	
 	public void loginEvent() {
 		try {
 			loginChecker(lv.getNameField(), lv.getPasswordField());
+			
+			if (user.isLoggedIn()) {
+				changeView();
+			}
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -118,7 +131,7 @@ public class LoginController {
 			mainUser.login();
 			
 			user = mainUser;
-			JOptionPane.showMessageDialog(null, ("You are now logged in as "+mainUser.getUsername()));
+			// JOptionPane.showMessageDialog(null, ("You are now logged in as "+mainUser.getUsername()));
 		} else {
 			JOptionPane.showMessageDialog(null, "Username and/or password were incorrect");
 		}

@@ -32,7 +32,7 @@ public class PrimaryFrame extends JFrame {
 		toolbar.add(test);
 		
 		mainContainer.add(banner, BorderLayout.NORTH);
-		mainContainer.add(toolbar, BorderLayout.SOUTH);
+		// mainContainer.add(toolbar, BorderLayout.SOUTH);
 		
 		pack();
 	}

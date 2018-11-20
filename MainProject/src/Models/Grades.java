@@ -1,5 +1,5 @@
 package Models;
 
 public enum Grades {
-	FAIL, PASS, DISTINCTION;
+	FAIL, PASS, DISTINCTION, UNDEFINED;
 }

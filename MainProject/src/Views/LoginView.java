@@ -17,11 +17,14 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import Controllers.LoginController;
+import Controllers.StudentSystemController;
 import Models.User;
 
 public class LoginView extends JPanel {
 	
 	private PrimaryFrame frame;
+	
+	private JPanel loginForm;
 	
 	private JButton loginButton;
 	private JTextField nameField;
@@ -29,6 +32,10 @@ public class LoginView extends JPanel {
 	
 	public LoginView(PrimaryFrame mf) {
 		frame = mf;
+	}
+	
+	public PrimaryFrame getFrame() {
+		return frame;
 	}
 	
 	
@@ -44,10 +51,14 @@ public class LoginView extends JPanel {
 		return passwordField;
 	}
 	
+	public void viewChange() {
+		frame.remove(loginForm);
+	}
+	
 	public void loginUI() {
 		// LoginController ls = new LoginController();
 		
-		JPanel loginForm = new JPanel();
+		loginForm = new JPanel();
 		
 		loginForm.setLayout(new GridBagLayout());
 		GridBagConstraints loginConstraints = new GridBagConstraints();

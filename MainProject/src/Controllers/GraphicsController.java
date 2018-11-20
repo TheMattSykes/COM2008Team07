@@ -5,6 +5,7 @@ import Models.User;
 import Views.LoggedInView;
 import Views.LoginView;
 import Views.PrimaryFrame;
+import Views.StudentView;
 
 import java.awt.*;
 
@@ -18,6 +19,11 @@ public class GraphicsController {
 				JPanel menuUI = menuView.loggedInUI(mainUser);
 				
 				PrimaryFrame mainFrame = new PrimaryFrame("University System");
+				
+				/*
+				StudentView sv = new StudentView(mainFrame);
+				StudentSystemController sc = new StudentSystemController(mainUser, sv);
+				sc.initController(); */
 				
 				LoginView lv = new LoginView(mainFrame);
 				LoginController lc = new LoginController(mainUser, lv);
