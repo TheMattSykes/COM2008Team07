@@ -22,9 +22,14 @@ import Models.Module;
 public class StudentView extends JPanel {
 	PrimaryFrame frame;
 	Object[][] data;
+	JPanel studentInfo;
 	
 	public StudentView(PrimaryFrame pf) {
 		frame = pf;
+	}
+	
+	public PrimaryFrame getFrame() {
+		return frame;
 	}
 	
 	public void setData(Object[][] d) {
@@ -33,6 +38,10 @@ public class StudentView extends JPanel {
 	
 	public void viewChange() {
 		frame.getContentPane().removeAll();
+	}
+	
+	public void removeUI() {
+		frame.remove(studentInfo);
 	}
 	
 	public void loadUI() {
@@ -59,7 +68,7 @@ public class StudentView extends JPanel {
         };
 		
 		
-		JPanel studentInfo = new JPanel();
+		studentInfo = new JPanel();
 		
 		studentInfo.setLayout(new GridBagLayout());
 		GridBagConstraints stuConstraints = new GridBagConstraints();
@@ -93,6 +102,7 @@ public class StudentView extends JPanel {
 		studentInfo.add(scrollPane, stuConstraints);
 		
 		frame.add(studentInfo, BorderLayout.CENTER);
+		frame.showMenuBar();
 		frame.revalidate();
 		frame.repaint();
 	}

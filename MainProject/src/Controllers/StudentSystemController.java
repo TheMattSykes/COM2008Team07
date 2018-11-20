@@ -4,18 +4,21 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.swing.JButton;
+
 import Models.Classification;
 import Models.Grades;
 import Models.GraduateType;
 import Models.Module;
 import Models.User;
 import Views.LoginView;
+import Views.PrimaryFrame;
 import Views.StudentView;
 
 import java.util.Collection;
 import java.util.Collections;
 
-public class StudentSystemController {
+public class StudentSystemController extends Controller {
 	
 	User user;
 	StudentView sv;
@@ -27,15 +30,17 @@ public class StudentSystemController {
 		initView();
 	}
 	
+	public User getUser() {
+		return user;
+	}
+	
 	public static void main(String[] args) {
 		// Main stuff
 	}
 	
 	
 	public void initController() {		
-		// lv.getLoginButton().addActionListener(e -> loginEvent());;
 		
-		// lv.getPasswordField().addActionListener(e -> loginEvent());
 	}
 	
 	public void initView() {

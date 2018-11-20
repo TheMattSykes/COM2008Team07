@@ -6,6 +6,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Random;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -16,7 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import Controllers.LoginController;
+import Controllers.AccountController;
 import Controllers.StudentSystemController;
 import Models.User;
 
@@ -55,6 +56,15 @@ public class LoginView extends JPanel {
 		frame.remove(loginForm);
 	}
 	
+	public void viewLogoutChange() {
+		frame.add(loginForm, BorderLayout.CENTER);
+		nameField.setText("");
+		passwordField.setText("");
+		frame.hideMenuBar();
+		frame.revalidate();
+		frame.repaint();
+	}
+	
 	public void loginUI() {
 		// LoginController ls = new LoginController();
 		
@@ -91,23 +101,6 @@ public class LoginView extends JPanel {
 		loginConstraints.insets = new Insets(20,50,5,50);
 		loginButton = new JButton("Log in");
 		loginButton.setPreferredSize(new Dimension(400,50));
-		
-		/*
-		// Create action for login authentication
-		Action loginAction = new AbstractAction() {
-			public void actionPerformed(ActionEvent e)
-			{
-				try {
-					// ls.loginChecker(nameField,passwordField);
-				} catch (Exception error) {
-					error.printStackTrace();
-				}
-			}
-		}; */
-		
-		// Add action listeners
-		//loginButton.addActionListener(loginAction);
-		//passwordField.addActionListener(loginAction);
 		
 		loginConstraints.gridx = 0;
 		loginConstraints.gridy = 2;

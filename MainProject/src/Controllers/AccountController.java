@@ -32,12 +32,15 @@ import java.sql.*;
 import java.text.MessageFormat;
 
 
-public class LoginController {
+public class AccountController extends Controller {
 
 	private static User user;
 	private LoginView lv;
+	private JPanel menuBar;
+	
+	private StudentView studentViewer = null;
 
-	public LoginController(User mainUser, LoginView lview) {
+	public AccountController(User mainUser, LoginView lview) {
 		user = mainUser;
 		lv = lview;
 		
@@ -56,14 +59,42 @@ public class LoginController {
 		lv.getLoginButton().addActionListener(e -> loginEvent());;
 		
 		lv.getPasswordField().addActionListener(e -> loginEvent());
+		
+		PrimaryFrame frame = lv.getFrame();
+		JButton logout = frame.getLogoutButton();
+		
+		logout.addActionListener(e -> logoutEvent());;
+	}
+	
+	public void logoutEvent() {
+		Object[] options = {"Logout", "Cancel"};
+		
+		int logoutOption = JOptionPane.showOptionDialog(lv.getFrame(), "Confirm logout", "Logout question", JOptionPane.YES_NO_OPTION, 
+				JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+		
+		if (logoutOption == 0) {
+			user.logout();
+			changeView();
+		}
 	}
 	
 	public void changeView() {
-		lv.viewChange();
-		
-		StudentView sv = new StudentView(lv.getFrame());
-		StudentSystemController sc = new StudentSystemController(user, sv);
-		sc.initController();
+		if (user.isLoggedIn()) {
+			lv.viewChange();
+			
+			if (user.getUserType() == UserTypes.STUDENT) {
+				studentViewer = new StudentView(lv.getFrame());
+				StudentSystemController sc = new StudentSystemController(user, studentViewer);
+				sc.initController();
+			}
+		} else {
+			
+			if (studentViewer != null) {
+				studentViewer.removeUI();
+			}
+			
+			lv.viewLogoutChange();
+		}
 	}
 	
 	public void loginEvent() {
@@ -77,6 +108,17 @@ public class LoginController {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+	}
+	
+	public static void main(String[] args) throws NoSuchAlgorithmException {
+		String pass = "hellotheregeneralkenobi";
+		
+		String salt = generateSalt();
+		
+		String newPassword = pass + salt;
+		
+		System.out.println("Salt: "+salt);
+		System.out.print("New Password: "+hash(newPassword));
 	}
 	
 	
@@ -124,7 +166,7 @@ public class LoginController {
 		if (salt != null) {
 			password = hash(password + salt);
 		}
-  
+		
 		if ((username.equals(usernameInDB)) && (password.equals(passwordInDB)) && exists) {
 			
 			mainUser.setUserDetails(Integer.parseInt(userID),usernameInDB,UserTypes.valueOf(userType.toUpperCase()));

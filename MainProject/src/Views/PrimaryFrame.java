@@ -6,6 +6,10 @@ public class PrimaryFrame extends JFrame {
 	
 	private Container mainContainer = getContentPane();
 	
+	private JPanel menuBar;
+	
+	private JButton logout;
+	
 	public PrimaryFrame(String windowTitle) {
 		super(windowTitle);
 		
@@ -25,11 +29,21 @@ public class PrimaryFrame extends JFrame {
 		banner.setPreferredSize(new Dimension(1000,160));
 		banner.setIcon(new ImageIcon("img/banner.png"));
 		
-		JButton test = new JButton("Test");
-		test.setToolTipText("Test");
+		menuBar = new JPanel();
+		menuBar.setLayout(new GridBagLayout());
 		
-		JToolBar toolbar = new JToolBar();
-		toolbar.add(test);
+		GridBagConstraints menuConstraints = new GridBagConstraints();
+
+		// menuBar.setBorder(BorderFactory.createEmptyBorder(10, 10, 20, 10));
+		
+		logout = new JButton("Log Out");
+		
+		menuConstraints.insets = new Insets(10,10,10,10);
+		
+		menuConstraints.fill = GridBagConstraints.HORIZONTAL;
+		menuConstraints.gridx = 0;
+		menuConstraints.gridy = 0;
+		menuBar.add(logout, menuConstraints);
 		
 		mainContainer.add(banner, BorderLayout.NORTH);
 		// mainContainer.add(toolbar, BorderLayout.SOUTH);
@@ -37,7 +51,19 @@ public class PrimaryFrame extends JFrame {
 		pack();
 	}
 	
-	public void updateView(JPanel newContent) {
-		mainContainer.add(newContent, BorderLayout.CENTER);
+	public void showMenuBar() {
+		mainContainer.add(menuBar, BorderLayout.SOUTH);
+		revalidate();
+		repaint();
+	}
+	
+	public void hideMenuBar() {
+		mainContainer.remove(menuBar);
+		revalidate();
+		repaint();
+	}
+	
+	public JButton getLogoutButton() {
+		return logout;
 	}
 }

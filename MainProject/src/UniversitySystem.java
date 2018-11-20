@@ -1,7 +1,7 @@
 import java.sql.*;
 
 import Controllers.FindDrivers;
-import Controllers.GraphicsController;
+import Controllers.MasterController;
 import Models.User;
 
 public class UniversitySystem {
@@ -18,7 +18,7 @@ public class UniversitySystem {
 		User mainUser = new User();
 		
 		// Run GUI
-		GraphicsController gm = new GraphicsController();
-		gm.runUI(mainUser);
+		MasterController mc = new MasterController();
+		mc.runUI(mainUser);
 	}
 }

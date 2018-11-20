@@ -9,7 +9,7 @@ import Views.StudentView;
 
 import java.awt.*;
 
-public class GraphicsController {
+public class MasterController {
 	
 	public void runUI(User mainUser) {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -20,14 +20,9 @@ public class GraphicsController {
 				
 				PrimaryFrame mainFrame = new PrimaryFrame("University System");
 				
-				/*
-				StudentView sv = new StudentView(mainFrame);
-				StudentSystemController sc = new StudentSystemController(mainUser, sv);
-				sc.initController(); */
-				
 				LoginView lv = new LoginView(mainFrame);
-				LoginController lc = new LoginController(mainUser, lv);
-				lc.initController();
+				AccountController ac = new AccountController(mainUser, lv);
+				ac.initController();
 				
 				mainFrame.setSize(1000,800);
 			}
