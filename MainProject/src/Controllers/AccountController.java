@@ -133,7 +133,7 @@ public class AccountController extends Controller {
 	
 	
 	
-	public static void main(String[] args) throws NoSuchAlgorithmException {
+	public static void main(String[] args) throws Exception {
 		String pass = "generalkenobi";
 		
 		String salt = generateSalt();
@@ -165,9 +165,10 @@ public class AccountController extends Controller {
 		String password = new String(passwordField.getPassword());
 		
 		String query = String.format("SELECT * FROM users WHERE username = ?");
-		String[][] values = new String[1][2];
-		values[0][0] = username;
-		values[0][1] = "true";
+		
+		ArrayList<String[]> values = new ArrayList<String[]>();
+		
+		values.add(new String[]{username,"true"});
 		
 		
 		String[] queries = {query};
@@ -235,34 +236,59 @@ public class AccountController extends Controller {
 	 * Function which generates a random Hex string of random length 
 	 * between 16 and 30.
 	 * This salt string is added to the password.
+	 * @throws Exception 
 	 * */
-	public static String generateSalt() {
+	public static String generateSalt() throws Exception {
+		DatabaseController dc = new DatabaseController();
+		
 		Random rand = new Random();
 		
-		// Generate random length
-		int length = rand.nextInt(10)+16;
-		
+		Boolean validSalt = false;
 		String salt = "";
-		int charValue = 0;
 		
-		// Generate a salt with a length between 16 and 
-		for (int i = 0; i < length; i++) {
-			int typeOfValue = rand.nextInt(2)+1;
+		while (!validSalt) {
+			// Generate random length
+			int length = rand.nextInt(10)+16;
 			
-			// Generate ASCII values for 0-9 or A-F
-			switch(typeOfValue) {
-				case 1:
-					// Between 48 and 57 i.e. 0-9
-					charValue = rand.nextInt(10)+48;
-					break;
-				default:
-					// Between 65 and 70 i.e. A-F
-					charValue = rand.nextInt(6)+65;
-					break;
+			salt = "";
+			int charValue = 0;
+			
+			// Generate a salt with a length between 16 and 
+			for (int i = 0; i < length; i++) {
+				int typeOfValue = rand.nextInt(2)+1;
+				
+				// Generate ASCII values for 0-9 or A-F
+				switch(typeOfValue) {
+					case 1:
+						// Between 48 and 57 i.e. 0-9
+						charValue = rand.nextInt(10)+48;
+						break;
+					default:
+						// Between 65 and 70 i.e. A-F
+						charValue = rand.nextInt(6)+65;
+						break;
+				}
+				
+				// Convert ASCII value to character and append to salt string
+				salt += (char)charValue;
 			}
 			
-			// Convert ASCII value to character and append to salt string
-			salt += (char)charValue;
+			String query = String.format("SELECT salt FROM users");
+			
+			String[] queries = {query};
+			
+			ArrayList<String[]> allResults = dc.executeQuery(query,null);
+			
+			if(allResults.size() < 0) {
+				validSalt = true;
+			} else {
+				for (String[] result : allResults) {
+					if (salt != result[0]) {
+						validSalt = true;
+					}
+				}
+			}
+			
 		}
 		
 		return salt.toLowerCase();

@@ -14,7 +14,7 @@ public class DatabaseController {
 	private Connection con = null;
 	private String db = "jdbc:mysql://stusql.dcs.shef.ac.uk/team007?user=team007&password=412fe569";
 	
-	public ArrayList<String[]> executeQuery(String query, String[][] values) throws Exception {
+	public ArrayList<String[]> executeQuery(String query, ArrayList<String[]> values) throws Exception {
 		
 		ArrayList<String[]> output = new ArrayList<String[]>();
 		
@@ -35,15 +35,17 @@ public class DatabaseController {
 			try {
 				stmt = con.prepareStatement(query);
 				
-				for (int itemNo = 0; itemNo < values.length; itemNo++) {
-					String value = values[itemNo][0];
-					Boolean typeString = Boolean.valueOf(values[itemNo][1]);
-					int dbColumnNo = itemNo + 1;
-					
-					if (!typeString) {
-						stmt.setInt(dbColumnNo, Integer.valueOf(values[itemNo][0]));
-					} else {
-						stmt.setString(dbColumnNo, (String)value);
+				if (values != null) {
+					for (int itemNo = 0; itemNo < values.size(); itemNo++) {
+						String value = values.get(itemNo)[0];
+						Boolean typeString = Boolean.valueOf(values.get(itemNo)[1]);
+						int dbColumnNo = itemNo + 1;
+						
+						if (!typeString) {
+							stmt.setInt(dbColumnNo, Integer.valueOf(value));
+						} else {
+							stmt.setString(dbColumnNo, (String)value);
+						}
 					}
 				}
 				
