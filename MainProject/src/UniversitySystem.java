@@ -6,10 +6,12 @@ import Models.User;
 
 public class UniversitySystem {
 	
-	// NOTE: JavaSE-1.8 System Library may be required if issues arrise while running.
+	// NOTE: JavaSE-1.8 System Library may be required if issues arise while running.
 	
 	public static void main(String[] args) throws Exception {
-		// admin dirk567 are username and password
+		// admin dirk567 are username and password for admin
+		// student hellotheregeneralkenobi are for student
+		// registrar bohemianrhapsody are for registrar
 		
 		// Check drivers
 		FindDrivers fd = new FindDrivers();

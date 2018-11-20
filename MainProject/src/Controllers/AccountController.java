@@ -25,6 +25,7 @@ import Models.UserTypes;
 import Views.LoginView;
 import Views.PrimaryFrame;
 import Views.StudentView;
+import Views.RegistrarView;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -39,6 +40,7 @@ public class AccountController extends Controller {
 	private JPanel menuBar;
 	
 	private StudentView studentViewer = null;
+	private RegistrarView registrarViewer = null;
 
 	public AccountController(User mainUser, LoginView lview) {
 		user = mainUser;
@@ -63,10 +65,17 @@ public class AccountController extends Controller {
 		PrimaryFrame frame = lv.getFrame();
 		JButton logout = frame.getLogoutButton();
 		
-		logout.addActionListener(e -> logoutEvent());;
+		logout.addActionListener(e -> {
+			try {
+				logoutEvent();
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		});;
 	}
 	
-	public void logoutEvent() {
+	public void logoutEvent() throws Exception {
 		Object[] options = {"Logout", "Cancel"};
 		
 		int logoutOption = JOptionPane.showOptionDialog(lv.getFrame(), "Confirm logout", "Logout question", JOptionPane.YES_NO_OPTION, 
@@ -78,7 +87,7 @@ public class AccountController extends Controller {
 		}
 	}
 	
-	public void changeView() {
+	public void changeView() throws Exception {
 		if (user.isLoggedIn()) {
 			lv.viewChange();
 			
@@ -86,11 +95,17 @@ public class AccountController extends Controller {
 				studentViewer = new StudentView(lv.getFrame());
 				StudentSystemController sc = new StudentSystemController(user, studentViewer);
 				sc.initController();
+			} else if (user.getUserType() == UserTypes.REGISTRAR) {
+				registrarViewer = new RegistrarView(lv.getFrame());
+				RegistrarSystemController sc = new RegistrarSystemController(user, registrarViewer);
+				sc.initController();
 			}
 		} else {
 			
 			if (studentViewer != null) {
 				studentViewer.removeUI();
+			} else if (registrarViewer != null) {
+				registrarViewer.removeUI();
 			}
 			
 			lv.viewLogoutChange();
@@ -111,7 +126,7 @@ public class AccountController extends Controller {
 	}
 	
 	public static void main(String[] args) throws NoSuchAlgorithmException {
-		String pass = "hellotheregeneralkenobi";
+		String pass = "bohemianrhapsody";
 		
 		String salt = generateSalt();
 		
@@ -182,7 +197,7 @@ public class AccountController extends Controller {
 	
 	/**
 	 * hash()
-	 * Uses java's MessageDigest and DatatypeConverter apis to SHA-256 hash a string.
+	 * Uses java's MessageDigest and DatatypeConverter APIs to SHA-256 hash a string.
 	 * */
 	public static String hash(String stringToHash) throws NoSuchAlgorithmException {
 		// Define algorithm: SHA-256

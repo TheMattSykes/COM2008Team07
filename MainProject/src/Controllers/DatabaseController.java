@@ -24,7 +24,7 @@ public class DatabaseController {
 			con = DriverManager.getConnection(db);
 			System.out.println("DATABASE CONNECTION ESTABILISHED");
 			
-			//TODO: Sanatise input to protect from SQL injection
+			//TODO: Sanitise input to protect from SQL injection
 			
 			System.out.println("\t[DATABASE] Starting query processing...");
 			System.out.println("\t[DATABASE] Query input: "+query);
@@ -108,4 +108,5 @@ public class DatabaseController {
 		
 		return output;
 	}
+	
 }
