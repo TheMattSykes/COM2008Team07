@@ -53,6 +53,10 @@ public class AccountController extends Controller {
 		return user;
 	}
 	
+	
+	
+	
+	
 	public void initView() {
 		lv.loginUI();
 	}
@@ -125,8 +129,12 @@ public class AccountController extends Controller {
 		}
 	}
 	
+	
+	
+	
+	
 	public static void main(String[] args) throws NoSuchAlgorithmException {
-		String pass = "bohemianrhapsody";
+		String pass = "generalkenobi";
 		
 		String salt = generateSalt();
 		
@@ -163,15 +171,24 @@ public class AccountController extends Controller {
 		
 		
 		String[] queries = {query};
-		String[] results = dc.executeQuery(query,values);
+		
+		ArrayList<String[]> allResults = dc.executeQuery(query,values);
+		String[] results = null;
+		
+		if(allResults.size() > 0) {
+			results = allResults.get(0);
+		}
 		
 		String userID = "";
 		String usernameInDB = null, passwordInDB = null, userType = null, salt = null;
 		
-		exists = (results.length > 0);
+		if (results != null) {
+			exists = (results.length > 0);
+		}
 		
 		if (exists) {
 			userID = results[0];
+			System.out.println("UID: "+userID);
 			usernameInDB = results[1];
 			passwordInDB = results[2];
 			userType = results[3];

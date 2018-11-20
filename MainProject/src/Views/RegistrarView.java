@@ -98,7 +98,7 @@ public class RegistrarView extends JPanel {
 		values[0][0] = "12345678";
 		values[0][1] = "12345679";
 		values[0][2] = "true";
-		String[] results = dc.executeQuery(query, values);
+		String[] results = dc.executeQuery(query, values).get(0);
 		
 		for (String result : results) {
 			System.out.println(result);

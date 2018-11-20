@@ -14,9 +14,9 @@ public class DatabaseController {
 	private Connection con = null;
 	private String db = "jdbc:mysql://stusql.dcs.shef.ac.uk/team007?user=team007&password=412fe569";
 	
-	public String[] executeQuery(String query, String[][] values) throws Exception {
+	public ArrayList<String[]> executeQuery(String query, String[][] values) throws Exception {
 		
-		String[] output = null;
+		ArrayList<String[]> output = new ArrayList<String[]>();
 		
 		try {
 			// Initiate connection with database
@@ -63,17 +63,18 @@ public class DatabaseController {
 					int noOfColumns = meta.getColumnCount();
 					
 					// Initialised string array with a length of the number of columns
-					String[] nextRow = new String[noOfColumns];
 					
 					// Store row data in array
 					while (res.next()) {
+						String[] nextRow = new String[noOfColumns];
 						for (int column = 1; column <= noOfColumns; column++) {
 							nextRow[column-1] = res.getString(column);
 						}
+						
+						output.add(nextRow);
 					}
 					
 					// Append array to list of arrays
-					output = nextRow;
 					System.out.println("\t[DATABASE] Output processed");
 					
 					// Close ResultSet
