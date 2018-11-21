@@ -22,6 +22,7 @@ public class RegistrarSystemController extends Controller {
 	
 	User user;
 	RegistrarView rv;
+	DatabaseController dc = new DatabaseController();
 	
 	public RegistrarSystemController(User mainUser, RegistrarView rview) throws Exception {
 		user = mainUser;
@@ -49,7 +50,19 @@ public class RegistrarSystemController extends Controller {
 	}
 	
 	
-	public Object[][] getTableData() {
+	public Object[][] getTableData() throws Exception {
+		
+		String query = "SELECT * FROM students WHERE reg_number = ?";
+		ArrayList<String[]> values = new ArrayList<String[]>();
+		values.add(new String[] {"12345678", ""});
+		ArrayList<String[]> results = dc.executeQuery(query, values);
+		
+		for (int i = 0; i < results.size(); i++) {
+			for (String result : results.get(i)) {
+				System.out.println(result);
+			}
+		}
+		
 		Object[][] data = new Object[50][8];
 		
 		ArrayList<Module> modules = new ArrayList<Module>();

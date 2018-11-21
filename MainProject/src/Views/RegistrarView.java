@@ -26,7 +26,6 @@ public class RegistrarView extends JPanel {
 	PrimaryFrame frame;
 	Object[][] data;
 	JPanel studentInfo;
-	DatabaseController dc = new DatabaseController();
 	
 	public RegistrarView(PrimaryFrame pf) {
 		frame = pf;
@@ -49,12 +48,12 @@ public class RegistrarView extends JPanel {
 	}
 	
 	public void loadUI() throws Exception {
-		String stuName = "Freddie Mercury";
+		String regName = "Freddie Mercury";
 		
 		JPanel studentDetails = new JPanel();
 		studentDetails.setLayout(new GridLayout(5,1));
 		
-		JLabel nameLabel = new JLabel("Name: "+stuName);
+		JLabel nameLabel = new JLabel("Name: "+regName);
 		
 		studentDetails.add(nameLabel);
 		
@@ -90,19 +89,6 @@ public class RegistrarView extends JPanel {
 		
 		
 		JTable table = new JTable(data, columnNames);
-		
-		DefaultTableModel model = new DefaultTableModel(new String[]{"Class Name", "Home work", "Due Date"}, 0);
-		
-		String query = "SELECT * FROM students WHERE reg_number = ?";
-		String[][] values = new String[1][3];
-		values[0][0] = "12345678";
-		values[0][1] = "12345679";
-		values[0][2] = "true";
-		String[] results = dc.executeQuery(query, values);
-		
-		for (String result : results) {
-			System.out.println(result);
-		}
 		
 		// table.getColumnModel().getColumn(7).setPreferredWidth(5);
 		// table.getColumnModel().getColumn(1).setPreferredWidth(40);
