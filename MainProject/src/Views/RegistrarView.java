@@ -58,13 +58,14 @@ public class RegistrarView extends JPanel {
 		studentDetails.add(nameLabel);
 		
 		String[] columnNames = {
-				"Code",
-                "Name",
-                "Credits",
-                "Result 1",
-                "Grade 1",
-                "Result 2",
-                "Grade 2",
+				"Reg. Number",
+                "Title",
+                "First Name",
+                "Second Name",
+                "Degree",
+                "Email",
+                "Tutor",
+                //"Period",
                 "Level"
         };
 		

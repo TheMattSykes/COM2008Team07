@@ -10,6 +10,7 @@ import Models.Classification;
 import Models.Grades;
 import Models.GraduateType;
 import Models.Module;
+import Models.Student;
 import Models.User;
 import Views.LoginView;
 import Views.PrimaryFrame;
@@ -52,49 +53,30 @@ public class RegistrarSystemController extends Controller {
 	
 	public Object[][] getTableData() throws Exception {
 		
-		String query = "SELECT * FROM students WHERE reg_number = ?";
+		String query = "SELECT * FROM students LIMIT ?";
 		ArrayList<String[]> values = new ArrayList<String[]>();
-		values.add(new String[] {"12345678", ""});
+		values.add(new String[] {"100", ""});
 		ArrayList<String[]> results = dc.executeQuery(query, values);
 		
+		ArrayList<Student> students = new ArrayList<Student>();
+		
 		for (int i = 0; i < results.size(); i++) {
-			for (String result : results.get(i)) {
-				System.out.println(result);
-			}
+			students.add(new Student(Integer.parseInt(results.get(i)[0]),results.get(i)[1],results.get(i)[2],results.get(i)[3],results.get(i)[4], results.get(i)[5], results.get(i)[6], results.get(i)[7].charAt(0), Integer.parseInt(results.get(i)[8])));
 		}
 		
-		Object[][] data = new Object[50][8];
-		
-		ArrayList<Module> modules = new ArrayList<Module>();
-		
-		modules.add(new Module("COM1101","Web Design with Scratch",40,new int[]{20,40},new Grades[]{Grades.FAIL, Grades.PASS}, "", 1, GraduateType.UNDERGRADUATE));
-		modules.add(new Module("COM1103","BASIC Programming on a Typewriter",20,new int[]{90,0},new Grades[]{Grades.PASS, Grades.UNDEFINED}, "", 1, GraduateType.UNDERGRADUATE));
-		modules.add(new Module("COM1105","Lab Robots That Don't Work",20,new int[]{50,0},new Grades[]{Grades.PASS, Grades.UNDEFINED}, "", 1, GraduateType.UNDERGRADUATE));
-		modules.add(new Module("COM1106","Introduction to Dirk",20,new int[]{80,0},new Grades[]{Grades.PASS, Grades.UNDEFINED}, "", 1, GraduateType.UNDERGRADUATE));
-		modules.add(new Module("COM1107","Data Driven Ducks",20,new int[]{60,0},new Grades[]{Grades.PASS, Grades.UNDEFINED}, "", 1, GraduateType.UNDERGRADUATE));
+		Object[][] data = new Object[results.size()][9];
 		
 		int row = 0;
-		for (Module module : modules) {
-			data[row][0] = module.getCode();
-			System.out.println("Code: "+data[row][0]);
-			data[row][1] = module.getName();
-			data[row][2] = module.getCredits();
-			
-			int[] scores = module.getScores();
-			Grades[] grades = module.getGrades();
-			
-			data[row][3] = scores[0];
-			data[row][4] = grades[0].toString();
-			
-			if (grades[1] == Grades.UNDEFINED) {
-				data[row][5] = "";
-				data[row][6] = "";
-			} else {
-				data[row][5] = scores[1];
-				data[row][6] = grades[1].toString();
-			}
-			
-			data[row][7] = module.getLevel();
+		for (Student student : students) {
+			data[row][0] = student.getRegNumber();
+			data[row][1] = student.getTitle();
+			data[row][2] = student.getFirstName();
+			data[row][3] = student.getSecondName();
+			data[row][4] = student.getDegree();
+			data[row][5] = student.getEmail();
+			data[row][6] = student.getTutor();
+			data[row][7] = student.getPeriod();
+			data[row][8] = student.getLevel();
 			
 			row++;
 		}
