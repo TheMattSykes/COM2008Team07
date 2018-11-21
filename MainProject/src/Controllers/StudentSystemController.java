@@ -52,6 +52,47 @@ public class StudentSystemController extends Controller {
 	public Object[][] getTableData() {
 		Object[][] data = new Object[50][8];
 		
+		
+DatabaseController dc = new DatabaseController();
+		
+		User mainUser = new User();
+		
+		/*
+		Boolean exists = false;
+		
+		String query = String.format("SELECT * FROM modules WHERE username = ?");
+		
+		ArrayList<String[]> values = new ArrayList<String[]>();
+		
+		// values.add(new String[]{username,"true"});
+		
+		
+		String[] queries = {query};
+		
+		ArrayList<String[]> allResults = dc.executeQuery(query,values);
+		String[] results = null;
+		
+		if(allResults.size() > 0) {
+			results = allResults.get(0);
+		}
+		
+		if (results != null) {
+			exists = (results.length > 0);
+		}
+		
+		if (exists) {
+			userID = results[0];
+			System.out.println("UID: "+userID);
+			usernameInDB = results[1];
+			passwordInDB = results[2];
+			userType = results[3];
+			salt = results[4];
+		}
+		
+		*/
+		
+		
+		
 		ArrayList<Module> modules = new ArrayList<Module>();
 		
 		modules.add(new Module("COM1101","Web Design with Scratch",40,new int[]{22,40},new Grades[]{Grades.FAIL, Grades.PASS}, "", 1, GraduateType.UNDERGRADUATE));

@@ -38,7 +38,12 @@ public class DatabaseController {
 				if (values != null) {
 					for (int itemNo = 0; itemNo < values.size(); itemNo++) {
 						String value = values.get(itemNo)[0];
-						Boolean typeString = Boolean.valueOf(values.get(itemNo)[1]);
+						Boolean typeString = true;
+						
+						if (values.get(itemNo).length > 1) {
+							typeString = Boolean.valueOf(values.get(itemNo)[1]); // checks if input is a string
+						}
+						
 						int dbColumnNo = itemNo + 1;
 						
 						if (!typeString) {

@@ -283,6 +283,7 @@ public class AccountController extends Controller {
 				validSalt = true;
 			} else {
 				for (String[] result : allResults) {
+					System.out.println("Checking: "+result[0]);
 					if (salt != result[0]) {
 						validSalt = true;
 					}
