@@ -9,12 +9,12 @@ public class Student extends User {
 	private String degree;
 	private String email;
 	private String tutor;
+	private char period;
 	private int level;
-	private GraduateType type;
 	
 	public Student() {}
 	
-	public Student(int r, String t, String fn, String sn, String d, String e, String tu, int l) {
+	public Student(int r, String t, String fn, String sn, String d, String e, String tu, char p, int l) {
 		regNumber = r;
 		title = t;
 		firstName = fn;
@@ -22,6 +22,7 @@ public class Student extends User {
 		degree = d;
 		email = e;
 		tutor = tu;
+		period = p;
 		level = l;
 	}
 	
@@ -81,6 +82,14 @@ public class Student extends User {
 	
 	public void setTutor(String inputTutor) {
 		tutor = inputTutor;
+	}
+	
+	public char getPeriod() {
+		return period;
+	}
+	
+	public void setPeriod(char inputPeriod) {
+		period = inputPeriod;
 	}
 	
 	public int getLevel() {
