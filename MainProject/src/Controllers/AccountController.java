@@ -26,6 +26,7 @@ import Views.LoginView;
 import Views.PrimaryFrame;
 import Views.StudentView;
 import Views.RegistrarView;
+import Views.AdminView;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -41,6 +42,7 @@ public class AccountController extends Controller {
 	
 	private StudentView studentViewer = null;
 	private RegistrarView registrarViewer = null;
+	private AdminView adminViewer = null;
 
 	public AccountController(User mainUser, LoginView lview) {
 		user = mainUser;
@@ -52,10 +54,6 @@ public class AccountController extends Controller {
 	public User getUpdatedUser() {
 		return user;
 	}
-	
-	
-	
-	
 	
 	public void initView() {
 		lv.loginUI();
@@ -103,6 +101,9 @@ public class AccountController extends Controller {
 				registrarViewer = new RegistrarView(lv.getFrame());
 				RegistrarSystemController sc = new RegistrarSystemController(user, registrarViewer);
 				sc.initController();
+			} else if (user.getUserType() == UserTypes.ADMIN) {
+				adminViewer = new AdminView(lv.getFrame());
+				AdminSystemController sc = new AdminSystemController(user, adminViewer);
 			}
 		} else {
 			
@@ -110,6 +111,8 @@ public class AccountController extends Controller {
 				studentViewer.removeUI();
 			} else if (registrarViewer != null) {
 				registrarViewer.removeUI();
+			} else if (adminViewer != null) {
+				adminViewer.removeUI();
 			}
 			
 			lv.viewLogoutChange();
