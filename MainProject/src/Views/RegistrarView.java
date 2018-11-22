@@ -7,6 +7,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
@@ -16,16 +18,23 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
 import Controllers.DatabaseController;
 import Controllers.TableColumnAdjuster;
+
 import Models.Grades;
 import Models.GraduateType;
 import Models.Module;
 
+import Views.AddStudent;
+
 public class RegistrarView extends JPanel {
+	private static final long serialVersionUID = 1L;
+	private AddStudent formView = null;
 	PrimaryFrame frame;
 	Object[][] data;
 	JPanel studentInfo;
@@ -122,6 +131,14 @@ public class RegistrarView extends JPanel {
 		registrarButtons.setLayout(new GridBagLayout());
 		
 		JButton addStudent = new JButton("Add Student");
+		addStudent.addActionListener(
+			new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					removeUI();
+					formView = new AddStudent(frame);
+				}
+			}
+		);
 		JButton editStudent = new JButton("Edit Student");
 		editStudent.setEnabled(false);
 		JButton deleteStudent = new JButton("Delete Student");
@@ -140,6 +157,19 @@ public class RegistrarView extends JPanel {
 		registrarButtons.add(deleteStudent, menuConstraints);
 		menuConstraints.gridx = 0;
 		frame.menuBar.add(registrarButtons, menuConstraints);
+		
+		// Row selection listener
+		table.getSelectionModel().addListSelectionListener(
+			new ListSelectionListener() {
+		        public void valueChanged(ListSelectionEvent event) {
+		            //System.out.println(table.getValueAt(table.getSelectedRow(), 0).toString());
+		        	if (!editStudent.isEnabled())
+		        		editStudent.setEnabled(true);
+		        	if (!deleteStudent.isEnabled())
+		        		deleteStudent.setEnabled(true);
+		        }
+			}
+	    );
 		
 		stuConstraints.insets = new Insets(5,5,5,5);
 		stuConstraints.fill = GridBagConstraints.HORIZONTAL;

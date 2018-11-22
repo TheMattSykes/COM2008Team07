@@ -1,4 +1,5 @@
 package Controllers;
+
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -212,8 +213,10 @@ public class AccountController extends Controller {
 			
 			user = mainUser;
 			// JOptionPane.showMessageDialog(null, ("You are now logged in as "+mainUser.getUsername()));
-		} else {
+		} else if (username.trim().length() != 0 && password.trim().length() != 0) {
 			JOptionPane.showMessageDialog(null, "Username and/or password were incorrect");
+		} else {
+			JOptionPane.showMessageDialog(null, "You cannot leave the username or password fields empty");
 		}
 	}
 	

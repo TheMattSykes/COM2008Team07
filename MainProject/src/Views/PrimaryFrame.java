@@ -14,14 +14,15 @@ public class PrimaryFrame extends JFrame {
 		super(windowTitle);
 		
 		// Set frame properties
+		Toolkit tk = Toolkit.getDefaultToolkit();
+		Dimension screenSize = tk.getScreenSize();
 		setSize(1000,800);
+		//setSize(screenSize.width/2, screenSize.height/2);
+		//setLocation(50,50);
+		setLocation(screenSize.width/2-getSize().width/2, screenSize.height/2-getSize().height/2);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
 		setResizable(false);
-		
-		Toolkit tk = Toolkit.getDefaultToolkit();
-		Dimension screenSize = tk.getScreenSize();
-		setLocation(new Point(50,50));
 		
 		setLayout(new BorderLayout());
 		
