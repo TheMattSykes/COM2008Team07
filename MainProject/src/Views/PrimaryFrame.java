@@ -6,7 +6,7 @@ public class PrimaryFrame extends JFrame {
 	
 	private Container mainContainer = getContentPane();
 	
-	private JPanel menuBar;
+	JPanel menuBar;
 	
 	private JButton logout;
 	
@@ -42,7 +42,7 @@ public class PrimaryFrame extends JFrame {
 		
 		menuConstraints.fill = GridBagConstraints.HORIZONTAL;
 		menuConstraints.gridx = 0;
-		menuConstraints.gridy = 0;
+		menuConstraints.gridy = 1;
 		menuBar.add(logout, menuConstraints);
 		
 		mainContainer.add(banner, BorderLayout.NORTH);

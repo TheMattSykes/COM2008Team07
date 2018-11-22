@@ -55,7 +55,7 @@ public class RegistrarSystemController extends Controller {
 		
 		String query = "SELECT * FROM students LIMIT ?";
 		ArrayList<String[]> values = new ArrayList<String[]>();
-		values.add(new String[] {"100", ""});
+		values.add(new String[] {"1000", ""});
 		ArrayList<String[]> results = dc.executeQuery(query, values);
 		
 		ArrayList<Student> students = new ArrayList<Student>();

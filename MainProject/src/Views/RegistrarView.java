@@ -1,6 +1,7 @@
 package Views;
 
 import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -10,6 +11,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -18,6 +20,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
 import Controllers.DatabaseController;
+import Controllers.TableColumnAdjuster;
 import Models.Grades;
 import Models.GraduateType;
 import Models.Module;
@@ -26,6 +29,7 @@ public class RegistrarView extends JPanel {
 	PrimaryFrame frame;
 	Object[][] data;
 	JPanel studentInfo;
+	private JPanel registrarButtons;
 	
 	public RegistrarView(PrimaryFrame pf) {
 		frame = pf;
@@ -65,7 +69,7 @@ public class RegistrarView extends JPanel {
                 "Degree",
                 "Email",
                 "Tutor",
-                //"Period",
+                "Period",
                 "Level"
         };
 		
@@ -86,16 +90,56 @@ public class RegistrarView extends JPanel {
 		stuConstraints.gridx = 0;
 		stuConstraints.gridy = 0;
 		studentInfo.add(studentDetails, stuConstraints);
+		
+		
+		JTable table = new JTable(data, columnNames) {
+	        private static final long serialVersionUID = 1L;
 
-		
-		
-		JTable table = new JTable(data, columnNames);
-		
-		// table.getColumnModel().getColumn(7).setPreferredWidth(5);
-		// table.getColumnModel().getColumn(1).setPreferredWidth(40);
+	        public boolean isCellEditable(int row, int column) {                
+	        	return false;               
+	        }
+	        
+	        @Override
+	        public Dimension getPreferredScrollableViewportSize() {
+	            Dimension dim = new Dimension(
+	            	// Width will get changed later anyway
+	                this.getColumnCount() * 100,
+	                // Set height of table, so it fits on the page
+	                this.getRowHeight() * 20);
+	            return dim;
+	        }
+	    };
+	    
+	    // Adjust column widths, based on the data they contain (see java file for source)
+	    TableColumnAdjuster tca = new TableColumnAdjuster(table);
+	    tca.adjustColumns();
 		
 		JScrollPane scrollPane = new JScrollPane(table);
 		table.setFillsViewportHeight(true);
+		
+		// Add, edit and delete student buttons
+		registrarButtons = new JPanel();
+		registrarButtons.setLayout(new GridBagLayout());
+		
+		JButton addStudent = new JButton("Add Student");
+		JButton editStudent = new JButton("Edit Student");
+		editStudent.setEnabled(false);
+		JButton deleteStudent = new JButton("Delete Student");
+		deleteStudent.setEnabled(false);
+		
+		GridBagConstraints menuConstraints = new GridBagConstraints();
+		menuConstraints.insets = new Insets(0,5,0,5);		
+		menuConstraints.fill = GridBagConstraints.HORIZONTAL;
+		menuConstraints.gridy = 0;
+		
+		menuConstraints.gridx = 0;
+		registrarButtons.add(addStudent, menuConstraints);
+		menuConstraints.gridx = 1;
+		registrarButtons.add(editStudent, menuConstraints);
+		menuConstraints.gridx = 2;
+		registrarButtons.add(deleteStudent, menuConstraints);
+		menuConstraints.gridx = 0;
+		frame.menuBar.add(registrarButtons, menuConstraints);
 		
 		stuConstraints.insets = new Insets(5,5,5,5);
 		stuConstraints.fill = GridBagConstraints.HORIZONTAL;
