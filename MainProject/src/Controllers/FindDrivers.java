@@ -10,6 +10,7 @@ public class FindDrivers {
 		System.out.println(System.getProperty("jdbc.drivers"));
 		System.out.println("\nDrivers loaded by DriverManager:");
 		Enumeration<Driver> list = DriverManager.getDrivers();
+		// DriverManager.setLoginTimeout(2);
 		while (list.hasMoreElements())
 			System.out.println(list.nextElement());
 	}

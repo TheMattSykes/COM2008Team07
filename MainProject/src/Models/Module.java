@@ -63,7 +63,7 @@ public class Module {
 		return grades;
 	}
 	
-	public void setScores(Grades[] gradesVals) {
+	public void setGrades(Grades[] gradesVals) {
 		grades = gradesVals;
 	}
 	

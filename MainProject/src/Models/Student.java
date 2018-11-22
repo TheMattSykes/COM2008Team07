@@ -1,6 +1,6 @@
 package Models;
 
-public class Student extends User {
+public class Student {
 
 	private int regNumber;
 	private String title;

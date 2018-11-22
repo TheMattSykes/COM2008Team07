@@ -10,6 +10,7 @@ import Models.Classification;
 import Models.Grades;
 import Models.GraduateType;
 import Models.Module;
+import Models.Student;
 import Models.User;
 import Views.LoginView;
 import Views.PrimaryFrame;
@@ -21,11 +22,16 @@ import java.util.Collections;
 public class StudentSystemController extends Controller {
 	
 	User user;
+	Student studentUser;
 	StudentView sv;
 	
-	public StudentSystemController(User mainUser, StudentView sview) {
+	public StudentSystemController(User mainUser, StudentView sview) throws Exception {
+		
 		user = mainUser;
+		
 		sv = sview;
+		
+		studentUser = setupStudent();
 		
 		initView();
 	}
@@ -38,41 +44,30 @@ public class StudentSystemController extends Controller {
 		// Main stuff
 	}
 	
-	
-	public void initController() {		
+	public Student setupStudent() throws Exception {
+		System.out.println("Setting up new student...");
 		
-	}
-	
-	public void initView() {
-		sv.setData(getTableData());
-		sv.loadUI();
-	}
-	
-	
-	public Object[][] getTableData() {
-		Object[][] data = new Object[50][8];
+		Student student = null;
 		
+		DatabaseController dc = new DatabaseController();
 		
-DatabaseController dc = new DatabaseController();
-		
-		User mainUser = new User();
-		
-		/*
-		Boolean exists = false;
-		
-		String query = String.format("SELECT * FROM modules WHERE username = ?");
+		String query = String.format("SELECT * FROM students WHERE userID = ?");
 		
 		ArrayList<String[]> values = new ArrayList<String[]>();
 		
-		// values.add(new String[]{username,"true"});
+		System.out.println("Setting up query...");
+		values.add(new String[]{Integer.toString(user.getUserID()),"false"});
 		
+		Boolean exists = false;
 		
 		String[] queries = {query};
 		
+		System.out.println("Executing query...");
 		ArrayList<String[]> allResults = dc.executeQuery(query,values);
 		String[] results = null;
 		
 		if(allResults.size() > 0) {
+			System.out.println("Getting results...");
 			results = allResults.get(0);
 		}
 		
@@ -81,20 +76,118 @@ DatabaseController dc = new DatabaseController();
 		}
 		
 		if (exists) {
-			userID = results[0];
-			System.out.println("UID: "+userID);
-			usernameInDB = results[1];
-			passwordInDB = results[2];
-			userType = results[3];
-			salt = results[4];
+			student = new Student();
+			
+			student.setCode(Integer.parseInt(results[0]));
+			student.setTitle(results[1]);
+			student.setSecondName(results[2]);
+			student.setFirstName(results[3]);
+			student.setDegree(results[4]);
+			student.setEmail(results[5]);
+			student.setTutor(results[6]);
+			student.setPeriod(results[7].charAt(0));
+			student.setLevel(Integer.parseInt(results[8]));
+			System.out.println("Reg Number: "+results[0]);
+			
+			sv.setStudent(student);
 		}
 		
-		*/
+		return student;
+	}
+	
+	
+	public void initController() {
+		
+	}
+	
+	public void initView() throws Exception {
+		sv.setData(getTableData());
+		sv.loadUI();
+	}
+	
+	
+	public Object[][] getTableData() throws Exception {
+		DatabaseController dc = new DatabaseController();
 		
 		
+		Boolean exists = false;
+		
+		String query = String.format("SELECT module_code, grade1, grade2 FROM enrolled WHERE reg_number = ? ORDER BY module_code");
+		
+		ArrayList<String[]> values = new ArrayList<String[]>();
+		
+		values.add(new String[]{Integer.toString(studentUser.getRegNumber()),"false"});
+		
+		
+		String[] queries = {query};
+		
+		ArrayList<String[]> allResults = dc.executeQuery(query,values);
+		String[] results = null;
 		
 		ArrayList<Module> modules = new ArrayList<Module>();
 		
+		if (allResults.size() > 0) {
+			
+			int count = 0;
+			for (String[] result : allResults) {
+				System.out.println("RESULT: "+count);
+				count++;
+				Module newModule = new Module();
+				
+				String code = result[0];
+				newModule.setCode(code);
+				
+				int[] studentResults = new int[2];
+				Grades[] studentGrades = new Grades[2];
+				
+				if (result[1] != null) {
+					studentResults[0] = (int) Float.parseFloat(result[1]);
+					System.out.println("STDUENT RESULT: "+studentResults[0]);
+					
+					if (studentResults[0] >= 40) {
+						studentGrades[0] = Grades.PASS;
+					} else {
+						studentGrades[0] = Grades.FAIL;
+					}
+				} else {
+					studentResults[0] = 0;
+					studentGrades[0] = Grades.UNDEFINED;
+				}
+				
+				if (result[2] != null) {
+					studentResults[1] = (int) Float.parseFloat(result[2]);
+					System.out.println("STDUENT RESULT 2: "+studentResults[1]);
+					
+					if (studentResults[1] >= 40) {
+						studentGrades[1] = Grades.PASS;
+					} else {
+						studentGrades[1] = Grades.FAIL;
+					}
+				} else {
+					studentResults[1] = 0;
+					studentGrades[1] = Grades.UNDEFINED;
+				}
+				
+				newModule.setScores(studentResults);
+				newModule.setGrades(studentGrades);
+				
+				System.out.println("STARTING MOD QUERY...");
+				String modQuery = String.format("SELECT module_name, credits, teaching_period, level, graduation_level FROM modules WHERE module_code = ?");
+				ArrayList<String[]> modValues = new ArrayList<String[]>();
+				modValues.add(new String[]{code,"true"});
+				String[] modResults = dc.executeQuery(modQuery,modValues).get(0);
+				
+				newModule.setName(modResults[0]);
+				newModule.setCredits(Integer.parseInt(modResults[1]));
+				newModule.setTeachingPeriod(modResults[2]);
+				newModule.setLevel(Integer.parseInt(modResults[3]));
+				newModule.setType(GraduateType.valueOf(modResults[4].toUpperCase()));
+				
+				modules.add(newModule);
+			}
+		}
+		
+		/*
 		modules.add(new Module("COM1101","Web Design with Scratch",40,new int[]{22,40},new Grades[]{Grades.FAIL, Grades.PASS}, "", 1, GraduateType.UNDERGRADUATE));
 		modules.add(new Module("COM1103","BASIC Programming on a Typewriter",20,new int[]{91,0},new Grades[]{Grades.PASS, Grades.UNDEFINED}, "", 1, GraduateType.UNDERGRADUATE));
 		modules.add(new Module("COM1105","Lab Robots That Don't Work",20,new int[]{57,0},new Grades[]{Grades.PASS, Grades.UNDEFINED}, "", 1, GraduateType.UNDERGRADUATE));
@@ -113,6 +206,13 @@ DatabaseController dc = new DatabaseController();
 		modules.add(new Module("MDI3015","Media and Culture in South Grindleford",20,new int[]{68,0},new Grades[]{Grades.PASS, Grades.UNDEFINED}, "", 3, GraduateType.UNDERGRADUATE));
 		modules.add(new Module("COM3925","Systems in the Clouds",20,new int[]{48,0},new Grades[]{Grades.PASS, Grades.UNDEFINED}, "", 3, GraduateType.UNDERGRADUATE));
 		modules.add(new Module("COM3978","Dissertation",40,new int[]{74,0},new Grades[]{Grades.PASS, Grades.UNDEFINED}, "", 3, GraduateType.UNDERGRADUATE));
+		*/
+		
+		Classification classi = calculateClass(GraduateType.UNDERGRADUATE, modules.toArray(new Module[modules.size()]));
+		
+		sv.setClassification(classi);
+		
+		Object[][] data = new Object[modules.size()][8];
 		
 		int row = 0;
 		for (Module module : modules) {
@@ -181,7 +281,10 @@ DatabaseController dc = new DatabaseController();
 				fourYearCourse = true;
 			}
 			
-			float weightedScore = (((float)credits / (float)yearCredits) * (float)score) * 100;
+			float weightedScore = (((float)credits / (float)yearCredits) * (float)score);
+			
+			System.out.println("Credits: "+(float)credits+" Year Credits: "+(float)yearCredits+" Credits Divided: "+
+					((float)credits / (float)yearCredits)+" Weighted Score: "+weightedScore);
 			
 			if (type == GraduateType.UNDERGRADUATE) {
 				levelTotals[level-1] += weightedScore;
@@ -195,7 +298,14 @@ DatabaseController dc = new DatabaseController();
 		if (type == GraduateType.UNDERGRADUATE) {
 			
 			if (!fourYearCourse) {
-				finalValue = ( ((1/3)*levelTotals[1]) + ((2/3)*levelTotals[2]) );
+				float convertedLv2Total = (float) ((1.0/3.0)*levelTotals[1]);
+				float convertedLv3Total = (float) ((2.0/3.0)*levelTotals[2]);
+				
+				finalValue = ( convertedLv2Total + convertedLv3Total );
+				
+				System.out.println("YEAR 2 Total: "+levelTotals[1]+"    (1/3 Version): "+convertedLv2Total);
+				System.out.println("YEAR 3 Total: "+levelTotals[2]+"    (1/3 Version): "+convertedLv3Total);
+				System.out.println("Final Value: "+finalValue);
 			} else {
 				finalValue = ( ((1/5)*levelTotals[1]) + ((2/5)*levelTotals[2]) + ((2/5)*levelTotals[3]) );
 			}

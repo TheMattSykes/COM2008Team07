@@ -108,7 +108,12 @@ public class DatabaseController {
 		} finally {
 			try {
 				con.close();
-				System.out.println("DATABASE CONNECTION TERMINATED");
+				
+				if (con.isClosed()) {
+					System.out.println("DATABASE CONNECTION TERMINATED");
+				} else {
+					System.out.println("ERROR CLOSING CONNECTION");
+				}
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}

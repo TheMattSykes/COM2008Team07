@@ -10,7 +10,7 @@ public class UniversitySystem {
 	
 	public static void main(String[] args) throws Exception {
 		// admin dirk567 are username and password for admin
-		// student hellotheregeneralkenobi are for student
+		// student generalkenobi are for student
 		// registrar bohemianrhapsody are for registrar
 		
 		// Check drivers
