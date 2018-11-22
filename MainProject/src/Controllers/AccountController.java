@@ -137,7 +137,9 @@ public class AccountController extends Controller {
 	
 	
 	public static void main(String[] args) throws Exception {
-		String pass = "generalkenobi";
+		String pass = "Generalkenobi!";
+		
+		newPasswordChecker(pass);
 		
 		String salt = generateSalt();
 		
@@ -286,7 +288,6 @@ public class AccountController extends Controller {
 				validSalt = true;
 			} else {
 				for (String[] result : allResults) {
-					System.out.println("Checking: "+result[0]);
 					if (salt != result[0]) {
 						validSalt = true;
 					}
@@ -297,5 +298,63 @@ public class AccountController extends Controller {
 		
 		return salt.toLowerCase();
 	}
-
+	
+	
+	
+	/*
+	 * newPasswordChecker
+	 * Takes a password string and tests that it has
+	 * a lower case char, an upper case char and a symbol.
+	 * Also checks that it does not contain "PASSWORD".
+	 * Security mesaure to ensure new passwords are secure.
+	 */
+	public static Boolean newPasswordChecker(String newPassword) {
+		
+		// Check password length
+		Boolean acceptableLength = newPassword.length() >= 8;
+		
+		// Default booleans for tests
+		Boolean containsSymbol = false;
+		Boolean containsCapital = false;
+		Boolean containsLowerCase = false;
+		Boolean containsPassword = false;
+		
+		// Check each character of password
+		for (int c = 0; c < newPassword.length(); c++) {
+			char currentChar = newPassword.charAt(c);
+			String currentString = Character.toString(currentChar); // string version for symbol check
+			
+			// Check if char is upper case
+			if (Character.isUpperCase(currentChar)) {
+				containsCapital = true;
+			}
+			
+			// Check if char is lower case
+			if (Character.isLowerCase(currentChar)) {
+				containsLowerCase = true;
+			}
+			
+			// Check if char is a symbol
+			if (!currentString.matches("[A-Za-z0-9]")) {
+				containsSymbol = true;
+			}
+		}
+		
+		// Check if string contains "Password"
+		if (newPassword.toUpperCase().contains("PASSWORD")) {
+			containsPassword = true;
+		}
+		
+		
+		// If all test are passed then return true and display dialog box
+		if (containsCapital && containsLowerCase && containsSymbol && !containsPassword) {
+			JOptionPane.showMessageDialog(null, "Password Accepted");
+			return true;
+		} else {
+			// Tests failed then return false and info on what is wrong with the password in dialog box
+			JOptionPane.showMessageDialog(null, "Password Rejected. Please include: A lower case letter, an upper case letter and a symbol. "
+					+ "Minumum length 8 characters. Cannot include 'PASSWORD'.");
+			return false;
+		}
+	}
 }
