@@ -1,5 +1,7 @@
 package Controllers;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -12,6 +14,8 @@ import Models.GraduateType;
 import Models.Module;
 import Models.Student;
 import Models.User;
+import Models.Views;
+import Views.AddStudent;
 import Views.LoginView;
 import Views.PrimaryFrame;
 import Views.RegistrarView;
@@ -23,13 +27,15 @@ public class RegistrarSystemController extends Controller {
 	
 	User user;
 	RegistrarView rv;
+	AddStudent as;
 	DatabaseController dc = new DatabaseController();
+	private Views currentView;
 	
 	public RegistrarSystemController(User mainUser, RegistrarView rview) throws Exception {
 		user = mainUser;
 		rv = rview;
 		
-		initView();
+		initDefaultView();
 	}
 	
 	public User getUser() {
@@ -45,9 +51,55 @@ public class RegistrarSystemController extends Controller {
 		
 	}
 	
-	public void initView() throws Exception {
+	public void initDefaultView() throws Exception {
 		rv.setData(getTableData());
 		rv.loadUI();
+		currentView = Views.REGISTRARVIEW;
+		// Action listener for Add Student button
+		rv.getAddButton().addActionListener(
+			new ActionListener() {
+				public void actionPerformed(ActionEvent e) {					
+					try {
+						changeView(Views.ADDSTUDENT);
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+				}
+			}
+		);
+	}
+	
+	public void initAddStudentView() throws Exception {
+		if (as == null)
+			as = new AddStudent(rv.getFrame());
+		as.loadUI();
+		currentView = Views.ADDSTUDENT;
+		// Action listener for Back button
+		as.getBackButton().addActionListener(
+			new ActionListener() {
+				public void actionPerformed(ActionEvent e) {					
+					try {
+						changeView(Views.REGISTRARVIEW);
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+				}
+			}
+		);
+	}
+	
+	public void changeView(Views changeTo) throws Exception {
+		if (currentView == Views.REGISTRARVIEW) {
+			rv.removeUI();
+		} else if (currentView == Views.ADDSTUDENT) {
+			as.removeUI();
+		}
+		
+		if (changeTo == Views.REGISTRARVIEW) {
+			initDefaultView();
+		} else if (changeTo == Views.ADDSTUDENT) {
+			initAddStudentView();
+		}
 	}
 	
 	
