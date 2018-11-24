@@ -1,35 +1,32 @@
 package Controllers;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
-import javax.swing.JButton;
 
 import Models.Classification;
-import Models.Grades;
 import Models.GraduateType;
 import Models.Module;
 import Models.Student;
 import Models.User;
-import Views.LoginView;
-import Views.PrimaryFrame;
+import Models.Views;
+import Views.AddStudent;
 import Views.RegistrarView;
-
-import java.util.Collection;
-import java.util.Collections;
 
 public class RegistrarSystemController extends Controller {
 	
 	User user;
 	RegistrarView rv;
+	AddStudent as;
 	DatabaseController dc = new DatabaseController();
+	private Views currentView;
 	
 	public RegistrarSystemController(User mainUser, RegistrarView rview) throws Exception {
 		user = mainUser;
 		rv = rview;
 		
-		initView();
+		initDefaultView();
 	}
 	
 	public User getUser() {
@@ -45,13 +42,60 @@ public class RegistrarSystemController extends Controller {
 		
 	}
 	
-	public void initView() throws Exception {
-		rv.setData(getTableData());
+	public void initDefaultView() throws Exception {
+		rv.setStudentsData(getStudentsData());
 		rv.loadUI();
+		currentView = Views.REGISTRARVIEW;
+		// Action listener for Add Student button
+		rv.getAddButton().addActionListener(
+			new ActionListener() {
+				public void actionPerformed(ActionEvent e) {					
+					try {
+						changeView(Views.ADDSTUDENT);
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+				}
+			}
+		);
+	}
+	
+	public void initAddStudentView() throws Exception {
+		if (as == null)
+			as = new AddStudent(rv.getFrame());
+		as.setAvailableDegrees(getAvailableDegrees());
+		as.loadUI();
+		currentView = Views.ADDSTUDENT;
+		// Action listener for Back button
+		as.getBackButton().addActionListener(
+			new ActionListener() {
+				public void actionPerformed(ActionEvent e) {					
+					try {
+						changeView(Views.REGISTRARVIEW);
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+				}
+			}
+		);
+	}
+	
+	public void changeView(Views changeTo) throws Exception {
+		if (currentView == Views.REGISTRARVIEW) {
+			rv.removeUI();
+		} else if (currentView == Views.ADDSTUDENT) {
+			as.removeUI();
+		}
+		
+		if (changeTo == Views.REGISTRARVIEW) {
+			initDefaultView();
+		} else if (changeTo == Views.ADDSTUDENT) {
+			initAddStudentView();
+		}
 	}
 	
 	
-	public Object[][] getTableData() throws Exception {
+	public Object[][] getStudentsData() throws Exception {
 		
 		String query = "SELECT * FROM students LIMIT ?";
 		ArrayList<String[]> values = new ArrayList<String[]>();
@@ -82,6 +126,20 @@ public class RegistrarSystemController extends Controller {
 		}
 		
 		return data;
+	}
+	
+	public String[] getAvailableDegrees() throws Exception {
+		String query = "SELECT degree_code FROM degrees LIMIT ?";
+		ArrayList<String[]> values = new ArrayList<String[]>();
+		values.add(new String[] {"1000", ""});
+		ArrayList<String[]> results = dc.executeQuery(query, values);
+		String[] availableDegrees = new String[results.size()];
+		
+		for (int i = 0; i < results.size(); i++) {
+			availableDegrees[i] = results.get(i)[0];
+		}
+		
+		return availableDegrees;
 	}
 	
 	public int getMax(int[] scores) {
