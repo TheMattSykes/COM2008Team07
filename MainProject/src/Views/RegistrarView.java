@@ -1,16 +1,11 @@
 package Views;
 
 import java.awt.BorderLayout;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.sql.ResultSet;
-import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -20,23 +15,13 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
 
-import Controllers.DatabaseController;
 import Controllers.TableColumnAdjuster;
-
-import Models.Grades;
-import Models.GraduateType;
-import Models.Module;
-
-import Views.AddStudent;
 
 public class RegistrarView extends JPanel {
 	private static final long serialVersionUID = 1L;
-	private AddStudent addView = null;
 	PrimaryFrame frame;
-	Object[][] data;
+	Object[][] studentsData;
 	JPanel studentInfo;
 	private JPanel registrarButtons;
 	private JButton addStudent;
@@ -50,8 +35,8 @@ public class RegistrarView extends JPanel {
 		return frame;
 	}
 	
-	public void setData(Object[][] d) {
-		data = d;
+	public void setStudentsData(Object[][] d) {
+		studentsData = d;
 	}
 	
 	public void viewChange() {
@@ -114,7 +99,7 @@ public class RegistrarView extends JPanel {
 		studentInfo.add(studentDetails, stuConstraints);
 		
 		
-		JTable table = new JTable(data, columnNames) {
+		JTable table = new JTable(studentsData, columnNames) {
 	        private static final long serialVersionUID = 1L;
 
 	        public boolean isCellEditable(int row, int column) {                

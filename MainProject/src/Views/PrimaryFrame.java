@@ -3,7 +3,8 @@ import java.awt.*;
 import javax.swing.*;
 
 public class PrimaryFrame extends JFrame {
-	
+	private static final long serialVersionUID = 1L;
+
 	private Container mainContainer = getContentPane();
 	
 	JPanel menuBar;
