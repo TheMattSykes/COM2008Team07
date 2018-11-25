@@ -1,4 +1,5 @@
 package Controllers;
+import java.awt.Window;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -8,7 +9,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 public class DatabaseController {
 	private Connection con = null;
@@ -18,7 +21,10 @@ public class DatabaseController {
 		
 		ArrayList<String[]> output = new ArrayList<String[]>();
 		
+		Boolean isLogin = query.toLowerCase().contains("select * from users where username = ?");
+		
 		try {
+			
 			// Initiate connection with database
 			DriverManager.setLoginTimeout(10);
 			con = DriverManager.getConnection(db);
@@ -102,10 +108,18 @@ public class DatabaseController {
 			System.out.println("\t[DATABASE] Query processed");
 			
 		} catch (SQLException ex) {
-			JOptionPane.showMessageDialog(null, "Unable to connect to the database. Please ensure you are connected to the campus network.", 
-					"Database Connection Error", JOptionPane.ERROR_MESSAGE);
-			System.out.println("[DATABASE ERROR!] CONNECTION ERROR");
 			ex.printStackTrace();
+			
+			String errorMessage = "";
+			
+			if (ex.toString().toLowerCase().contains("too many connections")) {
+				errorMessage = "Unable to connect to the database. There are too many connections at this time.";
+			} else {
+				errorMessage = "Unable to connect to the database. Please ensure you are connected to the campus network.";
+			}
+			
+			JOptionPane.showMessageDialog(null, errorMessage, "Database Connection Error", JOptionPane.ERROR_MESSAGE);
+			System.out.println("[DATABASE ERROR!] CONNECTION ERROR"+ex);
 		} finally {
 			try {
 				con.close();
@@ -119,7 +133,7 @@ public class DatabaseController {
 				e.printStackTrace();
 			}
 		}
-		
+
 		return output;
 	}
 	

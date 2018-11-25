@@ -187,27 +187,6 @@ public class StudentSystemController extends Controller {
 			}
 		}
 		
-		/*
-		modules.add(new Module("COM1101","Web Design with Scratch",40,new int[]{22,40},new Grades[]{Grades.FAIL, Grades.PASS}, "", 1, GraduateType.UNDERGRADUATE));
-		modules.add(new Module("COM1103","BASIC Programming on a Typewriter",20,new int[]{91,0},new Grades[]{Grades.PASS, Grades.UNDEFINED}, "", 1, GraduateType.UNDERGRADUATE));
-		modules.add(new Module("COM1105","Lab Robots That Don't Work",20,new int[]{57,0},new Grades[]{Grades.PASS, Grades.UNDEFINED}, "", 1, GraduateType.UNDERGRADUATE));
-		modules.add(new Module("COM1106","Introduction to Dirk",20,new int[]{80,0},new Grades[]{Grades.PASS, Grades.UNDEFINED}, "", 1, GraduateType.UNDERGRADUATE));
-		modules.add(new Module("COM1107","Algorithmic Complexness",20,new int[]{62,0},new Grades[]{Grades.PASS, Grades.UNDEFINED}, "", 1, GraduateType.UNDERGRADUATE));
-		
-		modules.add(new Module("COM2101","Functional Fuunctions",20,new int[]{75,0},new Grades[]{Grades.PASS, Grades.UNDEFINED}, "", 2, GraduateType.UNDERGRADUATE));
-		modules.add(new Module("COM2102","Blackberry App Development",20,new int[]{86,0},new Grades[]{Grades.PASS, Grades.UNDEFINED}, "", 2, GraduateType.UNDERGRADUATE));
-		modules.add(new Module("COM2104","Data Driven Ducks",20,new int[]{68,0},new Grades[]{Grades.PASS, Grades.UNDEFINED}, "", 2, GraduateType.UNDERGRADUATE));
-		modules.add(new Module("COM2108","Advanced Dirk Studies",20,new int[]{76,0},new Grades[]{Grades.PASS, Grades.UNDEFINED}, "", 2, GraduateType.UNDERGRADUATE));
-		modules.add(new Module("COM2109","Automata, Automata and Automata",20,new int[]{67,0},new Grades[]{Grades.PASS, Grades.UNDEFINED}, "", 2, GraduateType.UNDERGRADUATE));
-		modules.add(new Module("COM2109","Padlock Safety and Security",20,new int[]{90,0},new Grades[]{Grades.PASS, Grades.UNDEFINED}, "", 2, GraduateType.UNDERGRADUATE));
-		
-		modules.add(new Module("COM3904","5D Graphics",20,new int[]{65,0},new Grades[]{Grades.PASS, Grades.UNDEFINED}, "", 3, GraduateType.UNDERGRADUATE));
-		modules.add(new Module("COM3907","Texting Analysis",20,new int[]{43,0},new Grades[]{Grades.PASS, Grades.UNDEFINED}, "", 3, GraduateType.UNDERGRADUATE));
-		modules.add(new Module("MDI3015","Media and Culture in South Grindleford",20,new int[]{68,0},new Grades[]{Grades.PASS, Grades.UNDEFINED}, "", 3, GraduateType.UNDERGRADUATE));
-		modules.add(new Module("COM3925","Systems in the Clouds",20,new int[]{48,0},new Grades[]{Grades.PASS, Grades.UNDEFINED}, "", 3, GraduateType.UNDERGRADUATE));
-		modules.add(new Module("COM3978","Dissertation",40,new int[]{74,0},new Grades[]{Grades.PASS, Grades.UNDEFINED}, "", 3, GraduateType.UNDERGRADUATE));
-		*/
-		
 		Classification classi = calculateClass(GraduateType.UNDERGRADUATE, modules.toArray(new Module[modules.size()]));
 		
 		sv.setClassification(classi);
@@ -293,48 +272,57 @@ public class StudentSystemController extends Controller {
 			}
 		}
 		
+		
+		sv.setYearAverages(levelTotals);
+		
+		
 		float finalValue = 0;
 		
-		if (type == GraduateType.UNDERGRADUATE) {
-			
-			if (!fourYearCourse) {
-				float convertedLv2Total = (float) ((1.0/3.0)*levelTotals[1]);
-				float convertedLv3Total = (float) ((2.0/3.0)*levelTotals[2]);
+		System.out.println("STUDENT LEVEL: " + studentUser.getLevel());
+		if (studentUser.getLevel() >= 3) {
+			if (type == GraduateType.UNDERGRADUATE) {
 				
-				finalValue = ( convertedLv2Total + convertedLv3Total );
+				if (!fourYearCourse) {
+					float convertedLv2Total = (float) ((1.0/3.0)*levelTotals[1]);
+					float convertedLv3Total = (float) ((2.0/3.0)*levelTotals[2]);
+					
+					finalValue = ( convertedLv2Total + convertedLv3Total );
+					
+					System.out.println("YEAR 2 Total: "+levelTotals[1]+"    (1/3 Version): "+convertedLv2Total);
+					System.out.println("YEAR 3 Total: "+levelTotals[2]+"    (1/3 Version): "+convertedLv3Total);
+					System.out.println("Final Value: "+finalValue);
+				} else {
+					finalValue = ( ((1/5)*levelTotals[1]) + ((2/5)*levelTotals[2]) + ((2/5)*levelTotals[3]) );
+				}
 				
-				System.out.println("YEAR 2 Total: "+levelTotals[1]+"    (1/3 Version): "+convertedLv2Total);
-				System.out.println("YEAR 3 Total: "+levelTotals[2]+"    (1/3 Version): "+convertedLv3Total);
-				System.out.println("Final Value: "+finalValue);
+				if (finalValue < 39.5) {
+					return Classification.FAIL;
+				} else if (finalValue >= 39.5 && finalValue < 44.5) {
+					return Classification.PASS;
+				} else if (finalValue >= 44.5 && finalValue < 49.5) {
+					return Classification.THIRD;
+				} else if (finalValue >= 49.5 && finalValue < 59.5) {
+					return Classification.LOWER_SECOND;
+				} else if (finalValue >= 59.5 && finalValue < 69.5) {
+					return Classification.UPPER_SECOND;
+				} else {
+					return Classification.FIRST;
+				}
 			} else {
-				finalValue = ( ((1/5)*levelTotals[1]) + ((2/5)*levelTotals[2]) + ((2/5)*levelTotals[3]) );
-			}
-			
-			if (finalValue < 39.5) {
-				return Classification.FAIL;
-			} else if (finalValue >= 39.5 && finalValue < 44.5) {
-				return Classification.PASS;
-			} else if (finalValue >= 44.5 && finalValue < 49.5) {
-				return Classification.THIRD;
-			} else if (finalValue >= 49.5 && finalValue < 59.5) {
-				return Classification.LOWER_SECOND;
-			} else if (finalValue >= 59.5 && finalValue < 69.5) {
-				return Classification.UPPER_SECOND;
-			} else {
-				return Classification.FIRST;
-			}
-		} else {
-			finalValue = postGradTotal;
-			
-			if (finalValue < 49.5) {
-				return Classification.FAIL;
-			} else if (finalValue >= 49.5 && finalValue < 59.5) {
-				return Classification.PASS;
-			} else if (finalValue >= 59.5 && finalValue < 69.5) {
-				return Classification.MERIT;
-			} else {
-				return Classification.DISTINCTION;
+				finalValue = postGradTotal;
+				
+				if (finalValue < 49.5) {
+					return Classification.FAIL;
+				} else if (finalValue >= 49.5 && finalValue < 59.5) {
+					return Classification.PASS;
+				} else if (finalValue >= 59.5 && finalValue < 69.5) {
+					return Classification.MERIT;
+				} else {
+					return Classification.DISTINCTION;
+				}
 			}
 		}
+		
+		return Classification.INCOMPLETE;
 	}
 }

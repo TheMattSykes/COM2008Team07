@@ -16,6 +16,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.TableColumn;
 
+import Controllers.TableColumnAdjuster;
 import Models.Classification;
 import Models.Grades;
 import Models.GraduateType;
@@ -28,6 +29,9 @@ public class StudentView extends JPanel {
 	Classification classi;
 	JPanel studentInfo;
 	Student student;
+	
+	float[] yearAverages;
+	
 	
 	public StudentView(PrimaryFrame pf) {
 		frame = pf;
@@ -47,6 +51,10 @@ public class StudentView extends JPanel {
 	
 	public void setStudent(Student s) {
 		student = s;
+	}
+	
+	public void setYearAverages(float[] av) {
+		yearAverages = av;
 	}
 	
 	
@@ -115,11 +123,27 @@ public class StudentView extends JPanel {
 
 		
 		
-		JTable table = new JTable(data, columnNames);
-		table.setRowSelectionAllowed(false);
-		
-		// table.getColumnModel().getColumn(7).setPreferredWidth(5);
-		// table.getColumnModel().getColumn(1).setPreferredWidth(40);
+		JTable table = new JTable(data, columnNames) {
+	        private static final long serialVersionUID = 1L;
+
+	        public boolean isCellEditable(int row, int column) {                
+	        	return false;               
+	        }
+	        
+	        @Override
+	        public Dimension getPreferredScrollableViewportSize() {
+	            Dimension dim = new Dimension(
+	            		// Width will get changed later anyway
+	                this.getColumnCount() * 100,
+	                // Set height of table, so it fits on the page
+	                this.getRowHeight() * 20);
+	            return dim;
+	        }
+	    };
+	    
+	    // Adjust column widths, based on the data they contain (see java file for source)
+	    TableColumnAdjuster tca = new TableColumnAdjuster(table);
+	    tca.adjustColumns();
 		
 		JScrollPane scrollPane = new JScrollPane(table);
 		table.setFillsViewportHeight(true);
@@ -136,12 +160,14 @@ public class StudentView extends JPanel {
 		
 		
 		JPanel studentResults = new JPanel();
-		studentDetails.setLayout(new GridLayout(2,1));
+		studentDetails.setLayout(new GridLayout((1+(yearAverages.length)),1));
 		
-		JLabel yearResultLabel = new JLabel("Year Result: "+"COMPLETED");
+		for (int y = 0; y < student.getLevel(); y++) {
+			JLabel yearResultsLabel = new JLabel("Year "+(y+1)+" Result: "+yearAverages[y]);
+			studentResults.add(yearResultsLabel);
+		}
+		
 		JLabel resultLabel = new JLabel("Overall Result: "+classi);
-		
-		studentResults.add(yearResultLabel);
 		studentResults.add(resultLabel);
 		
 		stuConstraints.insets = new Insets(5,5,5,5);
