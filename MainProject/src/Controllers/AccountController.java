@@ -1,5 +1,8 @@
 package Controllers;
 
+import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -9,7 +12,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import javax.xml.bind.DatatypeConverter;
+// import javax.xml.bind.DatatypeConverter;
 
 import Models.User;
 import Models.UserTypes;
@@ -20,6 +23,7 @@ import Views.RegistrarView;
 import Views.AdminView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 
@@ -212,8 +216,9 @@ public class AccountController extends Controller {
 	/**
 	 * hash()
 	 * Uses java's MessageDigest and DatatypeConverter APIs to SHA-256 hash a string.
+	 * @throws UnsupportedEncodingException 
 	 * */
-	public static String hash(String stringToHash) throws NoSuchAlgorithmException {
+	public static String hash(String stringToHash) throws NoSuchAlgorithmException, UnsupportedEncodingException {
 		// Define algorithm: SHA-256
 		MessageDigest stringDigest = MessageDigest.getInstance("SHA-256");
 		
@@ -222,9 +227,25 @@ public class AccountController extends Controller {
 				stringToHash.getBytes(StandardCharsets.UTF_8));
 		
 		// Convert the hash information into hexadecimal
-		String hashValue = DatatypeConverter.printHexBinary(hash);
+		// String hashValueOld = DatatypeConverter.printHexBinary(hash);
 		
-		return hashValue.toLowerCase();
+		// Build string of hex values
+		StringBuffer hashValue = new StringBuffer();
+		
+		for (int n = 0; n < hash.length; n++) {
+			String hexString = Integer.toHexString(0xFF & hash[n]);
+			
+			// Prevents error where hexString is only one char in length
+			if (hexString.length() < 2) {
+				hexString = "0" + hexString;
+			}
+			
+			hashValue.append(hexString);
+		}
+		
+		System.out.println(hashValue.toString().toLowerCase());
+		
+		return hashValue.toString().toLowerCase();
 	}
 	
 	/**
