@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
+import javax.swing.JTable;
 
 import Models.Classification;
 import Models.GraduateType;
@@ -21,6 +22,8 @@ public class RegistrarSystemController extends Controller {
 	AddStudent as;
 	DatabaseController dc = new DatabaseController();
 	private Views currentView;
+	
+	private Object[][] studentData;
 	
 	public RegistrarSystemController(User mainUser, RegistrarView rview) throws Exception {
 		user = mainUser;
@@ -58,8 +61,39 @@ public class RegistrarSystemController extends Controller {
 				}
 			}
 		);
+		
+		rv.getDeleteButton().addActionListener(e -> {
+			try {
+				deleteStudent();
+				changeView(Views.REGISTRARVIEW);
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		});
+		
+		// JTable table = rv.getTable();
+		
+		// table.getSelectionModel().addListSelectionListener(e -> tableActions());
 	}
 	
+	private void deleteStudent() throws Exception {
+		JTable table = rv.getTable();
+		
+		int row = table.getSelectedRow();
+		
+		System.out.println("ROW: " + row);
+		
+		String regNumber = studentData[row][0].toString();
+		
+		String query = "DELETE FROM students WHERE reg_number = ?";
+		ArrayList<String[]> values = new ArrayList<String[]>();
+		values.add(new String[] {regNumber, "0"});
+		dc.executeQuery(query, values);
+		
+		System.out.println("UserID: " + regNumber);
+	}
+
 	public void initAddStudentView() throws Exception {
 		if (as == null)
 			as = new AddStudent(rv.getFrame());
@@ -95,6 +129,9 @@ public class RegistrarSystemController extends Controller {
 	}
 	
 	
+	
+	
+	
 	public Object[][] getStudentsData() throws Exception {
 		
 		String query = "SELECT * FROM students LIMIT ?";
@@ -124,6 +161,8 @@ public class RegistrarSystemController extends Controller {
 			
 			row++;
 		}
+		
+		studentData = data;
 		
 		return data;
 	}

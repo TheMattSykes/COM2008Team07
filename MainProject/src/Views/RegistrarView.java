@@ -26,6 +26,8 @@ public class RegistrarView extends JPanel {
 	private JPanel registrarButtons;
 	private JButton addStudent;
 	private JButton editStudent;
+	private JButton deleteStudent;
+	private JTable table;
 	
 	public RegistrarView(PrimaryFrame pf) {
 		frame = pf;
@@ -33,6 +35,10 @@ public class RegistrarView extends JPanel {
 	
 	public PrimaryFrame getFrame() {
 		return frame;
+	}
+	
+	public JTable getTable() {
+		return table;
 	}
 	
 	public void setStudentsData(Object[][] d) {
@@ -56,6 +62,10 @@ public class RegistrarView extends JPanel {
 	
 	public JButton getEditButton() {
 		return editStudent;
+	}
+	
+	public JButton getDeleteButton() {
+		return deleteStudent;
 	}
 	
 	public void loadUI() throws Exception {
@@ -99,7 +109,7 @@ public class RegistrarView extends JPanel {
 		studentInfo.add(studentDetails, stuConstraints);
 		
 		
-		JTable table = new JTable(studentsData, columnNames) {
+		table = new JTable(studentsData, columnNames) {
 	        private static final long serialVersionUID = 1L;
 
 	        public boolean isCellEditable(int row, int column) {                
@@ -119,7 +129,7 @@ public class RegistrarView extends JPanel {
 	    
 	    // Adjust column widths, based on the data they contain (see java file for source)
 	    TableColumnAdjuster tca = new TableColumnAdjuster(table);
-    	tca.adjustColumns();
+	    tca.adjustColumns();
 		
 		JScrollPane scrollPane = new JScrollPane(table);
 		table.setFillsViewportHeight(true);
@@ -131,7 +141,7 @@ public class RegistrarView extends JPanel {
 		addStudent = new JButton("Add Student");
 		editStudent = new JButton("Edit Student");
 		editStudent.setEnabled(false);
-		JButton deleteStudent = new JButton("Delete Student");
+		deleteStudent = new JButton("Delete Student");
 		deleteStudent.setEnabled(false);
 		
 		GridBagConstraints menuConstraints = new GridBagConstraints();

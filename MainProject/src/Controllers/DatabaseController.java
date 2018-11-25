@@ -102,7 +102,8 @@ public class DatabaseController {
 			System.out.println("\t[DATABASE] Query processed");
 			
 		} catch (SQLException ex) {
-			JOptionPane.showMessageDialog(null, "Unable to connect to the database. Please ensure you are connected to the campus network.");
+			JOptionPane.showMessageDialog(null, "Unable to connect to the database. Please ensure you are connected to the campus network.", 
+					"Database Connection Error", JOptionPane.ERROR_MESSAGE);
 			System.out.println("[DATABASE ERROR!] CONNECTION ERROR");
 			ex.printStackTrace();
 		} finally {

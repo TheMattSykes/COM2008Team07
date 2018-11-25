@@ -202,9 +202,9 @@ public class AccountController extends Controller {
 			user = mainUser;
 			// JOptionPane.showMessageDialog(null, ("You are now logged in as "+mainUser.getUsername()));
 		} else if (username.trim().length() != 0 && password.trim().length() != 0) {
-			JOptionPane.showMessageDialog(null, "Username and/or password were incorrect");
+			JOptionPane.showMessageDialog(null, "Username and/or password were incorrect", "Password Error", JOptionPane.ERROR_MESSAGE);
 		} else {
-			JOptionPane.showMessageDialog(null, "You cannot leave the username or password fields empty");
+			JOptionPane.showMessageDialog(null, "You cannot leave the username or password fields empty", "Password Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	
@@ -344,7 +344,7 @@ public class AccountController extends Controller {
 		} else {
 			// Tests failed then return false and info on what is wrong with the password in dialog box
 			JOptionPane.showMessageDialog(null, "Password Rejected. Please include: A lower case letter, an upper case letter and a symbol. "
-					+ "Minumum length 8 characters. Cannot include 'PASSWORD'.");
+					+ "Minumum length 8 characters. Cannot include 'PASSWORD'.", "Password Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 	}
