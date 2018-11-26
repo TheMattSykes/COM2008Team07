@@ -21,6 +21,7 @@ import Views.PrimaryFrame;
 import Views.StudentView;
 import Views.RegistrarView;
 import Views.AdminView;
+import Views.TeacherView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,6 +37,7 @@ public class AccountController extends Controller {
 	private StudentView studentViewer = null;
 	private RegistrarView registrarViewer = null;
 	private AdminView adminViewer = null;
+	private TeacherView teacherViewer = null;
 
 	public AccountController(User mainUser, LoginView lview) {
 		user = mainUser;
@@ -97,6 +99,9 @@ public class AccountController extends Controller {
 			} else if (user.getUserType() == UserTypes.ADMIN) {
 				adminViewer = new AdminView(lv.getFrame());
 				AdminSystemController ac = new AdminSystemController(user, adminViewer);
+			} else if (user.getUserType() == UserTypes.TEACHER) {
+				teacherViewer = new TeacherView(lv.getFrame());
+				TeacherSystemController ac = new TeacherSystemController(user, teacherViewer);
 			}
 		} else {
 			
@@ -106,6 +111,8 @@ public class AccountController extends Controller {
 				registrarViewer.removeUI();
 			} else if (adminViewer != null) {
 				adminViewer.removeUI();
+			} else if (teacherViewer != null) {
+				teacherViewer.removeUI();
 			}
 			
 			lv.viewLogoutChange();
