@@ -85,15 +85,15 @@ public class RegistrarSystemController extends Controller {
 			try {
 				JTable table = rv.getTable();
 				selectedStudent = new Student();
-				selectedStudent.setCode((int)table.getValueAt(table.getSelectedRow(), 0));
-				selectedStudent.setTitle((String)table.getValueAt(table.getSelectedRow(), 1));
-				selectedStudent.setFirstName((String)table.getValueAt(table.getSelectedRow(), 2));
-				selectedStudent.setSecondName((String)table.getValueAt(table.getSelectedRow(), 3));
-				selectedStudent.setDegree((String)table.getValueAt(table.getSelectedRow(), 4));
-				selectedStudent.setEmail((String)table.getValueAt(table.getSelectedRow(), 5));
-				selectedStudent.setTutor((String)table.getValueAt(table.getSelectedRow(), 6));
-				selectedStudent.setPeriod((Character)table.getValueAt(table.getSelectedRow(), 7));
-				selectedStudent.setLevel((int)table.getValueAt(table.getSelectedRow(), 8));
+				selectedStudent.setCode((int)studentData[table.getSelectedRow()][0]);
+				selectedStudent.setTitle((String)studentData[table.getSelectedRow()][1]);
+				selectedStudent.setFirstName((String)studentData[table.getSelectedRow()][2]);
+				selectedStudent.setSecondName((String)studentData[table.getSelectedRow()][3]);
+				selectedStudent.setDegree((String)studentData[table.getSelectedRow()][4]);
+				selectedStudent.setEmail((String)studentData[table.getSelectedRow()][5]);
+				selectedStudent.setTutor((String)studentData[table.getSelectedRow()][6]);
+				selectedStudent.setPeriod((Character)studentData[table.getSelectedRow()][7]);
+				selectedStudent.setLevel((int)studentData[table.getSelectedRow()][8]);
 				changeView(Views.EDITSTUDENT);
 			} catch (Exception ex) {
 				ex.printStackTrace();
@@ -209,8 +209,11 @@ public class RegistrarSystemController extends Controller {
 	}
 	
 	public void initEditStudentView() throws Exception {
-		if (es == null)
+		if (es == null) {
 			es = new EditStudent(rv.getFrame(), selectedStudent);
+		} else {
+			es.setStudent(selectedStudent);
+		}
 		es.setAvailableDegrees(getAvailableDegrees());
 		es.loadUI();
 		currentView = Views.EDITSTUDENT;

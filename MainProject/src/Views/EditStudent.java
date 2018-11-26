@@ -67,6 +67,10 @@ public class EditStudent extends JPanel {
 		availableDegrees = d;
 	}
 	
+	public void setStudent(Student stu) {
+		student = stu;
+	}
+	
 	public Student getNewStudent() {
 		//student = new Student();
 		student.setTitle((String)titleDropdown.getSelectedItem());
