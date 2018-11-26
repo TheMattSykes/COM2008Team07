@@ -92,11 +92,11 @@ public class AccountController extends Controller {
 				sc.initController();
 			} else if (user.getUserType() == UserTypes.REGISTRAR) {
 				registrarViewer = new RegistrarView(lv.getFrame());
-				RegistrarSystemController sc = new RegistrarSystemController(user, registrarViewer);
-				sc.initController();
+				RegistrarSystemController rc = new RegistrarSystemController(user, registrarViewer);
+				rc.initController();
 			} else if (user.getUserType() == UserTypes.ADMIN) {
 				adminViewer = new AdminView(lv.getFrame());
-				AdminSystemController sc = new AdminSystemController(user, adminViewer);
+				AdminSystemController ac = new AdminSystemController(user, adminViewer);
 			}
 		} else {
 			

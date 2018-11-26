@@ -28,6 +28,8 @@ public class RegistrarView extends JPanel {
 	private JButton editStudent;
 	private JButton deleteStudent;
 	private JTable table;
+
+	private JButton modulesButton;
 	
 	public RegistrarView(PrimaryFrame pf) {
 		frame = pf;
@@ -64,8 +66,13 @@ public class RegistrarView extends JPanel {
 		return editStudent;
 	}
 	
+
 	public JButton getDeleteButton() {
 		return deleteStudent;
+	}
+
+	public JButton getModulesButton() {
+		return modulesButton;
 	}
 	
 	public void loadUI() throws Exception {
@@ -141,7 +148,13 @@ public class RegistrarView extends JPanel {
 		addStudent = new JButton("Add Student");
 		editStudent = new JButton("Edit Student");
 		editStudent.setEnabled(false);
+
 		deleteStudent = new JButton("Delete Student");
+
+		modulesButton = new JButton("Add/Edit Modules");
+		modulesButton.setEnabled(false);
+		JButton deleteStudent = new JButton("Delete Student");
+
 		deleteStudent.setEnabled(false);
 		
 		GridBagConstraints menuConstraints = new GridBagConstraints();
@@ -155,6 +168,8 @@ public class RegistrarView extends JPanel {
 		registrarButtons.add(editStudent, menuConstraints);
 		menuConstraints.gridx = 2;
 		registrarButtons.add(deleteStudent, menuConstraints);
+		menuConstraints.gridx = 3;
+		registrarButtons.add(modulesButton, menuConstraints);
 		menuConstraints.gridx = 0;
 		frame.menuBar.add(registrarButtons, menuConstraints);
 		
@@ -167,6 +182,8 @@ public class RegistrarView extends JPanel {
 		        		editStudent.setEnabled(true);
 		        	if (!deleteStudent.isEnabled())
 		        		deleteStudent.setEnabled(true);
+		        	if (!modulesButton.isEnabled())
+		        		modulesButton.setEnabled(true);
 		        }
 			}
 	    );
