@@ -3,7 +3,10 @@ package Controllers;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Random;
 
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 
 import Models.Classification;
 import Models.GraduateType;
@@ -21,6 +24,7 @@ public class RegistrarSystemController extends Controller {
 	AddStudent as;
 	DatabaseController dc = new DatabaseController();
 	private Views currentView;
+	ArrayList<Integer> regNumbersInUse;
 	
 	public RegistrarSystemController(User mainUser, RegistrarView rview) throws Exception {
 		user = mainUser;
@@ -78,8 +82,66 @@ public class RegistrarSystemController extends Controller {
 				}
 			}
 		);
+		
+		// Action listener for Apply button
+		as.getApplyButton().addActionListener(
+				new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						Student student = as.getNewStudent();
+						
+						String query = "SELECT * FROM students WHERE surname = ? AND forename LIKE '?%'";
+						ArrayList<String[]> values = new ArrayList<String[]>();
+						try {
+							if (student != null && student.isComplete()) {
+								values.add(new String[] {student.getSecondName(), student.getFirstName().substring(0, 1)});
+								//values.add(new String[] {student.getSecondName(), ""});
+								//values.add(new String[] {student.getFirstName().substring(0, 1), ""});
+								ArrayList<String[]> results = dc.executeQuery(query, values);
+								
+								String email = student.getFirstName().substring(0, 1)+student.getSecondName()+(results.size()+1);
+								email += "@snowbelle.ac.uk";
+								student.setEmail(email);
+								System.out.print(email);
+								
+								Object[] options = {"Yes", "No"};
+								int applyOption = JOptionPane.showOptionDialog(as.getFrame(), "Confirm adding "+student.getFirstName()+" "+
+										student.getSecondName()+" to the students table in the database?", "Apply question", JOptionPane.YES_NO_OPTION, 
+										JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+								if (applyOption == 0) {
+									student.setCode(generateRandomReg());
+									try {
+										query = "INSERT INTO students (?, ?, ?, ?, ?, ?, ?, ?, ?, NULL)";
+										values = new ArrayList<String[]>();
+										values.add(new String[] {Integer.toString(student.getRegNumber()), student.getTitle(),
+																 student.getSecondName(), student.getFirstName(), student.getDegree(),
+																 student.getEmail(), student.getTutor(), Character.toString(student.getPeriod()),
+																 Integer.toString(student.getLevel())});
+										dc.executeQuery(query, values);
+										changeView(Views.REGISTRARVIEW);
+									} catch (Exception ex) {
+										ex.printStackTrace();
+									}
+								}
+							} else {
+								JOptionPane optionPane = new JOptionPane("Please make sure all the values have been filled in correctly."+
+																		 "\n(Names and Tutor have a maximum length of 50 each.)", JOptionPane.ERROR_MESSAGE);    
+								JDialog dialog = optionPane.createDialog("Failure");
+								dialog.setAlwaysOnTop(true);
+								dialog.setVisible(true);
+							}
+						} catch (Exception ex) {
+							ex.printStackTrace();
+							JOptionPane optionPane = new JOptionPane("Error connecting to dabatase.", JOptionPane.ERROR_MESSAGE);    
+							JDialog dialog = optionPane.createDialog("Error");
+							dialog.setAlwaysOnTop(true);
+							dialog.setVisible(true);
+						}
+					}
+				}
+			);
 	}
 	
+	// Changes to the specified view
 	public void changeView(Views changeTo) throws Exception {
 		if (currentView == Views.REGISTRARVIEW) {
 			rv.removeUI();
@@ -94,7 +156,18 @@ public class RegistrarSystemController extends Controller {
 		}
 	}
 	
+	// Generates a random reg. number, that is not yet used in the students table of the DB
+	public int generateRandomReg() {
+		int minReg = 10000000;
+		int maxReg = 99999999;
+		int regNumber = minReg + new Random().nextInt(maxReg-minReg+1);
+		while(regNumbersInUse.contains(regNumber)) {
+			regNumber = minReg + new Random().nextInt(maxReg-minReg+1);
+		}
+		return regNumber;
+	}
 	
+	// Gets the data of all the students currently in the database
 	public Object[][] getStudentsData() throws Exception {
 		
 		String query = "SELECT * FROM students LIMIT ?";
@@ -103,9 +176,11 @@ public class RegistrarSystemController extends Controller {
 		ArrayList<String[]> results = dc.executeQuery(query, values);
 		
 		ArrayList<Student> students = new ArrayList<Student>();
+		regNumbersInUse = new ArrayList<Integer>();
 		
 		for (int i = 0; i < results.size(); i++) {
 			students.add(new Student(Integer.parseInt(results.get(i)[0]),results.get(i)[1],results.get(i)[2],results.get(i)[3],results.get(i)[4], results.get(i)[5], results.get(i)[6], results.get(i)[7].charAt(0), Integer.parseInt(results.get(i)[8])));
+			regNumbersInUse.add(Integer.parseInt(results.get(i)[0]));
 		}
 		
 		Object[][] data = new Object[results.size()][9];

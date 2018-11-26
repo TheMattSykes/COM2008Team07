@@ -10,6 +10,7 @@ public class UniversitySystem {
 		// admin dirk567 are username and password for admin
 		// student generalkenobi are for student
 		// registrar bohemianrhapsody are for registrar
+		// teacher Iamyourfather! are for teacher
 		
 		// Check drivers
 		FindDrivers fd = new FindDrivers();

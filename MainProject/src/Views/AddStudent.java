@@ -15,6 +15,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import Models.Student;
+
 public class AddStudent extends JPanel {
 	private static final long serialVersionUID = 1L;
 	PrimaryFrame frame;
@@ -22,7 +24,13 @@ public class AddStudent extends JPanel {
 	private JPanel formButtons;
 	private JPanel localButtons;
 	private JButton backButton;
-	String[] availableDegrees;
+	private JButton applyButton;
+	private String[] availableDegrees;
+	private JComboBox<String> titleDropdown;
+	private JTextField forenameTextField;
+	private JTextField surnameTextField;
+	private JComboBox<String> degreeDropdown;
+	private JTextField tutorTextField;
 	
 	public AddStudent(PrimaryFrame pf) {
 		frame = pf;
@@ -47,8 +55,30 @@ public class AddStudent extends JPanel {
 		return backButton;
 	}
 	
+	public JButton getApplyButton() {
+		return applyButton;
+	}
+	
 	public void setAvailableDegrees(String[] d) {
 		availableDegrees = d;
+	}
+	
+	public Student getNewStudent() {
+		Student student = new Student();
+		student.setDegree((String)degreeDropdown.getSelectedItem());
+		String firstName = forenameTextField.getText().trim().toLowerCase();
+		if (firstName.length() > 0)
+			firstName = firstName.substring(0, 1).toUpperCase();
+		student.setFirstName(firstName);
+		String secondName = surnameTextField.getText().trim().toLowerCase();
+		if (secondName.length() > 0)
+			secondName = firstName.substring(0, 1).toUpperCase();
+		student.setSecondName(secondName);
+		student.setLevel(1);
+		student.setPeriod('A');
+		student.setTitle((String)titleDropdown.getSelectedItem());
+		student.setTutor(tutorTextField.getText().trim());
+		return student;
 	}
 	
 	public void loadUI() throws Exception {
@@ -92,7 +122,7 @@ public class AddStudent extends JPanel {
 		// Title
 		JPanel titlePanel = new JPanel();
 		JLabel titleLabel = new JLabel("Title: ");
-		JComboBox<String> titleDropdown = new JComboBox<String>(new String[] {"Mr","Ms"});
+		titleDropdown = new JComboBox<String>(new String[] {"Mr","Ms"});
 		formConstraints.gridx = 0;
 		titlePanel.add(titleLabel, formConstraints);
 		formConstraints.gridx = 1;
@@ -102,7 +132,7 @@ public class AddStudent extends JPanel {
 		// Forename
 		JPanel forenamePanel = new JPanel();
 		JLabel forenameLabel = new JLabel("Forename: ");
-		JTextField forenameTextField = new JTextField();
+		forenameTextField = new JTextField();
 		forenameTextField.setPreferredSize(textFieldSize);
 		formConstraints.gridx = 0;
 		forenamePanel.add(forenameLabel, formConstraints);
@@ -113,7 +143,7 @@ public class AddStudent extends JPanel {
 		// Surname
 		JPanel surnamePanel = new JPanel();
 		JLabel surnameLabel = new JLabel("Surname: ");
-		JTextField surnameTextField = new JTextField();
+		surnameTextField = new JTextField();
 		surnameTextField.setPreferredSize(textFieldSize);
 		formConstraints.gridx = 0;
 		surnamePanel.add(surnameLabel, formConstraints);
@@ -124,7 +154,7 @@ public class AddStudent extends JPanel {
 		// Degree
 		JPanel degreePanel = new JPanel();
 		JLabel degreeLabel = new JLabel("Degree: ");
-		JComboBox<String> degreeDropdown = new JComboBox<String>(availableDegrees);
+		degreeDropdown = new JComboBox<String>(availableDegrees);
 		formConstraints.gridx = 0;
 		degreePanel.add(degreeLabel, formConstraints);
 		formConstraints.gridx = 1;
@@ -147,7 +177,7 @@ public class AddStudent extends JPanel {
 		// Tutor
 		JPanel tutorPanel = new JPanel();
 		JLabel tutorLabel = new JLabel("Tutor: ");
-		JTextField tutorTextField = new JTextField();
+		tutorTextField = new JTextField();
 		tutorTextField.setPreferredSize(textFieldSize);
 		formConstraints.gridx = 0;
 		tutorPanel.add(tutorLabel, formConstraints);
@@ -187,7 +217,7 @@ public class AddStudent extends JPanel {
 		menuConstraints.gridy = 0;
 		menuConstraints.gridx = 0;
 		localButtons = new JPanel();
-		JButton applyButton = new JButton("Apply");
+		applyButton = new JButton("Apply");
 		localButtons.add(applyButton, menuConstraints);
 		backButton = new JButton("Back");
 		menuConstraints.gridx = 1;

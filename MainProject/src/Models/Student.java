@@ -99,5 +99,15 @@ public class Student {
 	public void setLevel(int inputLevel) {
 		level = inputLevel;
 	}
+	
+	public boolean isComplete() {
+		if (title != null && firstName.length() > 0 && firstName.length() <= 50 &&
+			secondName.length() > 0 && secondName.length() <= 50 && degree != null &&
+			tutor.length() > 0 && tutor.length() <= 50 && period != '\u0000' && level != 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 }
