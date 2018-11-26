@@ -15,6 +15,7 @@ import Models.Student;
 import Models.User;
 import Models.Views;
 import Views.AddStudent;
+import Views.EditStudent;
 import Views.RegistrarView;
 
 public class RegistrarSystemController extends Controller {
@@ -22,6 +23,8 @@ public class RegistrarSystemController extends Controller {
 	User user;
 	RegistrarView rv;
 	AddStudent as;
+	EditStudent es;
+	Student selectedStudent;
 	DatabaseController dc = new DatabaseController();
 	private Views currentView;
 	ArrayList<Integer> regNumbersInUse;
@@ -78,6 +81,25 @@ public class RegistrarSystemController extends Controller {
 			}
 		});
 		
+		rv.getEditButton().addActionListener(e -> {
+			try {
+				JTable table = rv.getTable();
+				selectedStudent = new Student();
+				selectedStudent.setCode((int)table.getValueAt(table.getSelectedRow(), 0));
+				selectedStudent.setTitle((String)table.getValueAt(table.getSelectedRow(), 1));
+				selectedStudent.setFirstName((String)table.getValueAt(table.getSelectedRow(), 2));
+				selectedStudent.setSecondName((String)table.getValueAt(table.getSelectedRow(), 3));
+				selectedStudent.setDegree((String)table.getValueAt(table.getSelectedRow(), 4));
+				selectedStudent.setEmail((String)table.getValueAt(table.getSelectedRow(), 5));
+				selectedStudent.setTutor((String)table.getValueAt(table.getSelectedRow(), 6));
+				selectedStudent.setPeriod((Character)table.getValueAt(table.getSelectedRow(), 7));
+				selectedStudent.setLevel((int)table.getValueAt(table.getSelectedRow(), 8));
+				changeView(Views.EDITSTUDENT);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		});
+		
 		// JTable table = rv.getTable();
 		
 		// table.getSelectionModel().addListSelectionListener(e -> tableActions());
@@ -127,16 +149,18 @@ public class RegistrarSystemController extends Controller {
 							Student student = as.getNewStudent();
 
 							if (student != null && student.isComplete()) {
-								String query = "SELECT * FROM students WHERE surname = ? AND forename = ?";
+								String email = student.getFirstName().substring(0, 1).toLowerCase()+student.getSecondName().toLowerCase();
+								String query = "SELECT * FROM students WHERE email LIKE '"+email+"%'";
 								ArrayList<String[]> values = new ArrayList<String[]>();
-								values.add(new String[] {student.getSecondName(), "true"});
-								values.add(new String[] {student.getFirstName(), "true"});
+								//values.add(new String[] {student.getSecondName(), "true"});
+								//values.add(new String[] {student.getFirstName(), "true"});
 								ArrayList<String[]> results = dc.executeQuery(query, values);
+								System.out.println("Email results size: "+results.size());
 								
-								String email = student.getFirstName().substring(0, 1).toLowerCase()+student.getSecondName().toLowerCase()+(results.size()+1);
+								email += (results.size()+1);
 								email += "@snowbelle.ac.uk";
 								student.setEmail(email);
-								System.out.print(email);
+								System.out.println("Email: "+email);
 								
 								Object[] options = {"Yes", "No"};
 								int applyOption = JOptionPane.showOptionDialog(as.getFrame(), "Confirm adding "+student.getFirstName()+" "+
@@ -148,7 +172,7 @@ public class RegistrarSystemController extends Controller {
 										query = "INSERT INTO students VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, NULL)";
 										values = new ArrayList<String[]>();
 										
-										// Each value String[] has (1) the data, (2) boolean which denotes whether it is a string
+										// Each value String[] has (1) the data, (2) boolean, which denotes whether it is a string
 										values.add(new String[] {Integer.toString(student.getRegNumber()), "false"});
 										values.add(new String[] {student.getTitle(), "true"});
 										values.add(new String[] {student.getSecondName(), "true"});
@@ -184,18 +208,94 @@ public class RegistrarSystemController extends Controller {
 			);
 	}
 	
+	public void initEditStudentView() throws Exception {
+		if (es == null)
+			es = new EditStudent(rv.getFrame(), selectedStudent);
+		es.setAvailableDegrees(getAvailableDegrees());
+		es.loadUI();
+		currentView = Views.EDITSTUDENT;
+		// Action listener for Back button
+		es.getBackButton().addActionListener(
+			new ActionListener() {
+				public void actionPerformed(ActionEvent e) {					
+					try {
+						changeView(Views.REGISTRARVIEW);
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+				}
+			}
+		);
+		
+		// Action listener for Apply button
+		es.getApplyButton().addActionListener(
+				new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						try {
+							Student student = es.getNewStudent();
+
+							if (student != null && student.isComplete()) {										
+								Object[] options = {"Yes", "No"};
+								int applyOption = JOptionPane.showOptionDialog(es.getFrame(), "Confirm updating "+student.getFirstName()+" "+
+										student.getSecondName()+" in the students table in the database?", "Apply question", JOptionPane.YES_NO_OPTION, 
+										JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+								if (applyOption == 0) {
+									try {
+										String query = "UPDATE students SET title = ?, surname = ?, forename = ?, degree = ?, "
+													 + "tutor = ?, period = ?, level = ? WHERE reg_number = ?";
+										ArrayList<String[]> values = new ArrayList<String[]>();
+										
+										// Each value String[] has (1) the data, (2) boolean, which denotes whether it is a string
+										values.add(new String[] {student.getTitle(), "true"});
+										values.add(new String[] {student.getSecondName(), "true"});
+										values.add(new String[] {student.getFirstName(), "true"});
+										values.add(new String[] {student.getDegree(), "true"});
+										values.add(new String[] {student.getTutor(), "true"});
+										values.add(new String[] {Character.toString(student.getPeriod()), "true"});
+										values.add(new String[] {Integer.toString(student.getLevel()), "false"});
+										values.add(new String[] {Integer.toString(student.getRegNumber()), "false"});
+										
+										dc.executeQuery(query, values);
+										changeView(Views.REGISTRARVIEW);
+									} catch (Exception ex) {
+										ex.printStackTrace();
+									}
+								}
+							} else {
+								JOptionPane optionPane = new JOptionPane("Please make sure all the values have been filled in correctly."+
+																		 "\n(Names and Tutor have a maximum length of 50 each.)", JOptionPane.ERROR_MESSAGE);    
+								JDialog dialog = optionPane.createDialog("Failure");
+								dialog.setAlwaysOnTop(true);
+								dialog.setVisible(true);
+							}
+						} catch (Exception ex) {
+							ex.printStackTrace();
+							JOptionPane optionPane = new JOptionPane("Error connecting to dabatase.", JOptionPane.ERROR_MESSAGE);    
+							JDialog dialog = optionPane.createDialog("Error");
+							dialog.setAlwaysOnTop(true);
+							dialog.setVisible(true);
+						}
+					}
+				}
+			);
+	}
+	
 	// Changes to the specified view
 	public void changeView(Views changeTo) throws Exception {
 		if (currentView == Views.REGISTRARVIEW) {
 			rv.removeUI();
 		} else if (currentView == Views.ADDSTUDENT) {
 			as.removeUI();
+		} else if (currentView == Views.EDITSTUDENT) {
+			es.removeUI();
 		}
 		
 		if (changeTo == Views.REGISTRARVIEW) {
 			initDefaultView();
 		} else if (changeTo == Views.ADDSTUDENT) {
 			initAddStudentView();
+		} else if (changeTo == Views.EDITSTUDENT) {
+			initEditStudentView();
 		}
 	}
 	

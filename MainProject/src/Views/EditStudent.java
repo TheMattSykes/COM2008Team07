@@ -17,7 +17,7 @@ import javax.swing.JTextField;
 
 import Models.Student;
 
-public class AddStudent extends JPanel {
+public class EditStudent extends JPanel {
 	private static final long serialVersionUID = 1L;
 	PrimaryFrame frame;
 	JPanel form;
@@ -33,9 +33,11 @@ public class AddStudent extends JPanel {
 	private JTextField tutorTextField;
 	private JComboBox<Character> periodDropdown;
 	private JComboBox<Integer> levelDropdown;
+	private Student student;
 	
-	public AddStudent(PrimaryFrame pf) {
+	public EditStudent(PrimaryFrame pf, Student stu) {
 		frame = pf;
+		student = stu;
 	}
 	
 	public PrimaryFrame getFrame() {
@@ -66,8 +68,8 @@ public class AddStudent extends JPanel {
 	}
 	
 	public Student getNewStudent() {
-		Student student = new Student();
-		student.setDegree((String)degreeDropdown.getSelectedItem());
+		//student = new Student();
+		student.setTitle((String)titleDropdown.getSelectedItem());
 		String firstName = forenameTextField.getText().trim();
 		if (firstName.length() > 0)
 			firstName = firstName.substring(0, 1).toUpperCase()+firstName.substring(1);
@@ -76,10 +78,10 @@ public class AddStudent extends JPanel {
 		if (secondName.length() > 0)
 			secondName = secondName.substring(0, 1).toUpperCase()+secondName.substring(1);
 		student.setSecondName(secondName);
-		student.setLevel((int)levelDropdown.getSelectedItem());
-		student.setPeriod((char)periodDropdown.getSelectedItem());
-		student.setTitle((String)titleDropdown.getSelectedItem());
+		student.setDegree((String)degreeDropdown.getSelectedItem());
 		student.setTutor(tutorTextField.getText().trim());
+		student.setPeriod('A');
+		student.setLevel(1);
 		return student;
 	}
 	
@@ -111,7 +113,7 @@ public class AddStudent extends JPanel {
 		JPanel regPanel = new JPanel();
 		JLabel regLabel = new JLabel("Reg. Number: ");
 		JTextField regTextField = new JTextField();
-		regTextField.setText("Reg. Numbers are automatically generated");
+		regTextField.setText(Integer.toString(student.getRegNumber()));
 		regTextField.setEnabled(false);
 		regTextField.setPreferredSize(textFieldSize);
 		formConstraints.gridx = 0;
@@ -125,6 +127,7 @@ public class AddStudent extends JPanel {
 		JPanel titlePanel = new JPanel();
 		JLabel titleLabel = new JLabel("Title: ");
 		titleDropdown = new JComboBox<String>(new String[] {"Mr","Ms"});
+		titleDropdown.setSelectedItem(student.getTitle());
 		formConstraints.gridx = 0;
 		titlePanel.add(titleLabel, formConstraints);
 		formConstraints.gridx = 1;
@@ -135,6 +138,7 @@ public class AddStudent extends JPanel {
 		JPanel forenamePanel = new JPanel();
 		JLabel forenameLabel = new JLabel("Forename: ");
 		forenameTextField = new JTextField();
+		forenameTextField.setText(student.getFirstName());
 		forenameTextField.setPreferredSize(textFieldSize);
 		formConstraints.gridx = 0;
 		forenamePanel.add(forenameLabel, formConstraints);
@@ -146,6 +150,7 @@ public class AddStudent extends JPanel {
 		JPanel surnamePanel = new JPanel();
 		JLabel surnameLabel = new JLabel("Surname: ");
 		surnameTextField = new JTextField();
+		surnameTextField.setText(student.getSecondName());
 		surnameTextField.setPreferredSize(textFieldSize);
 		formConstraints.gridx = 0;
 		surnamePanel.add(surnameLabel, formConstraints);
@@ -157,6 +162,7 @@ public class AddStudent extends JPanel {
 		JPanel degreePanel = new JPanel();
 		JLabel degreeLabel = new JLabel("Degree: ");
 		degreeDropdown = new JComboBox<String>(availableDegrees);
+		degreeDropdown.setSelectedItem(student.getDegree());
 		formConstraints.gridx = 0;
 		degreePanel.add(degreeLabel, formConstraints);
 		formConstraints.gridx = 1;
@@ -167,7 +173,7 @@ public class AddStudent extends JPanel {
 		JPanel emailPanel = new JPanel();
 		JLabel emailLabel = new JLabel("Email: ");
 		JTextField emailTextField = new JTextField();
-		emailTextField.setText("Emails are automatically generated");
+		emailTextField.setText(student.getEmail());
 		emailTextField.setEnabled(false);
 		emailTextField.setPreferredSize(textFieldSize);
 		formConstraints.gridx = 0;
@@ -180,6 +186,7 @@ public class AddStudent extends JPanel {
 		JPanel tutorPanel = new JPanel();
 		JLabel tutorLabel = new JLabel("Tutor: ");
 		tutorTextField = new JTextField();
+		tutorTextField.setText(student.getTutor());
 		tutorTextField.setPreferredSize(textFieldSize);
 		formConstraints.gridx = 0;
 		tutorPanel.add(tutorLabel, formConstraints);
@@ -192,6 +199,7 @@ public class AddStudent extends JPanel {
 		JLabel periodLabel = new JLabel("Period: ");
 		periodDropdown =
 				new JComboBox<Character>(new Character[] {'A','B','C','D','E','F','G','H','I','J','K'});
+		periodDropdown.setSelectedItem(student.getPeriod());
 		formConstraints.gridx = 0;
 		periodPanel.add(periodLabel, formConstraints);
 		formConstraints.gridx = 1;
@@ -202,6 +210,7 @@ public class AddStudent extends JPanel {
 		JPanel levelPanel = new JPanel();
 		JLabel levelLabel = new JLabel("Level: ");
 		levelDropdown = new JComboBox<Integer>(new Integer[] {1,2,3,4,5,6,7,8,9});
+		levelDropdown.setSelectedItem(student.getLevel());
 		formConstraints.gridx = 0;
 		levelPanel.add(levelLabel, formConstraints);
 		formConstraints.gridx = 1;

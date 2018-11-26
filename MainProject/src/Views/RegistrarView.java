@@ -17,6 +17,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import Controllers.TableColumnAdjuster;
+import Models.Student;
 
 public class RegistrarView extends JPanel {
 	private static final long serialVersionUID = 1L;
@@ -88,8 +89,8 @@ public class RegistrarView extends JPanel {
 		String[] columnNames = {
 				"Reg. Number",
                 "Title",
-                "First Name",
-                "Second Name",
+                "Surname",
+                "Forename",
                 "Degree",
                 "Email",
                 "Tutor",
