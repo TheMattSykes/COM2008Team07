@@ -153,7 +153,6 @@ public class RegistrarView extends JPanel {
 
 		modulesButton = new JButton("Add/Edit Modules");
 		modulesButton.setEnabled(false);
-		JButton deleteStudent = new JButton("Delete Student");
 
 		deleteStudent.setEnabled(false);
 		

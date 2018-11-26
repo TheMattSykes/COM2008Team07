@@ -65,7 +65,10 @@ public class RegistrarSystemController extends Controller {
 			}
 		);
 		
+		System.out.println("Hello there!");
+		
 		rv.getDeleteButton().addActionListener(e -> {
+			System.out.println("Deletey Delete!");
 			try {
 				deleteStudent();
 				changeView(Views.REGISTRARVIEW);
@@ -124,10 +127,10 @@ public class RegistrarSystemController extends Controller {
 							Student student = as.getNewStudent();
 
 							if (student != null && student.isComplete()) {
-								String query = "SELECT * FROM students WHERE surname = ? AND forename LIKE '?%'";
+								String query = "SELECT * FROM students WHERE surname = ? AND forename = ?";
 								ArrayList<String[]> values = new ArrayList<String[]>();
 								values.add(new String[] {student.getSecondName(), "true"});
-								values.add(new String[] {student.getFirstName().substring(0, 1), "true"});
+								values.add(new String[] {student.getFirstName(), "true"});
 								ArrayList<String[]> results = dc.executeQuery(query, values);
 								
 								String email = student.getFirstName().substring(0, 1).toLowerCase()+student.getSecondName().toLowerCase()+(results.size()+1);
@@ -142,7 +145,7 @@ public class RegistrarSystemController extends Controller {
 								if (applyOption == 0) {
 									student.setCode(generateRandomReg());
 									try {
-										query = "INSERT INTO students (?, ?, ?, ?, ?, ?, ?, ?, ?, NULL)";
+										query = "INSERT INTO students VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, NULL)";
 										values = new ArrayList<String[]>();
 										
 										// Each value String[] has (1) the data, (2) boolean which denotes whether it is a string
