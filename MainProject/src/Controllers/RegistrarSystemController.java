@@ -120,18 +120,17 @@ public class RegistrarSystemController extends Controller {
 		as.getApplyButton().addActionListener(
 				new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						Student student = as.getNewStudent();
-						
-						String query = "SELECT * FROM students WHERE surname = ? AND forename LIKE '?%'";
-						ArrayList<String[]> values = new ArrayList<String[]>();
 						try {
+							Student student = as.getNewStudent();
+
 							if (student != null && student.isComplete()) {
-								values.add(new String[] {student.getSecondName(), student.getFirstName().substring(0, 1)});
-								//values.add(new String[] {student.getSecondName(), ""});
-								//values.add(new String[] {student.getFirstName().substring(0, 1), ""});
+								String query = "SELECT * FROM students WHERE surname = ? AND forename LIKE '?%'";
+								ArrayList<String[]> values = new ArrayList<String[]>();
+								values.add(new String[] {student.getSecondName(), "true"});
+								values.add(new String[] {student.getFirstName().substring(0, 1), "true"});
 								ArrayList<String[]> results = dc.executeQuery(query, values);
 								
-								String email = student.getFirstName().substring(0, 1)+student.getSecondName()+(results.size()+1);
+								String email = student.getFirstName().substring(0, 1).toLowerCase()+student.getSecondName().toLowerCase()+(results.size()+1);
 								email += "@snowbelle.ac.uk";
 								student.setEmail(email);
 								System.out.print(email);
@@ -149,11 +148,14 @@ public class RegistrarSystemController extends Controller {
 										// Each value String[] has (1) the data, (2) boolean which denotes whether it is a string
 										values.add(new String[] {Integer.toString(student.getRegNumber()), "false"});
 										values.add(new String[] {student.getTitle(), "true"});
-												
-												/*student.getTitle(),
-																 student.getSecondName(), student.getFirstName(), student.getDegree(),
-																 student.getEmail(), student.getTutor(), Character.toString(student.getPeriod()),
-																 Integer.toString(student.getLevel())});*/
+										values.add(new String[] {student.getSecondName(), "true"});
+										values.add(new String[] {student.getFirstName(), "true"});
+										values.add(new String[] {student.getDegree(), "true"});
+										values.add(new String[] {student.getEmail(), "true"});
+										values.add(new String[] {student.getTutor(), "true"});
+										values.add(new String[] {Character.toString(student.getPeriod()), "true"});
+										values.add(new String[] {Integer.toString(student.getLevel()), "false"});
+										
 										dc.executeQuery(query, values);
 										changeView(Views.REGISTRARVIEW);
 									} catch (Exception ex) {

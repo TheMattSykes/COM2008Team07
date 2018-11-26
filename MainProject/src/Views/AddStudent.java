@@ -68,11 +68,11 @@ public class AddStudent extends JPanel {
 		student.setDegree((String)degreeDropdown.getSelectedItem());
 		String firstName = forenameTextField.getText().trim().toLowerCase();
 		if (firstName.length() > 0)
-			firstName = firstName.substring(0, 1).toUpperCase();
+			firstName = firstName.substring(0, 1).toUpperCase()+firstName.substring(1);
 		student.setFirstName(firstName);
 		String secondName = surnameTextField.getText().trim().toLowerCase();
 		if (secondName.length() > 0)
-			secondName = firstName.substring(0, 1).toUpperCase();
+			secondName = firstName.substring(0, 1).toUpperCase()+secondName.substring(1);
 		student.setSecondName(secondName);
 		student.setLevel(1);
 		student.setPeriod('A');
