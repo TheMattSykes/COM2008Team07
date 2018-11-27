@@ -9,10 +9,12 @@ public class Module {
 	private String teachingPeriod;
 	private int level;
 	private GraduateType type;
+	private String department;
+	private String core;
 	
 	public Module() {}
 	
-	public Module(String c, String n, int cred, int[] sc, Grades[] gr, String tp, int l, GraduateType ty) {
+	public Module(String c, String n, int cred, int[] sc, Grades[] gr, String tp, int l, GraduateType ty, String d, String core) {
 		code = c;
 		name = n;
 		credits = cred;
@@ -21,6 +23,7 @@ public class Module {
 		teachingPeriod = tp;
 		level = l;
 		type = ty;
+		department = d;
 	}
 	
 	public String getCode() {
@@ -104,5 +107,29 @@ public class Module {
 			result = grades[0].toString();
 		}
 		return code + " - " + name + " (Grade: "+result+ ")";
+	}
+	
+	public String getDepartment() {
+		return department;
+	}
+	
+	public void setDepartment(String inputDepartment) {
+		department = inputDepartment;
+	}
+	
+	public Boolean isCore() {
+		return true;
+	}
+	
+	public Boolean setCore(String inputCore) {
+		core = inputCore;
+		if (core.equals("yes")) {
+			return true;
+		}else if (core.equals("no")) {
+			return false;
+		} else {
+			return false;
+		}
+		
 	}
 }
