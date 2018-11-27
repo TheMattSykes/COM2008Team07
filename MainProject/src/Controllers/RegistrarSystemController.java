@@ -102,7 +102,6 @@ public class RegistrarSystemController extends Controller {
 		});
 		
 		// Action listener for Add/Remove modules button
-
 		rv.getModulesButton().addActionListener(e -> {				
 			try {
 				JTable table = rv.getTable();
