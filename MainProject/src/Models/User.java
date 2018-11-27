@@ -10,12 +10,18 @@ public class User {
 		loggedIn = false;
 	}
 	
-	public void setUserDetails(int uID, String name, UserTypes type) {
+	public User(int uID, String name, UserTypes type) {
 		userID = uID;
 		username = name;
 		userType = type;
 	}
 	
+	public void setUserDetails(int uID, String name, UserTypes type) {
+		userID = uID;
+		username = name;
+		userType = type;
+	}
+
 	public int getUserID() {
 		return userID;
 	}
