@@ -3,8 +3,6 @@ package Views;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -32,6 +30,7 @@ public class EditStudent extends JPanel {
 	private JTextField tutorTextField;
 	private JComboBox<Character> periodDropdown;
 	private JComboBox<Integer> levelDropdown;
+	private JComboBox<String> registeredDropdown;
 	private Student student;
 	
 	public EditStudent(PrimaryFrame pf) {
@@ -87,6 +86,7 @@ public class EditStudent extends JPanel {
 		student.setTutor(tutorTextField.getText().trim());
 		student.setPeriod((char)periodDropdown.getSelectedItem());
 		student.setLevel((int)levelDropdown.getSelectedItem());
+		student.setRegistered((String)registeredDropdown.getSelectedItem());
 		return student;
 	}
 	
@@ -219,6 +219,17 @@ public class EditStudent extends JPanel {
 		formConstraints.gridx = 1;
 		levelPanel.add(levelDropdown, formConstraints);
 		formLeft.add(levelPanel);
+		
+		// Registered
+		JPanel registeredPanel = new JPanel();
+		JLabel registeredLabel = new JLabel("Registered: ");
+		registeredDropdown = new JComboBox<String>(new String[] {"Not Registered","Partially Registered","Fully Registered"});
+		registeredDropdown.setSelectedItem(student.getRegistered());
+		formConstraints.gridx = 0;
+		registeredPanel.add(registeredLabel, formConstraints);
+		formConstraints.gridx = 1;
+		registeredPanel.add(registeredDropdown, formConstraints);
+		formRight.add(registeredPanel);
 		
 		form.add(formLeft);
 		form.add(formRight);

@@ -6,8 +6,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -24,7 +22,7 @@ public class RegistrarView extends JPanel {
 	private static final long serialVersionUID = 1L;
 	PrimaryFrame frame;
 	Object[][] studentsData;
-	JPanel studentInfo;
+	private JPanel registrarInfo;
 	private JPanel registrarButtons;
 	private JButton addStudent;
 	private JButton editStudent;
@@ -54,8 +52,8 @@ public class RegistrarView extends JPanel {
 	}
 	
 	public void removeUI() {
-		if (studentInfo != null)
-			frame.remove(studentInfo);
+		if (registrarInfo != null)
+			frame.remove(registrarInfo);
 		if (registrarButtons != null)
 			frame.menuBar.remove(registrarButtons);
 	}
@@ -84,12 +82,12 @@ public class RegistrarView extends JPanel {
 	public void loadUI() throws Exception {
 		String regName = "Freddie Mercury";
 		
-		JPanel studentDetails = new JPanel();
-		studentDetails.setLayout(new GridLayout(5,1));
+		JPanel registrarDetails = new JPanel();
+		registrarDetails.setLayout(new GridLayout(5,1));
 		
 		JLabel nameLabel = new JLabel("Name: "+regName);
 		
-		studentDetails.add(nameLabel);
+		registrarDetails.add(nameLabel);
 		
 		String[] columnNames = {
 				"Reg. Number",
@@ -100,26 +98,27 @@ public class RegistrarView extends JPanel {
                 "Email",
                 "Tutor",
                 "Period",
-                "Level"
+                "Level",
+                "Registered"
         };
 		
 		
-		studentInfo = new JPanel();
+		registrarInfo = new JPanel();
 		
-		studentInfo.setLayout(new GridBagLayout());
-		GridBagConstraints stuConstraints = new GridBagConstraints();
-		stuConstraints.weightx = 1.0;
+		registrarInfo.setLayout(new GridBagLayout());
+		GridBagConstraints regConstraints = new GridBagConstraints();
+		regConstraints.weightx = 1.0;
 
-		studentInfo.setBorder(BorderFactory.createEmptyBorder(10, 10, 20, 10));
+		registrarInfo.setBorder(BorderFactory.createEmptyBorder(10, 10, 20, 10));
 		
 		
 		
-		stuConstraints.insets = new Insets(5,5,5,5);
+		regConstraints.insets = new Insets(5,5,5,5);
 		
-		stuConstraints.fill = GridBagConstraints.HORIZONTAL;
-		stuConstraints.gridx = 0;
-		stuConstraints.gridy = 0;
-		studentInfo.add(studentDetails, stuConstraints);
+		regConstraints.fill = GridBagConstraints.HORIZONTAL;
+		regConstraints.gridx = 0;
+		regConstraints.gridy = 0;
+		registrarInfo.add(registrarDetails, regConstraints);
 		
 		
 		table = new JTable(studentsData, columnNames) {
@@ -185,7 +184,6 @@ public class RegistrarView extends JPanel {
 		table.getSelectionModel().addListSelectionListener(
 			new ListSelectionListener() {
 		        public void valueChanged(ListSelectionEvent event) {
-		            //System.out.println(table.getValueAt(table.getSelectedRow(), 0).toString());
 		        	if (!editStudent.isEnabled())
 		        		editStudent.setEnabled(true);
 		        	if (!deleteStudent.isEnabled())
@@ -196,13 +194,13 @@ public class RegistrarView extends JPanel {
 			}
 	    );
 		
-		stuConstraints.insets = new Insets(5,5,5,5);
-		stuConstraints.fill = GridBagConstraints.HORIZONTAL;
-		stuConstraints.gridx = 0;
-		stuConstraints.gridy = 1;
-		studentInfo.add(scrollPane, stuConstraints);
+		regConstraints.insets = new Insets(5,5,5,5);
+		regConstraints.fill = GridBagConstraints.HORIZONTAL;
+		regConstraints.gridx = 0;
+		regConstraints.gridy = 1;
+		registrarInfo.add(scrollPane, regConstraints);
 		
-		frame.add(studentInfo, BorderLayout.CENTER);
+		frame.add(registrarInfo, BorderLayout.CENTER);
 		frame.showMenuBar();
 		frame.revalidate();
 		frame.repaint();

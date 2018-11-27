@@ -2,10 +2,7 @@ package Views;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -20,7 +17,7 @@ import Models.Student;
 public class AddStudent extends JPanel {
 	private static final long serialVersionUID = 1L;
 	PrimaryFrame frame;
-	JPanel form;
+	private JPanel form;
 	private JPanel localButtons;
 	private JButton backButton;
 	private JButton applyButton;
@@ -33,6 +30,7 @@ public class AddStudent extends JPanel {
 	private JTextField tutorTextField;
 	private JComboBox<Character> periodDropdown;
 	private JComboBox<Integer> levelDropdown;
+	private JComboBox<String> registeredDropdown;
 	
 	public AddStudent(PrimaryFrame pf) {
 		frame = pf;
@@ -71,7 +69,7 @@ public class AddStudent extends JPanel {
 	
 	public Student getNewStudent() {
 		Student student = new Student();
-		student.setDegree((String)degreeDropdown.getSelectedItem());
+		student.setTitle((String)titleDropdown.getSelectedItem());
 		String firstName = forenameTextField.getText().trim();
 		if (firstName.length() > 0)
 			firstName = firstName.substring(0, 1).toUpperCase()+firstName.substring(1);
@@ -80,10 +78,11 @@ public class AddStudent extends JPanel {
 		if (secondName.length() > 0)
 			secondName = secondName.substring(0, 1).toUpperCase()+secondName.substring(1);
 		student.setSecondName(secondName);
-		student.setLevel((int)levelDropdown.getSelectedItem());
-		student.setPeriod((char)periodDropdown.getSelectedItem());
-		student.setTitle((String)titleDropdown.getSelectedItem());
+		student.setDegree((String)degreeDropdown.getSelectedItem());
 		student.setTutor(tutorTextField.getText().trim());
+		student.setPeriod((char)periodDropdown.getSelectedItem());
+		student.setLevel((int)levelDropdown.getSelectedItem());
+		student.setRegistered((String)registeredDropdown.getSelectedItem());
 		return student;
 	}
 	
@@ -209,6 +208,16 @@ public class AddStudent extends JPanel {
 		formConstraints.gridx = 1;
 		levelPanel.add(levelDropdown, formConstraints);
 		formLeft.add(levelPanel);
+		
+		// Registered
+		JPanel registeredPanel = new JPanel();
+		JLabel registeredLabel = new JLabel("Registered: ");
+		registeredDropdown = new JComboBox<String>(new String[] {"Not Registered","Partially Registered","Fully Registered"});
+		formConstraints.gridx = 0;
+		registeredPanel.add(registeredLabel, formConstraints);
+		formConstraints.gridx = 1;
+		registeredPanel.add(registeredDropdown, formConstraints);
+		formRight.add(registeredPanel);
 		
 		form.add(formLeft);
 		form.add(formRight);
