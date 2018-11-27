@@ -2,6 +2,7 @@ package Views;
 
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -28,6 +29,7 @@ public class RegistrarModules extends JPanel {
 	private JPanel localButtons;
 	private JButton backButton;
 	private JButton applyButton;
+	private JButton logoutButton;
 	private ArrayList<Module> currentModules;
 	private ArrayList<Module> availableModules;
 	
@@ -57,6 +59,10 @@ public class RegistrarModules extends JPanel {
 	
 	public JButton getApplyButton() {
 		return applyButton;
+	}
+	
+	public JButton getLogoutButton() {
+		return logoutButton;
 	}
 	
 	public void setStudent(Student stu) {
@@ -106,17 +112,41 @@ public class RegistrarModules extends JPanel {
 		
 		mainPanel.add(studentDetails, BorderLayout.NORTH);
 		
+		JPanel form = new JPanel();
+		form.setLayout(new GridBagLayout());
+		
 		// Remove Module
 		JPanel removeModulePanel = new JPanel();
 		JLabel removeModuleLabel = new JLabel("Pick module to remove: ");
 		JComboBox<Module> removeModuleDropdown = new JComboBox<Module>();
 		removeModuleDropdown.setModel(new DefaultComboBoxModel(currentModules.toArray()));
+		JButton removeModuleButton = new JButton("Remove module");
 		formConstraints.gridx = 0;
 		removeModulePanel.add(removeModuleLabel, formConstraints);
 		formConstraints.gridx = 1;
 		removeModulePanel.add(removeModuleDropdown, formConstraints);
+		formConstraints.gridx = 2;
+		removeModulePanel.add(removeModuleButton, formConstraints);
 		formConstraints.gridx = 0;
-		mainPanel.add(removeModulePanel);
+		form.add(removeModulePanel, formConstraints);
+		
+		// Add Module
+		JPanel addModulePanel = new JPanel();
+		JLabel addModuleLabel = new JLabel("Pick module to add: ");
+		JComboBox<Module> addModuleDropdown = new JComboBox<Module>();
+		addModuleDropdown.setModel(new DefaultComboBoxModel(availableModules.toArray()));
+		JButton addModuleButton = new JButton("Remove module");
+		formConstraints.gridx = 0;
+		addModulePanel.add(addModuleLabel, formConstraints);
+		formConstraints.gridx = 1;
+		addModulePanel.add(addModuleDropdown, formConstraints);
+		formConstraints.gridx = 2;
+		addModulePanel.add(addModuleButton, formConstraints);
+		formConstraints.gridx = 0;
+		formConstraints.gridy = 1;
+		form.add(addModulePanel, formConstraints);
+		
+		mainPanel.add(form, BorderLayout.CENTER);
 		
 		GridBagConstraints menuConstraints = new GridBagConstraints();
 		menuConstraints.insets = new Insets(0,5,0,5);		
@@ -131,15 +161,7 @@ public class RegistrarModules extends JPanel {
 		menuConstraints.gridx = 1;
 		localButtons.add(backButton, menuConstraints);
 		
-		// Remove UI, when logout is pressed
-		JButton logout = (JButton) frame.menuBar.getComponent(0);
-		logout.addActionListener(
-				new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						removeUI();
-					}
-				}
-		);
+		logoutButton = (JButton) frame.menuBar.getComponent(0);
 		
 		menuConstraints.gridx = 0;
 		frame.menuBar.add(localButtons, menuConstraints);

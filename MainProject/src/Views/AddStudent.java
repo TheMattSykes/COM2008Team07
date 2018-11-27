@@ -24,6 +24,7 @@ public class AddStudent extends JPanel {
 	private JPanel localButtons;
 	private JButton backButton;
 	private JButton applyButton;
+	private JButton logoutButton;
 	private String[] availableDegrees;
 	private JComboBox<String> titleDropdown;
 	private JTextField forenameTextField;
@@ -58,6 +59,10 @@ public class AddStudent extends JPanel {
 	
 	public JButton getApplyButton() {
 		return applyButton;
+	}
+	
+	public JButton getLogoutButton() {
+		return logoutButton;
 	}
 	
 	public void setAvailableDegrees(String[] d) {
@@ -220,15 +225,7 @@ public class AddStudent extends JPanel {
 		menuConstraints.gridx = 1;
 		localButtons.add(backButton, menuConstraints);
 		
-		// Remove UI, when logout is pressed
-		JButton logout = (JButton) frame.menuBar.getComponent(0);
-		logout.addActionListener(
-				new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						removeUI();
-					}
-				}
-		);
+		logoutButton = (JButton) frame.menuBar.getComponent(0);
 		
 		menuConstraints.gridx = 0;
 		frame.menuBar.add(localButtons, menuConstraints);
