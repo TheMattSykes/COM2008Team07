@@ -91,8 +91,8 @@ public class RegistrarSystemController extends Controller {
 				int row = table.getSelectedRow();
 				selectedStudent.setCode((int)studentData[row][0]);
 				selectedStudent.setTitle((String)studentData[row][1]);
-				selectedStudent.setFirstName((String)studentData[row][2]);
-				selectedStudent.setSecondName((String)studentData[row][3]);
+				selectedStudent.setSecondName((String)studentData[row][2]);
+				selectedStudent.setFirstName((String)studentData[row][3]);
 				selectedStudent.setDegree((String)studentData[row][4]);
 				selectedStudent.setEmail((String)studentData[row][5]);
 				selectedStudent.setTutor((String)studentData[row][6]);
@@ -114,8 +114,8 @@ public class RegistrarSystemController extends Controller {
 						int row = table.getSelectedRow();
 						selectedStudent.setCode((int)studentData[row][0]);
 						selectedStudent.setTitle((String)studentData[row][1]);
-						selectedStudent.setFirstName((String)studentData[row][2]);
-						selectedStudent.setSecondName((String)studentData[row][3]);
+						selectedStudent.setSecondName((String)studentData[row][2]);
+						selectedStudent.setFirstName((String)studentData[row][3]);
 						selectedStudent.setDegree((String)studentData[row][4]);
 						selectedStudent.setEmail((String)studentData[row][5]);
 						selectedStudent.setTutor((String)studentData[row][6]);
