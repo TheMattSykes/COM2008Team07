@@ -128,6 +128,7 @@ public class AdminSystemController extends Controller{
 		ad.getApplyButton().addActionListener(e -> {
 			Department newDepartment = ad.getNewDepartment();
 			if ( newDepartment.getCode() != null && newDepartment.getName() != null ) {
+				// To do: Managing duplicate entries
 				//String query = "SELECT * FROM department";
 				//ArrayList<String[]> values = new ArrayList<String[]>();
 				//ArrayList<String[]> results = dc.executeQuery(query, values);
