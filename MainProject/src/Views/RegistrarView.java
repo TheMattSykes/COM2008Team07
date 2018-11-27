@@ -109,7 +109,7 @@ public class RegistrarView extends JPanel {
 		GridBagConstraints regConstraints = new GridBagConstraints();
 		regConstraints.weightx = 1.0;
 
-		registrarInfo.setBorder(BorderFactory.createEmptyBorder(10, 10, 20, 10));
+		// registrarInfo.setBorder(BorderFactory.createEmptyBorder(10, 10, 20, 10));
 		
 		
 		
@@ -198,6 +198,8 @@ public class RegistrarView extends JPanel {
 		regConstraints.fill = GridBagConstraints.HORIZONTAL;
 		regConstraints.gridx = 0;
 		regConstraints.gridy = 1;
+		
+		scrollPane.setPreferredSize(new Dimension(getWidth(),350));
 		registrarInfo.add(scrollPane, regConstraints);
 		
 		frame.add(registrarInfo, BorderLayout.CENTER);
