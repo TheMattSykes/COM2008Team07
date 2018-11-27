@@ -21,7 +21,6 @@ public class AddStudent extends JPanel {
 	private static final long serialVersionUID = 1L;
 	PrimaryFrame frame;
 	JPanel form;
-	private JPanel formButtons;
 	private JPanel localButtons;
 	private JButton backButton;
 	private JButton applyButton;
@@ -84,8 +83,6 @@ public class AddStudent extends JPanel {
 	}
 	
 	public void loadUI() throws Exception {
-		formButtons = new JPanel();
-		formButtons.setLayout(new GridBagLayout());
 		form = new JPanel();
 		form.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
 		

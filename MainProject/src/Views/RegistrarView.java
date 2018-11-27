@@ -6,6 +6,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -17,7 +19,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import Controllers.TableColumnAdjuster;
-import Models.Student;
 
 public class RegistrarView extends JPanel {
 	private static final long serialVersionUID = 1L;
@@ -152,7 +153,7 @@ public class RegistrarView extends JPanel {
 
 		deleteStudent = new JButton("Delete Student");
 
-		modulesButton = new JButton("Add/Edit Modules");
+		modulesButton = new JButton("Add/Remove Modules");
 		modulesButton.setEnabled(false);
 
 		deleteStudent.setEnabled(false);
@@ -170,6 +171,17 @@ public class RegistrarView extends JPanel {
 		registrarButtons.add(deleteStudent, menuConstraints);
 		menuConstraints.gridx = 3;
 		registrarButtons.add(modulesButton, menuConstraints);
+		
+		// Remove UI, when logout is pressed
+		JButton logout = (JButton) frame.menuBar.getComponent(0);
+		logout.addActionListener(
+				new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						removeUI();
+					}
+				}
+		);
+		
 		menuConstraints.gridx = 0;
 		frame.menuBar.add(registrarButtons, menuConstraints);
 		

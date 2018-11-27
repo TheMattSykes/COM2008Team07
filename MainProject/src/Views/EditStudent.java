@@ -2,7 +2,6 @@ package Views;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,8 +19,7 @@ import Models.Student;
 public class EditStudent extends JPanel {
 	private static final long serialVersionUID = 1L;
 	PrimaryFrame frame;
-	JPanel form;
-	private JPanel formButtons;
+	private JPanel form;
 	private JPanel localButtons;
 	private JButton backButton;
 	private JButton applyButton;
@@ -35,9 +33,8 @@ public class EditStudent extends JPanel {
 	private JComboBox<Integer> levelDropdown;
 	private Student student;
 	
-	public EditStudent(PrimaryFrame pf, Student stu) {
+	public EditStudent(PrimaryFrame pf) {
 		frame = pf;
-		student = stu;
 	}
 	
 	public PrimaryFrame getFrame() {
@@ -72,7 +69,6 @@ public class EditStudent extends JPanel {
 	}
 	
 	public Student getNewStudent() {
-		//student = new Student();
 		student.setTitle((String)titleDropdown.getSelectedItem());
 		String firstName = forenameTextField.getText().trim();
 		if (firstName.length() > 0)
@@ -90,8 +86,6 @@ public class EditStudent extends JPanel {
 	}
 	
 	public void loadUI() throws Exception {
-		formButtons = new JPanel();
-		formButtons.setLayout(new GridBagLayout());
 		form = new JPanel();
 		form.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
 		

@@ -9,6 +9,7 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
 import Models.Classification;
+import Models.Grades;
 import Models.GraduateType;
 import Models.Module;
 import Models.Student;
@@ -16,6 +17,7 @@ import Models.User;
 import Models.Views;
 import Views.AddStudent;
 import Views.EditStudent;
+import Views.RegistrarModules;
 import Views.RegistrarView;
 
 public class RegistrarSystemController extends Controller {
@@ -24,6 +26,7 @@ public class RegistrarSystemController extends Controller {
 	RegistrarView rv;
 	AddStudent as;
 	EditStudent es;
+	RegistrarModules rm;
 	Student selectedStudent;
 	DatabaseController dc = new DatabaseController();
 	private Views currentView;
@@ -68,19 +71,17 @@ public class RegistrarSystemController extends Controller {
 			}
 		);
 		
-		System.out.println("Hello there!");
-		
+		// Action listener for Delete Student button
 		rv.getDeleteButton().addActionListener(e -> {
-			System.out.println("Deletey Delete!");
 			try {
 				deleteStudent();
 				changeView(Views.REGISTRARVIEW);
-			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+			} catch (Exception ex) {
+				ex.printStackTrace();
 			}
 		});
 		
+		// Action listener for Edit Student Button
 		rv.getEditButton().addActionListener(e -> {
 			try {
 				JTable table = rv.getTable();
@@ -100,9 +101,29 @@ public class RegistrarSystemController extends Controller {
 			}
 		});
 		
-		// JTable table = rv.getTable();
-		
-		// table.getSelectionModel().addListSelectionListener(e -> tableActions());
+		// Action listener for Add/Remove modules button
+		rv.getModulesButton().addActionListener(
+			new ActionListener() {
+				public void actionPerformed(ActionEvent e) {					
+					try {
+						JTable table = rv.getTable();
+						selectedStudent = new Student();
+						selectedStudent.setCode((int)studentData[table.getSelectedRow()][0]);
+						selectedStudent.setTitle((String)studentData[table.getSelectedRow()][1]);
+						selectedStudent.setFirstName((String)studentData[table.getSelectedRow()][2]);
+						selectedStudent.setSecondName((String)studentData[table.getSelectedRow()][3]);
+						selectedStudent.setDegree((String)studentData[table.getSelectedRow()][4]);
+						selectedStudent.setEmail((String)studentData[table.getSelectedRow()][5]);
+						selectedStudent.setTutor((String)studentData[table.getSelectedRow()][6]);
+						selectedStudent.setPeriod((Character)studentData[table.getSelectedRow()][7]);
+						selectedStudent.setLevel((int)studentData[table.getSelectedRow()][8]);
+						changeView(Views.REGISTRARMODULES);
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+				}
+			}
+		);
 	}
 	
 	private void deleteStudent() throws Exception {
@@ -147,7 +168,7 @@ public class RegistrarSystemController extends Controller {
 					public void actionPerformed(ActionEvent e) {
 						try {
 							Student student = as.getNewStudent();
-
+	
 							if (student != null && student.isComplete()) {
 								String email = student.getFirstName().substring(0, 1).toLowerCase()+student.getSecondName().toLowerCase();
 								String query = "SELECT * FROM students WHERE email LIKE '"+email+"%'";
@@ -209,11 +230,10 @@ public class RegistrarSystemController extends Controller {
 	}
 	
 	public void initEditStudentView() throws Exception {
-		if (es == null) {
-			es = new EditStudent(rv.getFrame(), selectedStudent);
-		} else {
-			es.setStudent(selectedStudent);
-		}
+		if (es == null)
+			es = new EditStudent(rv.getFrame());
+		
+		es.setStudent(selectedStudent);
 		es.setAvailableDegrees(getAvailableDegrees());
 		es.loadUI();
 		currentView = Views.EDITSTUDENT;
@@ -255,8 +275,8 @@ public class RegistrarSystemController extends Controller {
 										values.add(new String[] {student.getDegree(), "true"});
 										values.add(new String[] {student.getTutor(), "true"});
 										values.add(new String[] {Character.toString(student.getPeriod()), "true"});
-										values.add(new String[] {Integer.toString(student.getLevel()), "false"});
-										values.add(new String[] {Integer.toString(student.getRegNumber()), "false"});
+										values.add(new String[] {Integer.toString(student.getLevel()), "true"});
+										values.add(new String[] {Integer.toString(student.getRegNumber()), "true"});
 										
 										dc.executeQuery(query, values);
 										changeView(Views.REGISTRARVIEW);
@@ -283,6 +303,28 @@ public class RegistrarSystemController extends Controller {
 			);
 	}
 	
+	public void initRegistrarModulesView() throws Exception {
+		if (rm == null)
+			rm = new RegistrarModules(rv.getFrame());
+		
+		rm.setStudent(selectedStudent);
+		rm.setCurrentModules(getEnrolledModules());
+		rm.loadUI();
+		currentView = Views.REGISTRARMODULES;
+		// Action listener for Back button
+		rm.getBackButton().addActionListener(
+			new ActionListener() {
+				public void actionPerformed(ActionEvent e) {					
+					try {
+						changeView(Views.REGISTRARVIEW);
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+				}
+			}
+		);
+	}
+	
 	// Changes to the specified view
 	public void changeView(Views changeTo) throws Exception {
 		if (currentView == Views.REGISTRARVIEW) {
@@ -291,6 +333,8 @@ public class RegistrarSystemController extends Controller {
 			as.removeUI();
 		} else if (currentView == Views.EDITSTUDENT) {
 			es.removeUI();
+		} else if (currentView == Views.REGISTRARMODULES) {
+			rm.removeUI();
 		}
 		
 		if (changeTo == Views.REGISTRARVIEW) {
@@ -299,15 +343,18 @@ public class RegistrarSystemController extends Controller {
 			initAddStudentView();
 		} else if (changeTo == Views.EDITSTUDENT) {
 			initEditStudentView();
+		} else if (changeTo == Views.REGISTRARMODULES) {
+			initRegistrarModulesView();
 		}
 	}
 	
-	// Generates a random reg. number, that is not yet used in the students table of the DB
+	// Generates a random Reg. number, that is not yet used in the students table of the DB
 	public int generateRandomReg() {
 		int minReg = 10000000;
 		int maxReg = 99999999;
-		int regNumber = minReg + new Random().nextInt(maxReg-minReg+1);
-		while(regNumbersInUse.contains(regNumber)) {
+		int regNumber = 0;
+		// Generate a random number between min and max, until a suitable one is generated (number of tries depends on number of rows in the table)
+		while(regNumbersInUse.contains(regNumber) || regNumber < minReg || regNumber > maxReg) {
 			regNumber = minReg + new Random().nextInt(maxReg-minReg+1);
 		}
 		return regNumber;
@@ -363,6 +410,79 @@ public class RegistrarSystemController extends Controller {
 		}
 		
 		return availableDegrees;
+	}
+	
+	public ArrayList<Module> getEnrolledModules() throws Exception {
+		String query = String.format("SELECT module_code, grade1, grade2 FROM enrolled WHERE reg_number = ? ORDER BY module_code");
+		
+		ArrayList<String[]> values = new ArrayList<String[]>();
+		values.add(new String[]{Integer.toString(selectedStudent.getRegNumber()),"false"});		
+		
+		ArrayList<String[]> results = dc.executeQuery(query,values);
+		ArrayList<Module> modules = new ArrayList<Module>();
+		
+		if (results.size() > 0) {
+			
+			int count = 0;
+			for (String[] result : results) {
+				System.out.println("RESULT: "+count);
+				count++;
+				Module newModule = new Module();
+				
+				String code = result[0];
+				newModule.setCode(code);
+				
+				int[] studentResults = new int[2];
+				Grades[] studentGrades = new Grades[2];
+				
+				if (result[1] != null) {
+					studentResults[0] = (int) Float.parseFloat(result[1]);
+					System.out.println("STDUENT RESULT: "+studentResults[0]);
+					
+					if (studentResults[0] >= 40) {
+						studentGrades[0] = Grades.PASS;
+					} else {
+						studentGrades[0] = Grades.FAIL;
+					}
+				} else {
+					studentResults[0] = 0;
+					studentGrades[0] = Grades.UNDEFINED;
+				}
+				
+				if (result[2] != null) {
+					studentResults[1] = (int) Float.parseFloat(result[2]);
+					System.out.println("STDUENT RESULT 2: "+studentResults[1]);
+					
+					if (studentResults[1] >= 40) {
+						studentGrades[1] = Grades.PASS;
+					} else {
+						studentGrades[1] = Grades.FAIL;
+					}
+				} else {
+					studentResults[1] = 0;
+					studentGrades[1] = Grades.UNDEFINED;
+				}
+				
+				newModule.setScores(studentResults);
+				newModule.setGrades(studentGrades);
+				
+				System.out.println("STARTING MOD QUERY...");
+				String modQuery = String.format("SELECT module_name, credits, teaching_period, level, graduation_level FROM modules WHERE module_code = ?");
+				ArrayList<String[]> modValues = new ArrayList<String[]>();
+				modValues.add(new String[]{code,"true"});
+				String[] modResults = dc.executeQuery(modQuery,modValues).get(0);
+				
+				newModule.setName(modResults[0]);
+				newModule.setCredits(Integer.parseInt(modResults[1]));
+				newModule.setTeachingPeriod(modResults[2]);
+				newModule.setLevel(Integer.parseInt(modResults[3]));
+				newModule.setType(GraduateType.valueOf(modResults[4].toUpperCase()));
+				
+				modules.add(newModule);
+			}
+		}
+		
+		return modules;
 	}
 	
 	public int getMax(int[] scores) {

@@ -93,4 +93,16 @@ public class Module {
 	public void setType(GraduateType gradType) {
 		type = gradType;
 	}
+	
+	public String toString() {
+		String result;
+		if (grades[0] != Grades.FAIL && grades[0] != Grades.UNDEFINED) {
+			result = grades[0].toString();
+		} else if (grades[0] == Grades.FAIL) {
+			result = grades[1].toString();
+		} else {
+			result = grades[0].toString();
+		}
+		return code + " - " + name + " (Grade: "+result+ ")";
+	}
 }
