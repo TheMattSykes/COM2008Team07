@@ -169,27 +169,24 @@ public class StudentView extends JPanel {
 		
 		DecimalFormat df = new DecimalFormat("#.00");
 		
-		int lastY = 0;
-		
 		for (int y = 0; y < student.getLevel(); y++) {
 			String formattedAverage = df.format(yearAverages[y]);
 			
 			JLabel yearResultsLabel = new JLabel("Year "+(y+1)+" Average: "+formattedAverage);
 			
-			resConstraints.insets = new Insets(5,5,5,5);
+			resConstraints.insets = new Insets(10,10,10,10);
 			resConstraints.fill = GridBagConstraints.HORIZONTAL;
-			resConstraints.gridx = 0;
-			resConstraints.gridy = y;
+			resConstraints.gridx = y;
+			resConstraints.gridy = 0;
 			
 			studentResults.add(yearResultsLabel, resConstraints);
-			lastY++;
 		}
 		
 		JLabel resultLabel = new JLabel("Overall Result: "+classi);
-		resConstraints.insets = new Insets(5,5,5,5);
+		resConstraints.insets = new Insets(10,10,10,10);
 		resConstraints.fill = GridBagConstraints.HORIZONTAL;
 		resConstraints.gridx = 0;
-		resConstraints.gridy = lastY;
+		resConstraints.gridy = 1;
 		studentResults.add(resultLabel, resConstraints);
 		
 		stuConstraints.insets = new Insets(5,15,5,15);

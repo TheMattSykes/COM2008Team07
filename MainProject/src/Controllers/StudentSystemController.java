@@ -55,19 +55,16 @@ public class StudentSystemController extends Controller {
 		
 		ArrayList<String[]> values = new ArrayList<String[]>();
 		
-		System.out.println("Setting up query...");
 		values.add(new String[]{Integer.toString(user.getUserID()),"false"});
 		
 		Boolean exists = false;
 		
 		String[] queries = {query};
 		
-		System.out.println("Executing query...");
 		ArrayList<String[]> allResults = dc.executeQuery(query,values);
 		String[] results = null;
 		
 		if(allResults.size() > 0) {
-			System.out.println("Getting results...");
 			results = allResults.get(0);
 		}
 		
@@ -142,7 +139,6 @@ public class StudentSystemController extends Controller {
 				
 				if (result[1] != null) {
 					studentResults[0] = (int) Float.parseFloat(result[1]);
-					System.out.println("STDUENT RESULT: "+studentResults[0]);
 					
 					if (studentResults[0] >= 40) {
 						studentGrades[0] = Grades.PASS;
@@ -156,7 +152,6 @@ public class StudentSystemController extends Controller {
 				
 				if (result[2] != null) {
 					studentResults[1] = (int) Float.parseFloat(result[2]);
-					System.out.println("STDUENT RESULT 2: "+studentResults[1]);
 					
 					if (studentResults[1] >= 40) {
 						studentGrades[1] = Grades.PASS;
@@ -172,7 +167,7 @@ public class StudentSystemController extends Controller {
 				newModule.setGrades(studentGrades);
 				
 				System.out.println("STARTING MOD QUERY...");
-				String modQuery = String.format("SELECT module_name, credits, teaching_period, level, graduation_level FROM modules WHERE module_code = ?");
+				String modQuery = String.format("SELECT module_name, credits, teaching_period, graduation_level FROM modules WHERE module_code = ?");
 				ArrayList<String[]> modValues = new ArrayList<String[]>();
 				modValues.add(new String[]{code,"true"});
 				String[] modResults = dc.executeQuery(modQuery,modValues).get(0);
@@ -180,8 +175,13 @@ public class StudentSystemController extends Controller {
 				newModule.setName(modResults[0]);
 				newModule.setCredits(Integer.parseInt(modResults[1]));
 				newModule.setTeachingPeriod(modResults[2]);
-				newModule.setLevel(Integer.parseInt(modResults[3]));
-				newModule.setType(GraduateType.valueOf(modResults[4].toUpperCase()));
+				newModule.setType(GraduateType.valueOf(modResults[3].toUpperCase()));
+				
+				String lvQuery = String.format("SELECT level FROM approval WHERE module_code = ?");
+				ArrayList<String[]> lvValues = new ArrayList<String[]>();
+				String[] lvResults = dc.executeQuery(lvQuery,modValues).get(0);
+				
+				newModule.setLevel(Integer.parseInt(lvResults[0]));
 				
 				modules.add(newModule);
 			}
@@ -264,19 +264,15 @@ public class StudentSystemController extends Controller {
 			
 			float weightedScore = (((float)credits / (float)yearCredits) * (float)score);
 			
-			System.out.println("Credits: "+(float)credits+" Year Credits: "+(float)yearCredits+" Credits Divided: "+
-					((float)credits / (float)yearCredits)+" Weighted Score: "+weightedScore);
 			
 			if (type == GraduateType.UNDERGRADUATE) {
 				levelTotals[level-1] += weightedScore;
 				
 				if (score < 40 && level != 4) {
-					System.out.println("DEGREE FAILED");
 					degreeFailed = true;
 				} 
 				
 				if (score < 50 && level == 4) {
-					System.out.println("DEGREE FAILED 2");
 					degreeFailed = true;
 				}
 			} else {
@@ -290,7 +286,6 @@ public class StudentSystemController extends Controller {
 		
 		float finalValue = 0;
 		
-		System.out.println("STUDENT LEVEL: " + studentUser.getLevel());
 		if (studentUser.getLevel() >= 3) {
 			if (type == GraduateType.UNDERGRADUATE) {
 				

@@ -204,7 +204,7 @@ public class RegistrarSystemController extends Controller {
 							if (applyOption == 0) {
 								student.setCode(generateRandomReg());
 								try {
-									query = "INSERT INTO students VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, NULL)";
+									query = "INSERT INTO students VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, 'Not Registered')";
 									values = new ArrayList<String[]>();
 									
 									// Each value String[] has (1) the data, (2) boolean, which denotes whether it is a string
