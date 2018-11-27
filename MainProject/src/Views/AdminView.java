@@ -1,6 +1,7 @@
 package Views;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -12,6 +13,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+
+import Controllers.TableColumnAdjuster;
 
 public class AdminView extends JPanel {
 	PrimaryFrame frame;
@@ -32,27 +35,31 @@ public class AdminView extends JPanel {
 	JPanel accountButtons;
 	JButton accountAdd;
 	JButton accountDelete;
+	JTable accountTable;
 	
 	JPanel departmentPanel;
 	JPanel departmentButtons;
 	JButton departmentAdd;
 	JButton departmentDelete;
+	JTable departmentTable;
 	
 	JPanel degreePanel;
 	JPanel degreeButtons;
 	JButton degreeAdd;
 	JButton degreeDelete;
+	JTable degreeTable;
 	
 	JPanel modulePanel;
 	JPanel moduleButtons;
 	JButton moduleAdd;
 	JButton moduleDelete;
+	JTable moduleTable;
 	
 	public AdminView(PrimaryFrame pf) {
 		frame = pf;
 	}
 	
-	public PrimaryFrame getFrame() {
+	public PrimaryFrame getFrame() { 
 		return frame;
 	}
 	
@@ -92,6 +99,38 @@ public class AdminView extends JPanel {
 		return back;
 	}
 	
+	public JButton getAccountAdd() {
+		return accountAdd;
+	}
+	
+	public JButton getAccountDelete() {
+		return accountDelete;
+	}
+	
+	public JButton getDepartmentAdd() {
+		return departmentAdd;
+	}
+	
+	public JButton getDepartmentDelete() {
+		return departmentDelete;
+	}
+	
+	public JButton getDegreeAdd() {
+		return degreeAdd;
+	}
+	
+	public JButton getDegreeDelete() {
+		return degreeDelete;
+	}
+	
+	public JButton getModuleAdd() {
+		return moduleAdd;
+	}
+	
+	public JButton getModuleDelete() {
+		return moduleDelete;
+	}
+	
 	public void viewChange() {
 		frame.getContentPane().removeAll();
 	}
@@ -127,14 +166,17 @@ public class AdminView extends JPanel {
 	}
 	
 	public void loadMenuUI() {
+		// Clear the existing UI
+		removeUI();
+		// Setting up buttons and panel
 		menuAccount = new JButton("Manage Accounts");
 		menuDepartment = new JButton("Manage Departments");
-		menuDegree = new JButton("Manage Departments");
+		menuDegree = new JButton("Manage Degrees");
 		menuModule = new JButton("Manage Modules");
-		
 		adminMenu = new JPanel();
 		adminMenu.setLayout(new GridLayout(5,3));
 		adminMenu.setBorder(BorderFactory.createEmptyBorder(50,200,50,200));
+		// Adding the buttons to the panel
 		GridBagConstraints menuConstraints = new GridBagConstraints();
 		menuConstraints.insets = new Insets(100,500,100,500);
 		menuConstraints.fill = GridBagConstraints.VERTICAL;
@@ -146,7 +188,7 @@ public class AdminView extends JPanel {
 		adminMenu.add(menuDegree, menuConstraints);
 		menuConstraints.gridy = 3;
 		adminMenu.add(menuModule, menuConstraints);
-		
+		// Adding panel to the frame
 		frame.add(adminMenu, BorderLayout.CENTER);
 		frame.showMenuBar();
 		frame.revalidate();
@@ -154,37 +196,73 @@ public class AdminView extends JPanel {
 	}
 	
 	public void loadAccountUI() {
+		// Clear the existing UI
+		removeUI();
 		//Table
+		// Setting up buttons and the panel to hold them
 		accountButtons = new JPanel();
 		accountButtons.setLayout(new GridBagLayout());
-		
 		accountAdd = new JButton("Add");
 		accountDelete = new JButton("Delete");
 		accountDelete.setEnabled(false);
 		back = new JButton("Back");
-		
+		// Adding the buttons to the panel
 		GridBagConstraints buttonConstraints = new GridBagConstraints();
 		buttonConstraints.fill = GridBagConstraints.HORIZONTAL;
 		buttonConstraints.insets = new Insets(0,5,0,5);
 		buttonConstraints.gridy = 0;
-		
 		buttonConstraints.gridx = 0;
 		accountButtons.add(accountAdd, buttonConstraints);
 		buttonConstraints.gridx = 1;
 		accountButtons.add(accountDelete, buttonConstraints);
 		buttonConstraints.gridx = 2;
 		accountButtons.add(back, buttonConstraints);
+		// Adding the buttons to the menu bar
 		buttonConstraints.gridx = 0;
 		frame.menuBar.add(accountButtons, buttonConstraints);
+		
+
+		String[] columnNames = {
+				"User ID",
+				"Username",
+				"User Type"
+		};
 		
 		accountPanel = new JPanel();
 		accountPanel.setLayout(new GridBagLayout());
 		GridBagConstraints accountConstraints = new GridBagConstraints();
-		accountConstraints.gridy = 0;
-		accountConstraints.gridx = 1;
-		JLabel title = new JLabel("Account UI");
-		accountPanel.add(title, accountConstraints);
+		accountConstraints.weightx = 1.0;
+		accountConstraints.insets = new Insets(5,5,5,5);
+		accountPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 20, 10));
 		
+		accountTable = new JTable(accountsData, columnNames) {
+	        private static final long serialVersionUID = 1L;
+
+	        public boolean isCellEditable(int row, int column) {                
+	        	return false;               
+	        }
+	        
+	        @Override
+	        public Dimension getPreferredScrollableViewportSize() {
+	            Dimension dim = new Dimension(
+	            	// Width will get changed later anyway
+	                this.getColumnCount() * 100,
+	                // Set height of table, so it fits on the page
+	                this.getRowHeight() * 20);
+	            return dim;
+	        }
+		};
+		
+		TableColumnAdjuster tca = new TableColumnAdjuster(accountTable);
+		tca.adjustColumns();
+		
+		JScrollPane scrollPane = new JScrollPane(accountTable);
+		accountTable.setFillsViewportHeight(true);
+		accountConstraints.fill = GridBagConstraints.HORIZONTAL;
+		accountConstraints.gridx = 0;
+		accountConstraints.gridy = 1;
+		accountPanel.add(scrollPane, accountConstraints);
+		// Adding the panel to the frame
 		frame.add(accountPanel, BorderLayout.CENTER);
 		frame.showMenuBar();
 		frame.revalidate();
@@ -192,29 +270,32 @@ public class AdminView extends JPanel {
 	}
 	
 	public void loadDepartmentUI() {
+		// Clear the existing UI
+		removeUI();
 		//Table
+		// Setting up buttons and the panel to hold them
 		departmentButtons = new JPanel();
 		departmentButtons.setLayout(new GridBagLayout());
-		
 		departmentAdd = new JButton("Add");
 		departmentDelete = new JButton("Delete");
 		departmentDelete.setEnabled(false);
 		back = new JButton("Back");
-		
+		// Adding buttons to the panel
 		GridBagConstraints buttonConstraints = new GridBagConstraints();
 		buttonConstraints.fill = GridBagConstraints.HORIZONTAL;
 		buttonConstraints.insets = new Insets(0,5,0,5);
 		buttonConstraints.gridy = 0;
-		
 		buttonConstraints.gridx = 0;
 		departmentButtons.add(departmentAdd, buttonConstraints);
 		buttonConstraints.gridx = 1;
 		departmentButtons.add(departmentDelete, buttonConstraints);
 		buttonConstraints.gridx = 2;
 		departmentButtons.add(back, buttonConstraints);
+		// Adding the buttons to the menu bar
 		buttonConstraints.gridx = 0;
 		frame.menuBar.add(departmentButtons, buttonConstraints);
 
+		// Setting up the main panel (currently placeholder)
 		departmentPanel = new JPanel();
 		departmentPanel.setLayout(new GridBagLayout());
 		GridBagConstraints departmentConstraints = new GridBagConstraints();
@@ -223,6 +304,7 @@ public class AdminView extends JPanel {
 		JLabel title = new JLabel("Department UI");
 		departmentPanel.add(title, departmentConstraints);
 		
+		// Adding the panel to the frame
 		frame.add(departmentPanel, BorderLayout.CENTER);
 		frame.showMenuBar();
 		frame.revalidate();
@@ -230,6 +312,8 @@ public class AdminView extends JPanel {
 	}
 	
 	public void loadDegreeUI() {
+		// Clear the existing UI
+		removeUI();
 		//Table
 		//Add/Delete/Back buttons
 		degreeButtons = new JPanel();
@@ -269,6 +353,8 @@ public class AdminView extends JPanel {
 	}
 	
 	public void loadModuleUI() {
+		// Clear the existing UI
+		removeUI();
 		//Table
 		//Add/Delete/Back buttons
 		moduleButtons = new JPanel();
