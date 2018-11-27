@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 
 import Models.Classification;
 import Models.Department;
@@ -84,12 +86,12 @@ public class AdminSystemController extends Controller{
 		av.setDataDepartments(getDepartmentData());
 		av.loadDepartmentUI();
 		av.getBackButton().addActionListener(e -> initMenuView());
+		av.getDepartmentAdd().addActionListener(e -> initAddDepartmentView());
 	}
 	
 	public void initDegreeView() throws Exception {
 		av.loadDegreeUI();
 		av.getBackButton().addActionListener(e -> initMenuView());
-		av.getDepartmentAdd().addActionListener(e -> initAddDepartmentView());
 	}
 	
 	public void initModuleView() throws Exception {
@@ -103,7 +105,60 @@ public class AdminSystemController extends Controller{
 	}
 	
 	public void initAddDepartmentView() {
-		System.out.println("Change to the Dept. add view - WIP");
+		if (ad == null) {
+			ad = new AddDepartment(av.getFrame());
+		}
+		
+		av.removeUI();
+		try {
+			ad.loadUI();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		
+		ad.getBackButton().addActionListener(e -> {
+			ad.removeUI();
+			try {
+				initDepartmentView();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		});
+		
+		ad.getApplyButton().addActionListener(e -> {
+			Department newDepartment = ad.getNewDepartment();
+			if ( newDepartment.getCode() != null && newDepartment.getName() != null ) {
+				//String query = "SELECT * FROM department";
+				//ArrayList<String[]> values = new ArrayList<String[]>();
+				//ArrayList<String[]> results = dc.executeQuery(query, values);
+					Object[] options = {"Yes", "No"};
+					int applyOption = JOptionPane.showOptionDialog(ad.getFrame(), "Confirm adding the department "+newDepartment.getName()+
+							" with code "+newDepartment.getCode(), "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, 
+							null, options, options[0]);
+					if (applyOption == 0) {
+						try {
+							String query = "INSERT INTO department VALUES(?,?)";
+							ArrayList<String[]> values = new ArrayList<String[]>();
+							values.add(new String[] {newDepartment.getName(), "true"});
+							values.add(new String[] {newDepartment.getCode(), "true"});
+							dc.executeQuery(query, values);
+						} catch (Exception ex) {
+							ex.printStackTrace();
+						}
+					}
+					ad.removeUI();
+					try {
+						initDepartmentView();
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+			} else {
+				JOptionPane inputError = new JOptionPane("Please make sure both values have been entered");
+				JDialog dialog = inputError.createDialog("Failure");
+				dialog.setAlwaysOnTop(true);
+				dialog.setVisible(true);
+			}
+		});
 	}
 	
 	public void initAddDegreeView() {
@@ -142,7 +197,7 @@ public class AdminSystemController extends Controller{
 	
 	public Object[][] getDepartmentData() throws Exception {
 		
-		String query = "SELECT * FROM departments LIMIT ?";
+		String query = "SELECT code, name FROM departments LIMIT ?";
 		ArrayList<String[]> values = new ArrayList<String[]>();
 		values.add(new String[] {"100",""});
 		ArrayList<String[]> results = dc.executeQuery(query, values);
