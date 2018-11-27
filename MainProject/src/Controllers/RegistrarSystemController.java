@@ -508,16 +508,22 @@ public class RegistrarSystemController extends Controller {
 				newModule.setGrades(studentGrades);
 				
 				System.out.println("STARTING MOD QUERY...");
-				String modQuery = String.format("SELECT module_name, credits, teaching_period, level, graduation_level FROM modules WHERE module_code = ?");
+				String modQuery = String.format("SELECT module_name, credits, teaching_period, graduation_level FROM modules WHERE module_code = ? ORDER BY module_code");
 				ArrayList<String[]> modValues = new ArrayList<String[]>();
 				modValues.add(new String[]{code,"true"});
 				String[] modResults = dc.executeQuery(modQuery,modValues).get(0);
+				modQuery = String.format("SELECT level FROM approval WHERE degree_code = ? AND module_code = ? ORDER BY module_code");
+				modValues = new ArrayList<String[]>();
+				modValues.add(new String[] {selectedStudent.getDegree(),"true"});
+				modValues.add(new String[] {code,"true"});
+				String[] modLevels = dc.executeQuery(modQuery,modValues).get(0);
+				
 				
 				newModule.setName(modResults[0]);
 				newModule.setCredits(Integer.parseInt(modResults[1]));
 				newModule.setTeachingPeriod(modResults[2]);
-				newModule.setLevel(Integer.parseInt(modResults[3]));
-				newModule.setType(GraduateType.valueOf(modResults[4].toUpperCase()));
+				newModule.setLevel(Integer.parseInt(modLevels[0]));
+				newModule.setType(GraduateType.valueOf(modResults[3].toUpperCase()));
 				
 				modules.add(newModule);
 			}

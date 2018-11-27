@@ -135,7 +135,7 @@ public class RegistrarModules extends JPanel {
 		JLabel addModuleLabel = new JLabel("Pick module to add: ");
 		JComboBox<Module> addModuleDropdown = new JComboBox<Module>();
 		addModuleDropdown.setModel(new DefaultComboBoxModel(availableModules.toArray()));
-		JButton addModuleButton = new JButton("Remove module");
+		JButton addModuleButton = new JButton("Add module");
 		formConstraints.gridx = 0;
 		addModulePanel.add(addModuleLabel, formConstraints);
 		formConstraints.gridx = 1;
