@@ -26,6 +26,14 @@ public class Module {
 		department = d;
 	}
 	
+	public Module(String c, String n, int cred, String tp, GraduateType ty) {
+		code = c;
+		name = n;
+		credits = cred;
+		teachingPeriod = tp;
+		type = ty;
+	}
+	
 	public String getCode() {
 		return code;
 	}
