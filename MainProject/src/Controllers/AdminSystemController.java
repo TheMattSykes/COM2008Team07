@@ -93,24 +93,25 @@ public class AdminSystemController extends Controller{
 	}
 	
 	public void initModuleView() throws Exception {
+		av.setDataModules(getModuleData());
 		av.loadModuleUI();
 		av.getBackButton().addActionListener(e -> initMenuView());
 	}
 	
 	public void initAddAccountView() {
-		
+		System.out.println("Change to the Account add view - WIP");
 	}
 	
 	public void initAddDepartmentView() {
-		
+		System.out.println("Change to the Dept. add view - WIP");
 	}
 	
 	public void initAddDegreeView() {
-		
+		System.out.println("Change to the Degree add view - WIP");
 	}
 	
 	public void initAddModuleView() {
-		
+		System.out.println("Change to the Module add view - WIP");
 	}
 	
 	public Object[][] getAccountData() throws Exception {
@@ -162,6 +163,34 @@ public class AdminSystemController extends Controller{
 		
 		return data;
 	}
-	// get degree data
-	// get module data
+	
+	public Object[][] getModuleData() throws Exception {
+		
+		String query = new String("SELECT * FROM modules LIMIT ?");
+		ArrayList<String[]> values = new ArrayList<String[]>();
+		values.add(new String[] {"1000", ""});
+		ArrayList<String[]> results = dc.executeQuery(query, values);
+		
+		ArrayList<Module> modules = new ArrayList<Module>();
+		
+		for (int i=0; i < results.size(); i++) {
+			modules.add(new Module(results.get(i)[0],results.get(i)[1],Integer.parseInt(results.get(i)[2]),results.get(i)[3],GraduateType.valueOf(results.get(i)[4].toUpperCase())));
+		}
+		
+		Object[][] data = new Object[results.size()][5];
+		
+		int row = 0;
+		for (Module module : modules) {
+			data[row][0] = module.getCode();
+			data[row][1] = module.getName();
+			data[row][2] = module.getCredits();
+			data[row][3] = module.getTeachingPeriod();
+			data[row][4] = module.getType();
+			row++;		
+		}
+		
+		return data;
+	}
+	
+	// get degree data WIP
 }

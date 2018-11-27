@@ -299,11 +299,40 @@ public class AdminView extends JPanel {
 		departmentPanel = new JPanel();
 		departmentPanel.setLayout(new GridBagLayout());
 		GridBagConstraints departmentConstraints = new GridBagConstraints();
-		departmentConstraints.gridy = 0;
-		departmentConstraints.gridx = 1;
-		JLabel title = new JLabel("Department UI");
-		departmentPanel.add(title, departmentConstraints);
+		departmentConstraints.weightx = 1.0;
+		departmentConstraints.insets = new Insets(5,5,5,5);
 		
+		String[] columnNames = {"Department Code", "Department Name"};
+		
+		departmentTable = new JTable(departmentsData, columnNames) {
+	        private static final long serialVersionUID = 1L;
+
+	        public boolean isCellEditable(int row, int column) {                
+	        	return false;               
+	        }
+	        
+	        @Override
+	        public Dimension getPreferredScrollableViewportSize() {
+	            Dimension dim = new Dimension(
+	            		// Width will get changed later anyway
+	                this.getColumnCount() * 100,
+	                // Set height of table, so it fits on the page
+	                this.getRowHeight() * 20);
+	            return dim;
+	        }
+		};
+		
+		TableColumnAdjuster tca = new TableColumnAdjuster(departmentTable);
+		tca.adjustColumns();
+		
+		JScrollPane scrollPane = new JScrollPane(departmentTable);
+		departmentTable.setFillsViewportHeight(true);
+		scrollPane.setPreferredSize(new Dimension(getWidth(),350));
+		
+		departmentConstraints.fill = GridBagConstraints.HORIZONTAL;
+		departmentConstraints.gridx = 0;
+		departmentConstraints.gridy = 1;
+		departmentPanel.add(scrollPane, departmentConstraints);
 		// Adding the panel to the frame
 		frame.add(departmentPanel, BorderLayout.CENTER);
 		frame.showMenuBar();
@@ -382,10 +411,47 @@ public class AdminView extends JPanel {
 		modulePanel = new JPanel();
 		modulePanel.setLayout(new GridBagLayout());
 		GridBagConstraints moduleConstraints = new GridBagConstraints();
-		moduleConstraints.gridy = 0;
-		moduleConstraints.gridx = 1;
-		JLabel title = new JLabel("Module UI");
-		modulePanel.add(title,moduleConstraints);
+		moduleConstraints.weightx = 1.0;
+		
+		String[] columnNames = {
+				"Module Code",
+				"Module Name",
+				"Credits",
+				"Teaching Period",
+				"Module Type"
+		};
+		
+		moduleTable = new JTable(modulesData, columnNames) {
+	        private static final long serialVersionUID = 1L;
+
+	        public boolean isCellEditable(int row, int column) {                
+	        	return false;               
+	        }
+	        
+	        @Override
+	        public Dimension getPreferredScrollableViewportSize() {
+	            Dimension dim = new Dimension(
+	            		// Width will get changed later anyway
+	                this.getColumnCount() * 100,
+	                // Set height of table, so it fits on the page
+	                this.getRowHeight() * 20);
+	            return dim;
+	        }
+		};
+		
+	    TableColumnAdjuster tca = new TableColumnAdjuster(moduleTable);
+	    tca.adjustColumns();
+		
+		JScrollPane scrollPane = new JScrollPane(moduleTable);
+		moduleTable.setFillsViewportHeight(true);
+		
+		scrollPane.setPreferredSize(new Dimension(getWidth(),350));
+		
+		moduleConstraints.insets = new Insets(5,5,5,5);
+		moduleConstraints.fill = GridBagConstraints.HORIZONTAL;
+		moduleConstraints.gridx = 0;
+		moduleConstraints.gridy = 1;
+		modulePanel.add(scrollPane, moduleConstraints);
 		
 		frame.add(modulePanel, BorderLayout.CENTER);
 		frame.showMenuBar();
