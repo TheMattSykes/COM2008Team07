@@ -7,6 +7,7 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Window;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -110,7 +111,7 @@ public class StudentView extends JPanel {
 		GridBagConstraints stuConstraints = new GridBagConstraints();
 		stuConstraints.weightx = 1.0;
 
-		studentInfo.setBorder(BorderFactory.createEmptyBorder(10, 10, 20, 10));
+		// studentInfo.setBorder(BorderFactory.createEmptyBorder(10, 10, 20, 10));
 		
 		
 		
@@ -160,17 +161,38 @@ public class StudentView extends JPanel {
 		
 		
 		JPanel studentResults = new JPanel();
-		studentDetails.setLayout(new GridLayout((1+(yearAverages.length)),1));
+		// studentDetails.setLayout(new GridLayout((1+(yearAverages.length)),1));
+		
+		studentResults.setLayout(new GridBagLayout());
+		
+		GridBagConstraints resConstraints = new GridBagConstraints();
+		
+		DecimalFormat df = new DecimalFormat("#.00");
+		
+		int lastY = 0;
 		
 		for (int y = 0; y < student.getLevel(); y++) {
-			JLabel yearResultsLabel = new JLabel("Year "+(y+1)+" Result: "+yearAverages[y]);
-			studentResults.add(yearResultsLabel);
+			String formattedAverage = df.format(yearAverages[y]);
+			
+			JLabel yearResultsLabel = new JLabel("Year "+(y+1)+" Average: "+formattedAverage);
+			
+			resConstraints.insets = new Insets(5,5,5,5);
+			resConstraints.fill = GridBagConstraints.HORIZONTAL;
+			resConstraints.gridx = 0;
+			resConstraints.gridy = y;
+			
+			studentResults.add(yearResultsLabel, resConstraints);
+			lastY++;
 		}
 		
 		JLabel resultLabel = new JLabel("Overall Result: "+classi);
-		studentResults.add(resultLabel);
+		resConstraints.insets = new Insets(5,5,5,5);
+		resConstraints.fill = GridBagConstraints.HORIZONTAL;
+		resConstraints.gridx = 0;
+		resConstraints.gridy = lastY;
+		studentResults.add(resultLabel, resConstraints);
 		
-		stuConstraints.insets = new Insets(5,5,5,5);
+		stuConstraints.insets = new Insets(5,15,5,15);
 		stuConstraints.fill = GridBagConstraints.HORIZONTAL;
 		stuConstraints.gridx = 0;
 		stuConstraints.gridy = 2;

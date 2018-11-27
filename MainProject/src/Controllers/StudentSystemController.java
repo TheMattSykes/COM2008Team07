@@ -240,6 +240,8 @@ public class StudentSystemController extends Controller {
 		
 		Boolean fourYearCourse = false;
 		
+		Boolean degreeFailed = false;
+		
 		int yearCredits = 0;
 		
 		// Determine how many credits are in a year for graduate type
@@ -267,6 +269,16 @@ public class StudentSystemController extends Controller {
 			
 			if (type == GraduateType.UNDERGRADUATE) {
 				levelTotals[level-1] += weightedScore;
+				
+				if (score < 40 && level != 4) {
+					System.out.println("DEGREE FAILED");
+					degreeFailed = true;
+				} 
+				
+				if (score < 50 && level == 4) {
+					System.out.println("DEGREE FAILED 2");
+					degreeFailed = true;
+				}
 			} else {
 				postGradTotal += weightedScore;
 			}
@@ -295,7 +307,7 @@ public class StudentSystemController extends Controller {
 					finalValue = ( ((1/5)*levelTotals[1]) + ((2/5)*levelTotals[2]) + ((2/5)*levelTotals[3]) );
 				}
 				
-				if (finalValue < 39.5) {
+				if (finalValue < 39.5 || degreeFailed) {
 					return Classification.FAIL;
 				} else if (finalValue >= 39.5 && finalValue < 44.5) {
 					return Classification.PASS;
