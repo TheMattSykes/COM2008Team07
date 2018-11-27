@@ -29,9 +29,9 @@ public class RegistrarView extends JPanel {
 	private JButton addStudent;
 	private JButton editStudent;
 	private JButton deleteStudent;
-	private JTable table;
-
 	private JButton modulesButton;
+	private JButton logoutButton;
+	private JTable table;
 	
 	public RegistrarView(PrimaryFrame pf) {
 		frame = pf;
@@ -75,6 +75,10 @@ public class RegistrarView extends JPanel {
 
 	public JButton getModulesButton() {
 		return modulesButton;
+	}
+	
+	public JButton getLogoutButton() {
+		return logoutButton;
 	}
 	
 	public void loadUI() throws Exception {
@@ -172,15 +176,7 @@ public class RegistrarView extends JPanel {
 		menuConstraints.gridx = 3;
 		registrarButtons.add(modulesButton, menuConstraints);
 		
-		// Remove UI, when logout is pressed
-		JButton logout = (JButton) frame.menuBar.getComponent(0);
-		logout.addActionListener(
-				new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						removeUI();
-					}
-				}
-		);
+		logoutButton = (JButton) frame.menuBar.getComponent(0);
 		
 		menuConstraints.gridx = 0;
 		frame.menuBar.add(registrarButtons, menuConstraints);
