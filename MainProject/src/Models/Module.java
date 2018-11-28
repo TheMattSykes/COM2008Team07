@@ -70,6 +70,15 @@ public class Module {
 		grades = gradesVals;
 	}
 	
+	public Grades getMaxGrade() {
+		Grades maxGrade;
+		if (grades[0] == Grades.DISTINCTION || grades[0] == Grades.PASS || grades[0] == Grades.UNDEFINED) {
+			maxGrade = grades[0];
+		} else {
+			maxGrade = grades[1];
+		}
+		return maxGrade;
+	}
 	
 	public String getTeachingPeriod() {
 		return teachingPeriod;
@@ -98,15 +107,8 @@ public class Module {
 	}
 	
 	public String toString() {
-		String result;
-		if (grades[0] != Grades.FAIL && grades[0] != Grades.UNDEFINED) {
-			result = grades[0].toString();
-		} else if (grades[0] == Grades.FAIL) {
-			result = grades[1].toString();
-		} else {
-			result = grades[0].toString();
-		}
-		return code + " - " + name + " (Grade: "+result+ ")";
+		//return code + " - " + name + " (Grade: "+getMaxGrade()+ ")";
+		return code;
 	}
 	
 	public String getDepartment() {

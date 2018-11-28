@@ -5,8 +5,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Random;
 import javax.swing.JTable;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
@@ -48,35 +47,27 @@ public class RegistrarSystemController extends Controller {
 		return user;
 	}
 	
-	public static void main(String[] args) {
-		// Main stuff
-	}
-	
-	
-	public void initController() {		
-		
-	}
-	
 	public void initDefaultView() throws Exception {
 		rv.setStudentsData(getStudentsData());
 		rv.loadUI();
 		currentView = Views.REGISTRARVIEW;
-		
-		JButton editStudent = rv.getEditButton();
-		JButton deleteStudent = rv.getDeleteButton();
+
+		JButton addButton = rv.getAddButton();
+		JButton editButton = rv.getEditButton();
+		JButton deleteButton = rv.getDeleteButton();
 		JButton modulesButton = rv.getModulesButton();
 		// Row selection listener
 		rv.getTable().getSelectionModel().addListSelectionListener(e -> {
-        	if (!editStudent.isEnabled())
-        		editStudent.setEnabled(true);
-        	if (!deleteStudent.isEnabled())
-        		deleteStudent.setEnabled(true);
+        	if (!editButton.isEnabled())
+        		editButton.setEnabled(true);
+        	if (!deleteButton.isEnabled())
+        		deleteButton.setEnabled(true);
         	if (!modulesButton.isEnabled())
         		modulesButton.setEnabled(true);
 		});
 		
 		// Action listener for Add Student button
-		rv.getAddButton().addActionListener(e -> {				
+		addButton.addActionListener(e -> {				
 			try {
 				changeView(Views.ADDSTUDENT);
 			} catch (Exception ex) {
@@ -84,18 +75,8 @@ public class RegistrarSystemController extends Controller {
 			}
 		});
 		
-		// Action listener for Delete Student button
-		rv.getDeleteButton().addActionListener(e -> {
-			try {
-				deleteStudent();
-				changeView(Views.REGISTRARVIEW);
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-		});
-		
 		// Action listener for Edit Student Button
-		rv.getEditButton().addActionListener(e -> {
+		editButton.addActionListener(e -> {
 			try {
 				JTable table = rv.getTable();
 				selectedStudent = new Student();
@@ -116,8 +97,18 @@ public class RegistrarSystemController extends Controller {
 			}
 		});
 		
+		// Action listener for Delete Student button
+		deleteButton.addActionListener(e -> {
+			try {
+				deleteStudent();
+				changeView(Views.REGISTRARVIEW);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		});
+		
 		// Action listener for Add/Remove modules button
-		rv.getModulesButton().addActionListener(e -> {				
+		modulesButton.addActionListener(e -> {				
 			try {
 				JTable table = rv.getTable();
 				selectedStudent = new Student();
@@ -245,8 +236,7 @@ public class RegistrarSystemController extends Controller {
 		});
 		
 		// Action listener for Logout Button
-		logoutButton = as.getLogoutButton();
-		logoutButton.addActionListener(e -> {
+		as.getLogoutButton().addActionListener(e -> {
 			as.removeUI();
 		});
 	}
@@ -318,8 +308,7 @@ public class RegistrarSystemController extends Controller {
 		});
 		
 		// Action listener for Logout Button
-		logoutButton = es.getLogoutButton();
-		logoutButton.addActionListener(e -> {
+		es.getLogoutButton().addActionListener(e -> {
 			es.removeUI();
 		});
 	}
@@ -329,10 +318,47 @@ public class RegistrarSystemController extends Controller {
 			rm = new RegistrarModules(rv.getFrame());
 		
 		rm.setStudent(selectedStudent);
-		rm.setCurrentModules(getEnrolledModules());
-		rm.setAvailableModules(getAvailableModules());
+		ArrayList<Module> enrolledModules = getEnrolledModules();
+		rm.setCurrentModules(enrolledModules);
+		ArrayList<Module> availableModules = getAvailableModules();
+		rm.setAvailableModules(availableModules);
 		rm.loadUI();
 		currentView = Views.REGISTRARMODULES;
+		
+		JButton removeButton = rm.getRemoveModuleButton();
+		JTable currentModulesTable = rm.getCurrentModulesTable();
+		// Row selection listener for currentModulesTable
+		currentModulesTable.getSelectionModel().addListSelectionListener(e -> {
+			// A module has to be incomplete and optional, for it to be removed
+        	if (!enrolledModules.get(currentModulesTable.getSelectedRow()).isCore() &&
+        		enrolledModules.get(currentModulesTable.getSelectedRow()).getMaxGrade() == Grades.UNDEFINED)
+        		removeButton.setEnabled(true);
+        	else
+        		removeButton.setEnabled(false);
+		});
+		
+		DefaultTableModel currentModulesTableModel = rm.getCurrentModulesTableModel();
+		DefaultTableModel availableModulesTableModel = rm.getAvailableModulesTableModel();
+		
+		// Action listener for remove module button
+		removeButton.addActionListener(e -> {
+			availableModulesTableModel.addRow(new Object[] {enrolledModules.get(currentModulesTable.getSelectedRow())});
+			currentModulesTableModel.removeRow(currentModulesTable.getSelectedRow());
+		});
+		
+		JButton addButton = rm.getAddModuleButton();
+		JTable availableModulesTable = rm.getAvailableModulesTable();
+		// Row selection listener for availableModulesTable
+		availableModulesTable.getSelectionModel().addListSelectionListener(e -> {
+        	if (!addButton.isEnabled())
+        		addButton.setEnabled(true);
+		});
+		
+		// Action listener for add module button
+		addButton.addActionListener(e -> {
+			currentModulesTableModel.addRow(new Object[] {enrolledModules.get(currentModulesTable.getSelectedRow())});
+			availableModulesTableModel.removeRow(availableModulesTable.getSelectedRow());
+		});
 		
 		// Action listener for Back button
 		rm.getBackButton().addActionListener(e -> {				
@@ -344,8 +370,7 @@ public class RegistrarSystemController extends Controller {
 		});
 		
 		// Action listener for Logout Button
-		logoutButton = rm.getLogoutButton();
-		logoutButton.addActionListener(e -> {
+		rm.getLogoutButton().addActionListener(e -> {
 			rm.removeUI();
 		});
 	}
@@ -516,7 +541,7 @@ public class RegistrarSystemController extends Controller {
 		String query = String.format("SELECT module_code, level FROM approval WHERE degree_code = ? AND core = b'0' AND level = ? ORDER BY module_code");
 		
 		ArrayList<String[]> values = new ArrayList<String[]>();
-		values.add(new String[]{Integer.toString(selectedStudent.getRegNumber()),"false"});
+		values.add(new String[]{selectedStudent.getDegree(),"true"});
 		values.add(new String[]{Integer.toString(selectedStudent.getLevel()),"false"});
 		
 		ArrayList<String[]> results = dc.executeQuery(query,values);

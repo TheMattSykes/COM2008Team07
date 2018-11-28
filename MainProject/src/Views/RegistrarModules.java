@@ -1,22 +1,22 @@
 package Views;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
-import javax.swing.ComboBoxModel;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
+import Controllers.TableColumnAdjuster;
 import Models.Module;
 import Models.Student;
 
@@ -26,6 +26,12 @@ public class RegistrarModules extends JPanel {
 	PrimaryFrame frame;
 	Student student;
 	private JPanel mainPanel;
+	private JTable currentModulesTable;
+	private JTable availableModulesTable;
+	private DefaultTableModel currentModulesTableModel;
+	private DefaultTableModel availableModulesTableModel;
+	private	JButton addModuleButton;
+	private JButton removeModuleButton;
 	private JPanel localButtons;
 	private JButton backButton;
 	private JButton applyButton;
@@ -51,6 +57,30 @@ public class RegistrarModules extends JPanel {
 			frame.remove(mainPanel);
 		if (localButtons != null)
 			frame.menuBar.remove(localButtons);
+	}
+	
+	public JTable getCurrentModulesTable() {
+		return currentModulesTable;
+	}
+	
+	public JTable getAvailableModulesTable() {
+		return availableModulesTable;
+	}
+	
+	public DefaultTableModel getCurrentModulesTableModel() {
+		return currentModulesTableModel;
+	}
+	
+	public DefaultTableModel getAvailableModulesTableModel() {
+		return availableModulesTableModel;
+	}
+	
+	public JButton getRemoveModuleButton() {
+		return removeModuleButton;
+	}
+	
+	public JButton getAddModuleButton() {
+		return addModuleButton;
 	}
 	
 	public JButton getBackButton() {
@@ -112,64 +142,142 @@ public class RegistrarModules extends JPanel {
 		studentDetails.add(emailLabel);
 		studentDetails.add(tutorLabel);
 		
-		JLabel modulesLabel;
-		
-		if (currentModules.size() > 0) {
-			String modulesString = currentModules.get(0).toString();
-			for (int i=1; i < currentModules.size(); i++) {
-				modulesString += ", "+currentModules.get(i);
-				if (i == currentModules.size()-1)
-					modulesString += "</html>";
-			}
-			System.out.println(modulesString);
-			modulesLabel = new JLabel("<html>Current Modules: "+modulesString);
-		} else {
-			modulesLabel = new JLabel("This student is not enrolled on any modules.");
-		}
-		
 		northPanel.add(studentDetails, formConstraints);
-		formConstraints.gridy = 1;
-		northPanel.add(modulesLabel, formConstraints);
 		mainPanel.add(northPanel, BorderLayout.NORTH);
 		
-		JPanel form = new JPanel();
-		form.setLayout(new GridBagLayout());
+		// Table of currently enrolled modules
+		String[] currentModulesColumnNames = {
+				"Module Code",
+                "Module Name",
+                "Grade achieved",
+                "Credits",
+                "Level",
+                "Core"
+        };
 		
-		formConstraints.gridy = 0;
-		formConstraints.insets = new Insets(20,20,20,20);
+		Object[][] currentModulesData = new Object[currentModules.size()][6];
+		int totalCredits = 0;
+		for (int i = 0; i < currentModules.size(); i++) {
+			currentModulesData[i][0] = currentModules.get(i).getCode();
+			currentModulesData[i][1] = currentModules.get(i).getName();
+			currentModulesData[i][2] = currentModules.get(i).getMaxGrade();
+			currentModulesData[i][3] = currentModules.get(i).getCredits();
+			currentModulesData[i][4] = currentModules.get(i).getLevel();
+			currentModulesData[i][5] = currentModules.get(i).isCore();
+			totalCredits += currentModules.get(i).getCredits();
+		}
 		
-		// Remove Module
-		JPanel removeModulePanel = new JPanel();
-		JLabel removeModuleLabel = new JLabel("Pick module to remove: ");
-		JComboBox<Module> removeModuleDropdown = new JComboBox<Module>();
-		removeModuleDropdown.setModel(new DefaultComboBoxModel(currentModules.toArray()));
-		JButton removeModuleButton = new JButton("Remove module");
-		formConstraints.gridx = 0;
-		removeModulePanel.add(removeModuleLabel, formConstraints);
-		formConstraints.gridx = 1;
-		removeModulePanel.add(removeModuleDropdown, formConstraints);
-		formConstraints.gridx = 2;
-		removeModulePanel.add(removeModuleButton, formConstraints);
-		formConstraints.gridx = 0;
-		form.add(removeModulePanel, formConstraints);
+		currentModulesTableModel = new DefaultTableModel(currentModulesData, currentModulesColumnNames);		
+		currentModulesTable = new JTable(currentModulesTableModel) {
+	        private static final long serialVersionUID = 1L;
+
+	        public boolean isCellEditable(int row, int column) {
+	        	return false;
+	        }
+	        
+	        @Override
+	        public Dimension getPreferredScrollableViewportSize() {
+	            Dimension dim = new Dimension(
+	            	// Width will get changed later anyway
+	                this.getColumnCount() * 100,
+	                // Set height of table, so it fits on the page
+	                this.getRowHeight() * 20);
+	            return dim;
+	        }
+	    };
+	    
+	    // Adjust column widths, based on the data they contain (see java file for source)
+	    TableColumnAdjuster tca = new TableColumnAdjuster(currentModulesTable);
+	    tca.adjustColumns();
+	    
+	    JScrollPane currentModulesScrollPane = new JScrollPane(currentModulesTable);
+	    currentModulesTable.setFillsViewportHeight(true);
+	    
+	    JPanel twoColumns = new JPanel(new GridBagLayout());
+	    GridBagConstraints twoColumnsConst = new GridBagConstraints();
+	    twoColumnsConst.weightx = 1.0;
+	    twoColumnsConst.fill = GridBagConstraints.HORIZONTAL;
+	    twoColumnsConst.gridx = 0;
+	    twoColumnsConst.gridy = 0;
 		
-		// Add Module
-		JPanel addModulePanel = new JPanel();
-		JLabel addModuleLabel = new JLabel("Pick module to add: ");
-		JComboBox<Module> addModuleDropdown = new JComboBox<Module>();
-		addModuleDropdown.setModel(new DefaultComboBoxModel(availableModules.toArray()));
-		JButton addModuleButton = new JButton("Add module");
-		formConstraints.gridx = 0;
-		addModulePanel.add(addModuleLabel, formConstraints);
-		formConstraints.gridx = 1;
-		addModulePanel.add(addModuleDropdown, formConstraints);
-		formConstraints.gridx = 2;
-		addModulePanel.add(addModuleButton, formConstraints);
-		formConstraints.gridx = 0;
-		formConstraints.gridy = 1;
-		form.add(addModulePanel, formConstraints);
+		JLabel currentModulesTableTitle = new JLabel("Current Modules:");
+		twoColumns.add(currentModulesTableTitle, twoColumnsConst);
 		
-		mainPanel.add(form, BorderLayout.CENTER);
+		twoColumnsConst.gridx = 1;
+		JLabel availableModulesTableTitle = new JLabel("Available Modules:");
+		twoColumns.add(availableModulesTableTitle, twoColumnsConst);
+		
+		twoColumnsConst.gridx = 0;
+	    twoColumnsConst.gridy = 1;
+		currentModulesScrollPane.setPreferredSize(new Dimension(getWidth()/2,300));
+		twoColumns.add(currentModulesScrollPane, twoColumnsConst);
+		
+		// Table of available (optional) modules
+		String[] availableModulesColumnNames = {
+				"Module Code",
+                "Module Name",
+                "Credits",
+                "Level"
+        };
+		
+		Object[][] availableModulesData = new Object[availableModules.size()][4];
+		for (int i = 0; i < availableModules.size(); i++) {
+			availableModulesData[i][0] = availableModules.get(i).getCode();
+			availableModulesData[i][1] = availableModules.get(i).getName();
+			availableModulesData[i][2] = availableModules.get(i).getCredits();
+			availableModulesData[i][3] = availableModules.get(i).getLevel();
+		}
+		
+		availableModulesTableModel = new DefaultTableModel(availableModulesData, availableModulesColumnNames);		
+		availableModulesTable = new JTable(availableModulesTableModel) {
+	        private static final long serialVersionUID = 1L;
+
+	        public boolean isCellEditable(int row, int column) {                
+	        	return false;               
+	        }
+	        
+	        @Override
+	        public Dimension getPreferredScrollableViewportSize() {
+	            Dimension dim = new Dimension(
+	            	// Width will get changed later anyway
+	                this.getColumnCount() * 100,
+	                // Set height of table, so it fits on the page
+	                this.getRowHeight() * 20);
+	            return dim;
+	        }
+	    };
+	    
+	    // Adjust column widths, based on the data they contain (see java file for source)
+	    TableColumnAdjuster tcaAvailable = new TableColumnAdjuster(availableModulesTable);
+	    tcaAvailable.adjustColumns();
+	    
+	    JScrollPane availableModulesScrollPane = new JScrollPane(availableModulesTable);
+	    availableModulesTable.setFillsViewportHeight(true);
+	    
+	    twoColumnsConst.gridx = 1;
+	    availableModulesScrollPane.setPreferredSize(new Dimension(getWidth()/2,300));
+		twoColumns.add(availableModulesScrollPane, twoColumnsConst);
+		
+		// Total number of credits for this year
+		JLabel totalCreditsLabel = new JLabel("Total number of credits for level "+student.getLevel()+": "+totalCredits);
+		twoColumnsConst.gridx = 0;
+		twoColumnsConst.gridy = 2;
+		twoColumns.add(totalCreditsLabel, twoColumnsConst);
+		
+		// Remove Module Button
+		removeModuleButton = new JButton("Remove module");
+		removeModuleButton.setEnabled(false);
+		twoColumnsConst.gridy = 3;
+		twoColumns.add(removeModuleButton, twoColumnsConst);
+		
+		// Add Module Button
+		addModuleButton = new JButton("Add module");
+		addModuleButton.setEnabled(false);
+		twoColumnsConst.gridx = 1;
+		twoColumnsConst.gridy = 3;
+		twoColumns.add(addModuleButton, twoColumnsConst);
+		
+		mainPanel.add(twoColumns, BorderLayout.CENTER);
 		
 		GridBagConstraints menuConstraints = new GridBagConstraints();
 		menuConstraints.insets = new Insets(0,5,0,5);		

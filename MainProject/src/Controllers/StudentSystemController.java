@@ -40,10 +40,6 @@ public class StudentSystemController extends Controller {
 		return user;
 	}
 	
-	public static void main(String[] args) {
-		// Main stuff
-	}
-	
 	public Student setupStudent() throws Exception {
 		System.out.println("Setting up new student...");
 		
@@ -90,11 +86,6 @@ public class StudentSystemController extends Controller {
 		}
 		
 		return student;
-	}
-	
-	
-	public void initController() {
-		
 	}
 	
 	public void initView() throws Exception {
