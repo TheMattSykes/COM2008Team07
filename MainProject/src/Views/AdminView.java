@@ -17,6 +17,8 @@ import javax.swing.JTable;
 import Controllers.TableColumnAdjuster;
 
 public class AdminView extends JPanel {
+	private static final long serialVersionUID = 1L;
+
 	PrimaryFrame frame;
 	
 	Object[][] accountsData;
