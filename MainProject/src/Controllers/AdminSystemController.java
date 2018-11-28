@@ -35,7 +35,7 @@ public class AdminSystemController extends Controller{
 	
 	User user;
 	AdminView av;
-	AddAccount addAccount;
+	AddAccount addUser;
 	AddDepartment addDept;
 	AddDegree addDegree;
 	AddModule addModule;
@@ -101,7 +101,15 @@ public class AdminSystemController extends Controller{
 						}
 					});
 		// Listener to point to delete the account selected
-		deleteButton.addActionListener(e -> {});
+		av.getAccountAdd().addActionListener(e -> initAddAccountView());
+		
+		deleteButton.addActionListener(e -> {
+			Object[][] data = av.getDataAccounts();
+			JTable table = av.getAccountTable();
+			int row = table.getSelectedRow();
+			User targetUser = new User(Integer.parseInt((String)data[row][0]),(String)data[row][1],UserTypes.valueOf((String)data[row][2]));
+			System.out.println(targetUser.getUserID() + "  " + targetUser.getUsername() + "  " + targetUser.getUserType());
+		});
 	}
 	
 	public void initDepartmentView() throws Exception {
@@ -137,7 +145,30 @@ public class AdminSystemController extends Controller{
 	}
 	
 	public void initAddAccountView() {
-		System.out.println("Change to the Account add view - WIP");
+		if (addUser == null) {
+			addUser = new AddAccount(av.getFrame());
+		}
+		
+		av.removeUI();
+		try {
+			addUser.loadUI();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		
+		addUser.getBackButton().addActionListener(e -> {
+			addUser.removeUI();
+			try {
+				initAccountView();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		});
+		
+		addUser.getApplyButton().addActionListener(e -> {
+			System.out.println("Accept the user form & submit the account iformation");
+			addAccount(addUser.getDetails());
+		});
 	}
 	
 	public void initAddDepartmentView() {
@@ -280,8 +311,7 @@ public class AdminSystemController extends Controller{
 	
 	// public Object[][] getDegreeData() throws Exception { }
 	
-	public void addAccount(User u) {
-		String[] details = addAccount.getDetails();
+	public void addAccount(String[] details) {
 		Integer id = 0;
 		try {
 			String query = "SELECT MAX(uid) FROM users;";
@@ -294,8 +324,21 @@ public class AdminSystemController extends Controller{
 		String username = makeUsername(details[0], details[1], type);
 		User newUser = new User(id, username, type);
 		// Waiting for access to password handling functions
+		// Check equality
+		// Check strength
+		// Generate Salt
+		// Hash
+		// Submit hashed password & salt to the DB 
+		Object[] options = {"Yes", "No"};
+		int applyOption = JOptionPane.showOptionDialog(addDept.getFrame(), "Confirm adding user with username "+ username, "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, 
+				null, options, options[0]);
+		if (applyOption == 0) {
+			// carry out query & redirect back to accounts view
+			System.out.println(id + "  " + username + "  " + type + " Awaiting password processing");
+		} 
 	}
 	
+	// Produces a Username for a user account based off of given name and type
 	public String makeUsername(String fn, String sn, UserTypes type) {
 		String base = "";
 		if (type == UserTypes.ADMIN) {
@@ -321,9 +364,49 @@ public class AdminSystemController extends Controller{
 	}
 	
 	public void deleteAccount(User u) {
-		
+		String userID = u.getUserID() + "";
+		String username = u.getUsername();
+		if (u.getUserID() == user.getUserID()) {
+			JOptionPane inputError = new JOptionPane("You cannot delete your own account");
+			JDialog dialog = inputError.createDialog("Failure");
+			dialog.setAlwaysOnTop(true);
+			dialog.setVisible(true);
+		} else if (typeCount(u.getUserType()) < 2) {
+			JOptionPane inputError = new JOptionPane("You can't delete the last account of a type");
+			JDialog dialog = inputError.createDialog("Failure");
+			dialog.setAlwaysOnTop(true);
+			dialog.setVisible(true);
+		} else {
+			Object[] options = {"Yes", "No"};
+			int applyOption = JOptionPane.showOptionDialog(av.getFrame(), "Confirm deleting user "+userID+" with username "+ username, 
+					"Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+			if (applyOption == 0) {
+				try {
+					String query = "DELETE FROM users WHERE uid = ?;";
+					ArrayList<String[]> values = new ArrayList<String[]>();
+					values.add(new String[] {userID, "true"});
+					dc.executeQuery(query, values);
+					initDepartmentView();
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		}
 	}
 	
+	public int typeCount(UserTypes t) {
+		Integer count = 0;
+		try {
+			String query = "SELECT * FROM users WHERE user_type = ?";
+			ArrayList<String[]> values = new ArrayList<String[]>();
+			values.add(new String[] {t.toString(), "true"});
+			ArrayList<String[]> results = dc.executeQuery(query, values);
+			count = results.size();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return count;
+	}
 	public void addDepartment(Department d) {
 		if (d.getName().length() != 0 && d.getCode().length() != 0) {
 			// To do: Managing duplicate entries
