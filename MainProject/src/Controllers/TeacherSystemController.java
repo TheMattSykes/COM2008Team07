@@ -118,7 +118,7 @@ public class TeacherSystemController extends Controller {
 		ArrayList<Student> students = new ArrayList<Student>();
 		
 		for (int i = 0; i < results.size(); i++) {
-			students.add(new Student(Integer.parseInt(results.get(i)[0]),results.get(i)[1],results.get(i)[2],results.get(i)[3],results.get(i)[4], results.get(i)[5], results.get(i)[6], results.get(i)[7].charAt(0), Integer.parseInt(results.get(i)[8])));
+			students.add(new Student(Integer.parseInt(results.get(i)[0]),results.get(i)[1],results.get(i)[2],results.get(i)[3],results.get(i)[4], results.get(i)[5], results.get(i)[6], results.get(i)[7].charAt(0), Integer.parseInt(results.get(i)[8]),results.get(i)[9]));
 		}
 		
 		Object[][] data = new Object[results.size()][9];
