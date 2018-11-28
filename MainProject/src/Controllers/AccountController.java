@@ -91,7 +91,6 @@ public class AccountController extends Controller {
 			if (user.getUserType() == UserTypes.STUDENT) {
 				studentViewer = new StudentView(lv.getFrame());
 				StudentSystemController sc = new StudentSystemController(user, studentViewer);
-				sc.initController();
 			} else if (user.getUserType() == UserTypes.REGISTRAR) {
 				registrarViewer = new RegistrarView(lv.getFrame());
 				RegistrarSystemController rc = new RegistrarSystemController(user, registrarViewer);
@@ -101,7 +100,8 @@ public class AccountController extends Controller {
 				AdminSystemController ac = new AdminSystemController(user, adminViewer);
 			} else if (user.getUserType() == UserTypes.TEACHER) {
 				teacherViewer = new TeacherView(lv.getFrame());
-				TeacherSystemController ac = new TeacherSystemController(user, teacherViewer);
+				TeacherSystemController tc = new TeacherSystemController(user, teacherViewer);
+				tc.initController();
 			}
 		} else {
 			

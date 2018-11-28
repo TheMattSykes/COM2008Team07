@@ -92,11 +92,6 @@ public class StudentSystemController extends Controller {
 		return student;
 	}
 	
-	
-	public void initController() {
-		
-	}
-	
 	public void initView() throws Exception {
 		sv.setData(getTableData());
 		sv.loadUI();
@@ -109,7 +104,9 @@ public class StudentSystemController extends Controller {
 		
 		Boolean exists = false;
 		
-		String query = String.format("SELECT module_code, grade1, grade2 FROM enrolled WHERE reg_number = ? ORDER BY module_code");
+		String query = String.format("SELECT m.module_code,m.module_name,m.credits,e.grade1,e.grade2,a.level,m.teaching_period,m.graduation_level " + 
+				"FROM modules AS m, enrolled AS e, approval AS a " + 
+				"WHERE e.reg_number = ? AND e.module_code = m.module_code AND a.module_code = m.module_code ORDER BY module_code;");
 		
 		ArrayList<String[]> values = new ArrayList<String[]>();
 		
@@ -134,11 +131,19 @@ public class StudentSystemController extends Controller {
 				String code = result[0];
 				newModule.setCode(code);
 				
+				for (int i = 0; i < result.length; i++) {
+					System.out.println("Result No. "+i+": "+result[i]);
+				}
+				
+				newModule.setName(result[1]);
+				
+				newModule.setCredits(Integer.parseInt(result[2]));
+				
 				int[] studentResults = new int[2];
 				Grades[] studentGrades = new Grades[2];
 				
-				if (result[1] != null) {
-					studentResults[0] = (int) Float.parseFloat(result[1]);
+				if (result[3] != null) {
+					studentResults[0] = (int) Float.parseFloat(result[3]);
 					
 					if (studentResults[0] >= 40) {
 						studentGrades[0] = Grades.PASS;
@@ -150,8 +155,8 @@ public class StudentSystemController extends Controller {
 					studentGrades[0] = Grades.UNDEFINED;
 				}
 				
-				if (result[2] != null) {
-					studentResults[1] = (int) Float.parseFloat(result[2]);
+				if (result[4] != null) {
+					studentResults[1] = (int) Float.parseFloat(result[4]);
 					
 					if (studentResults[1] >= 40) {
 						studentGrades[1] = Grades.PASS;
@@ -166,22 +171,10 @@ public class StudentSystemController extends Controller {
 				newModule.setScores(studentResults);
 				newModule.setGrades(studentGrades);
 				
-				System.out.println("STARTING MOD QUERY...");
-				String modQuery = String.format("SELECT module_name, credits, teaching_period, graduation_level FROM modules WHERE module_code = ?");
-				ArrayList<String[]> modValues = new ArrayList<String[]>();
-				modValues.add(new String[]{code,"true"});
-				String[] modResults = dc.executeQuery(modQuery,modValues).get(0);
+				newModule.setLevel(Integer.parseInt(result[5]));
 				
-				newModule.setName(modResults[0]);
-				newModule.setCredits(Integer.parseInt(modResults[1]));
-				newModule.setTeachingPeriod(modResults[2]);
-				newModule.setType(GraduateType.valueOf(modResults[3].toUpperCase()));
-				
-				String lvQuery = String.format("SELECT level FROM approval WHERE module_code = ?");
-				ArrayList<String[]> lvValues = new ArrayList<String[]>();
-				String[] lvResults = dc.executeQuery(lvQuery,modValues).get(0);
-				
-				newModule.setLevel(Integer.parseInt(lvResults[0]));
+				newModule.setTeachingPeriod(result[6]);
+				newModule.setType(GraduateType.valueOf(result[7].toUpperCase()));
 				
 				modules.add(newModule);
 			}

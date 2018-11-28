@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTable;
 
 import Models.Classification;
+import Models.Degree;
 import Models.Department;
 import Models.Grades;
 import Models.GraduateType;
@@ -107,7 +108,22 @@ public class AdminSystemController extends Controller{
 			int row = table.getSelectedRow();
 			String deptCode = (String)(data[row][0]);
 			String deptName = (String)(data[row][1]);
-			System.out.println("Delete: "+deptCode+"  "+deptName);
+			Object[] options = {"Yes", "No"};
+			int applyOption = JOptionPane.showOptionDialog(av.getFrame(), "Confirm deleting the department "+deptName+
+					" with code "+deptCode, "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, 
+					null, options, options[0]);
+			if (applyOption == 0) {
+				try {
+					String query = "DELETE FROM departments WHERE code = ? AND name = ? ";
+					ArrayList<String[]> values = new ArrayList<String[]>();
+					values.add(new String[] {deptCode, "true"});
+					values.add(new String[] {deptName, "true"});
+					dc.executeQuery(query, values);
+					initDepartmentView();
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
 		});
 	}
 	
@@ -149,32 +165,52 @@ public class AdminSystemController extends Controller{
 		
 		ad.getApplyButton().addActionListener(e -> {
 			Department newDepartment = ad.getNewDepartment();
-			if ( newDepartment.getCode() != null && newDepartment.getName() != null ) {
+			//if ( (newDepartment.getCode() != null || !newDepartment.getCode().isEmpty()) && 
+			//	 (newDepartment.getName() != null || !newDepartment.getName().isEmpty())) {
+			System.out.println(newDepartment.getCode().length());
+			System.out.println(newDepartment.getName().length());
+			if (newDepartment.getName().length() != 0 && newDepartment.getCode().length() != 0) {
 				// To do: Managing duplicate entries
-				//String query = "SELECT * FROM department";
-				//ArrayList<String[]> values = new ArrayList<String[]>();
-				//ArrayList<String[]> results = dc.executeQuery(query, values);
-					Object[] options = {"Yes", "No"};
-					int applyOption = JOptionPane.showOptionDialog(ad.getFrame(), "Confirm adding the department "+newDepartment.getName()+
-							" with code "+newDepartment.getCode(), "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, 
-							null, options, options[0]);
-					if (applyOption == 0) {
-						try {
-							String query = "INSERT INTO departments VALUES(?,?)";
-							ArrayList<String[]> values = new ArrayList<String[]>();
-							values.add(new String[] {newDepartment.getName(), "true"});
-							values.add(new String[] {newDepartment.getCode(), "true"});
-							dc.executeQuery(query, values);
-						} catch (Exception ex) {
-							ex.printStackTrace();
+				try {
+					String query = "SELECT code, name FROM departments";
+					ArrayList<String[]> values = new ArrayList<String[]>();
+					ArrayList<String[]> results = dc.executeQuery(query, values);
+					ArrayList<String> deptCodes = new ArrayList<String>();
+					ArrayList<String> deptNames = new ArrayList<String>();
+					
+					for (int i = 0; i < results.size(); i++) {
+						deptCodes.add(results.get(i)[0]);
+						deptNames.add(results.get(i)[1]);
+					}
+					
+					if(deptCodes.contains(newDepartment.getCode()) || deptNames.contains(newDepartment.getName())){
+						JOptionPane inputError = new JOptionPane("One of the entered values already exists in the database, please ensure name and code are unique");
+						JDialog dialog = inputError.createDialog("Failure");
+						dialog.setAlwaysOnTop(true);
+						dialog.setVisible(true);
+					} else {
+						Object[] options = {"Yes", "No"};
+						int applyOption = JOptionPane.showOptionDialog(ad.getFrame(), "Confirm adding the department "+newDepartment.getName()+
+								" with code "+newDepartment.getCode(), "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, 
+								null, options, options[0]);
+						if (applyOption == 0) {
+							String insertQuery = "INSERT INTO departments VALUES(?,?)";
+							ArrayList<String[]> insertValues = new ArrayList<String[]>();
+							insertValues.add(new String[] {newDepartment.getName(), "true"});
+							insertValues.add(new String[] {newDepartment.getCode(), "true"});
+							dc.executeQuery(insertQuery, insertValues);
+
+							ad.removeUI();
+							try {
+								initDepartmentView();
+							} catch (Exception ex) {
+								ex.printStackTrace();
+							}
 						}
 					}
-					ad.removeUI();
-					try {
-						initDepartmentView();
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
 			} else {
 				JOptionPane inputError = new JOptionPane("Please make sure both values have been entered");
 				JDialog dialog = inputError.createDialog("Failure");
@@ -270,5 +306,30 @@ public class AdminSystemController extends Controller{
 		return data;
 	}
 	
-	// get degree data WIP
+	// public Object[][] getDegreeData() throws Exception { }
+	
+	public void addAccount(User u) {
+		
+	}
+	
+	public void deleteAccount(User u) {
+		
+	}
+	
+	public void addDepartment(Department d) {
+		
+	}
+	
+	public void deleteDepartment(Department d) {
+		
+	}
+	
+	public void addDegree(Degree d) {
+
+	}
+	
+	public void deleteDegree(Degree d) {
+		
+	}
+	
 }
