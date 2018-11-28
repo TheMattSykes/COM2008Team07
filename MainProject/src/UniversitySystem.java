@@ -1,3 +1,10 @@
+/**
+ *  UniversitySystem
+ *  
+ *  Main class file for the university program.
+ *  Run this class to start the program.
+ */
+
 import Controllers.FindDrivers;
 import Controllers.MasterController;
 import Models.User;

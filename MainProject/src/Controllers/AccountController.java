@@ -1,3 +1,10 @@
+/**
+ * AccountController
+ * 
+ * Controller for the login UI.
+ * Instantiates other controllers after user is logged in.
+ */
+
 package Controllers;
 
 import java.io.UnsupportedEncodingException;
@@ -30,8 +37,6 @@ import java.util.Random;
 
 
 public class AccountController extends Controller {
-
-	private static User user;
 	private LoginView lv;
 	private JPanel menuBar;
 	
@@ -43,16 +48,13 @@ public class AccountController extends Controller {
 	private static PasswordUtilities pu;
 
 	public AccountController(User mainUser, LoginView lview) {
-		user = mainUser;
+		super(mainUser);
+		
 		lv = lview;
 		
 		pu = new PasswordUtilities();
 		
 		initView();
-	}
-	
-	public User getUpdatedUser() {
-		return user;
 	}
 	
 	public void initView() {
@@ -106,7 +108,6 @@ public class AccountController extends Controller {
 			} else if (user.getUserType() == UserTypes.TEACHER) {
 				teacherViewer = new TeacherView(lv.getFrame());
 				TeacherSystemController tc = new TeacherSystemController(user, teacherViewer);
-				tc.initController();
 			}
 		} else {
 			

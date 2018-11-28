@@ -33,17 +33,19 @@ import java.util.Collections;
 
 public class AdminSystemController extends Controller{
 	
-	User user;
-	AdminView av;
-	AddAccount addUser;
-	AddDepartment addDept;
-	AddDegree addDegree;
-	AddModule addModule;
-	DatabaseController dc = new DatabaseController();
+	private AdminView av;
+	private AddAccount addUser;
+	private AddDepartment addDept;
+	private AddDegree addDegree;
+	private AddModule addModule;
+	private DatabaseController dc;
 	//private Views currentView;
 	
 	public AdminSystemController (User mainUser, AdminView aview) throws Exception {
-		user = mainUser;
+		super(mainUser);
+		
+		dc = new DatabaseController();
+		
 		av = aview;
 		initMenuView();
 	}

@@ -23,22 +23,24 @@ import Views.RegistrarView;
 
 public class RegistrarSystemController extends Controller {
 	
-	User user;
-	RegistrarView rv;
-	AddStudent as;
-	EditStudent es;
-	RegistrarModules rm;
-	Student selectedStudent;
-	DatabaseController dc = new DatabaseController();
+	private RegistrarView rv;
+	private AddStudent as;
+	private EditStudent es;
+	private RegistrarModules rm;
+	private Student selectedStudent;
+	private DatabaseController dc;
 	private Views currentView;
-	ArrayList<Integer> regNumbersInUse;
+	private ArrayList<Integer> regNumbersInUse;
 	private JButton logoutButton;
 	
 	private Object[][] studentData;
 	
 	public RegistrarSystemController(User mainUser, RegistrarView rview) throws Exception {
-		user = mainUser;
+		super(mainUser);
+		
 		rv = rview;
+		
+		dc = new DatabaseController();
 		
 		initDefaultView();
 	}

@@ -18,33 +18,22 @@ import Views.AddGrades;
 
 public class TeacherSystemController extends Controller {
 	
-	User user;
-	TeacherView tv;
-	AddGrades ag;
-	DatabaseController dc = new DatabaseController();
+	private TeacherView tv;
+	private AddGrades ag;
+	private DatabaseController dc;
 	private Views currentView;
 	private JButton logoutButton;
 	
 	private Object[][] studentData;
 	
 	public TeacherSystemController(User mainUser, TeacherView tview) throws Exception {
-		user = mainUser;
+		super(mainUser);
+		
 		tv = tview;
 		
-		initDefaultView();
-	}
-	
-	public User getUser() {
-		return user;
-	}
-	
-	public static void main(String[] args) {
-		// Main stuff
-	}
-	
-	
-	public void initController() {		
+		dc = new DatabaseController();
 		
+		initDefaultView();
 	}
 	
 	public void initDefaultView() throws Exception {

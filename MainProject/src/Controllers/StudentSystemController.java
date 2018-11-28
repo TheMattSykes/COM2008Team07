@@ -21,13 +21,12 @@ import java.util.Collections;
 
 public class StudentSystemController extends Controller {
 	
-	User user;
-	Student studentUser;
-	StudentView sv;
+	private Student studentUser;
+	private StudentView sv;
 	
 	public StudentSystemController(User mainUser, StudentView sview) throws Exception {
 		
-		user = mainUser;
+		super(mainUser);
 		
 		sv = sview;
 		
@@ -38,10 +37,6 @@ public class StudentSystemController extends Controller {
 	
 	public User getUser() {
 		return user;
-	}
-	
-	public static void main(String[] args) {
-		// Main stuff
 	}
 	
 	public Student setupStudent() throws Exception {
