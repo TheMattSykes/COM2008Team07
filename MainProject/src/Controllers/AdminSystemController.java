@@ -19,6 +19,8 @@ import Models.Module;
 import Models.User;
 import Models.UserTypes;
 import Models.Views;
+import Views.AddAccount;
+import Views.AddDegree;
 import Views.AddDepartment;
 import Views.AddModule;
 import Views.AdminView;
@@ -33,7 +35,9 @@ public class AdminSystemController extends Controller{
 	
 	User user;
 	AdminView av;
+	AddAccount addAccount;
 	AddDepartment addDept;
+	AddDegree addDegree;
 	AddModule addModule;
 	DatabaseController dc = new DatabaseController();
 	//private Views currentView;
@@ -277,7 +281,43 @@ public class AdminSystemController extends Controller{
 	// public Object[][] getDegreeData() throws Exception { }
 	
 	public void addAccount(User u) {
-		
+		String[] details = addAccount.getDetails();
+		Integer id = 0;
+		try {
+			String query = "SELECT MAX(uid) FROM users;";
+			ArrayList<String[]> results = dc.executeQuery(query, null);
+			id = Integer.parseInt(results.get(0)[0]);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		UserTypes type =  UserTypes.valueOf(details[2]);
+		String username = makeUsername(details[0], details[1], type);
+		User newUser = new User(id, username, type);
+		// Waiting for access to password handling functions
+	}
+	
+	public String makeUsername(String fn, String sn, UserTypes type) {
+		String base = "";
+		if (type == UserTypes.ADMIN) {
+			base = "adm";
+		} else if (type == UserTypes.REGISTRAR) {
+			base = "reg";
+		} else if (type == UserTypes.TEACHER) {
+			base = "tcr";
+		} else {
+			base = "";
+		}
+		base += fn.substring(0,1).toLowerCase();
+		base += sn.toLowerCase();
+		try {
+			String query = "SELECT username FROM users WHERE username LIKE '"+base+"%';";
+			ArrayList<String[]> results = dc.executeQuery(query, null);
+			int count = results.size();
+			base += (count+1);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return base;
 	}
 	
 	public void deleteAccount(User u) {
