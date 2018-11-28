@@ -101,7 +101,8 @@ public class AccountController extends Controller {
 				AdminSystemController ac = new AdminSystemController(user, adminViewer);
 			} else if (user.getUserType() == UserTypes.TEACHER) {
 				teacherViewer = new TeacherView(lv.getFrame());
-				TeacherSystemController ac = new TeacherSystemController(user, teacherViewer);
+				TeacherSystemController tc = new TeacherSystemController(user, teacherViewer);
+				tc.initController();
 			}
 		} else {
 			
