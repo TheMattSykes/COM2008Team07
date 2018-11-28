@@ -5,6 +5,8 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Random;
 import javax.swing.JTable;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
@@ -59,6 +61,20 @@ public class RegistrarSystemController extends Controller {
 		rv.setStudentsData(getStudentsData());
 		rv.loadUI();
 		currentView = Views.REGISTRARVIEW;
+		
+		JButton editStudent = rv.getEditButton();
+		JButton deleteStudent = rv.getDeleteButton();
+		JButton modulesButton = rv.getModulesButton();
+		// Row selection listener
+		rv.getTable().getSelectionModel().addListSelectionListener(e -> {
+        	if (!editStudent.isEnabled())
+        		editStudent.setEnabled(true);
+        	if (!deleteStudent.isEnabled())
+        		deleteStudent.setEnabled(true);
+        	if (!modulesButton.isEnabled())
+        		modulesButton.setEnabled(true);
+		});
+		
 		// Action listener for Add Student button
 		rv.getAddButton().addActionListener(e -> {				
 			try {

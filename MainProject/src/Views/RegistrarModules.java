@@ -87,10 +87,12 @@ public class RegistrarModules extends JPanel {
 		
 		GridBagConstraints formConstraints = new GridBagConstraints();
 		formConstraints.weightx = 1.0;
-		formConstraints.insets = new Insets(20,20,20,20);
 		formConstraints.fill = GridBagConstraints.HORIZONTAL;
 		
 		mainPanel.setLayout(new BorderLayout(20,50));
+		
+		JPanel northPanel = new JPanel();
+		northPanel.setLayout(new GridBagLayout());
 		
 		// Student details
 		JPanel studentDetails = new JPanel();
@@ -110,10 +112,31 @@ public class RegistrarModules extends JPanel {
 		studentDetails.add(emailLabel);
 		studentDetails.add(tutorLabel);
 		
-		mainPanel.add(studentDetails, BorderLayout.NORTH);
+		JLabel modulesLabel;
+		
+		if (currentModules.size() > 0) {
+			String modulesString = currentModules.get(0).toString();
+			for (int i=1; i < currentModules.size(); i++) {
+				modulesString += ", "+currentModules.get(i);
+				if (i == currentModules.size()-1)
+					modulesString += "</html>";
+			}
+			System.out.println(modulesString);
+			modulesLabel = new JLabel("<html>Current Modules: "+modulesString);
+		} else {
+			modulesLabel = new JLabel("This student is not enrolled on any modules.");
+		}
+		
+		northPanel.add(studentDetails, formConstraints);
+		formConstraints.gridy = 1;
+		northPanel.add(modulesLabel, formConstraints);
+		mainPanel.add(northPanel, BorderLayout.NORTH);
 		
 		JPanel form = new JPanel();
 		form.setLayout(new GridBagLayout());
+		
+		formConstraints.gridy = 0;
+		formConstraints.insets = new Insets(20,20,20,20);
 		
 		// Remove Module
 		JPanel removeModulePanel = new JPanel();

@@ -7,7 +7,6 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -79,15 +78,12 @@ public class RegistrarView extends JPanel {
 		return logoutButton;
 	}
 	
-	public void loadUI() throws Exception {
-		String regName = "Freddie Mercury";
-		
+	public void loadUI() throws Exception {		
 		JPanel registrarDetails = new JPanel();
 		registrarDetails.setLayout(new GridLayout(5,1));
 		
-		JLabel nameLabel = new JLabel("Name: "+regName);
-		
-		registrarDetails.add(nameLabel);
+		JLabel welcomeLabel = new JLabel("Welcome, Registrar!");
+		registrarDetails.add(welcomeLabel);
 		
 		String[] columnNames = {
 				"Reg. Number",
@@ -107,11 +103,7 @@ public class RegistrarView extends JPanel {
 		
 		registrarInfo.setLayout(new GridBagLayout());
 		GridBagConstraints regConstraints = new GridBagConstraints();
-		regConstraints.weightx = 1.0;
-
-		// registrarInfo.setBorder(BorderFactory.createEmptyBorder(10, 10, 20, 10));
-		
-		
+		regConstraints.weightx = 1.0;		
 		
 		regConstraints.insets = new Insets(5,5,5,5);
 		
@@ -179,20 +171,6 @@ public class RegistrarView extends JPanel {
 		
 		menuConstraints.gridx = 0;
 		frame.menuBar.add(registrarButtons, menuConstraints);
-		
-		// Row selection listener
-		table.getSelectionModel().addListSelectionListener(
-			new ListSelectionListener() {
-		        public void valueChanged(ListSelectionEvent event) {
-		        	if (!editStudent.isEnabled())
-		        		editStudent.setEnabled(true);
-		        	if (!deleteStudent.isEnabled())
-		        		deleteStudent.setEnabled(true);
-		        	if (!modulesButton.isEnabled())
-		        		modulesButton.setEnabled(true);
-		        }
-			}
-	    );
 		
 		regConstraints.insets = new Insets(5,5,5,5);
 		regConstraints.fill = GridBagConstraints.HORIZONTAL;
