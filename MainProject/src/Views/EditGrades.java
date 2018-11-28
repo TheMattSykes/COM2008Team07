@@ -2,7 +2,6 @@ package Views;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,24 +15,25 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import Models.Enrolled;
+import Models.GraduateType;
+import Models.Module;
 
-public class AddGrades extends JPanel {
+public class EditGrades extends JPanel {
 	private static final long serialVersionUID = 1L;
 	PrimaryFrame frame;
-	JPanel form;
+	private JPanel form;
 	private JPanel formButtons;
 	private JPanel localButtons;
 	private JButton backButton;
 	private JButton applyButton;
-	private JButton logoutButton;
 	private JComboBox<Integer> regNoDropdown;
 	private JComboBox<String> codeDropdown;
-	private JTextField regNoTextField;
 	private JTextField res1TextField;
 	private JTextField res2TextField;
 	String[] availableModules;
+	private Enrolled student;
 	
-	public AddGrades(PrimaryFrame pf) {
+	public EditGrades(PrimaryFrame pf) {
 		frame = pf;
 	}
 	
@@ -60,18 +60,12 @@ public class AddGrades extends JPanel {
 		return applyButton;
 	}
 	
-	public JButton getLogoutButton() {
-		return logoutButton;
-	}
-	
 	public void setAvailableModules(String[] m) {
 		availableModules = m;
 	}
 	
 	public Enrolled getNewGrades() {
-		Enrolled student = new Enrolled();
-		int regNo = Integer.parseInt(regNoTextField.getText());
-		student.setRegNo(regNo);
+		student.setRegNo((int)regNoDropdown.getSelectedItem());
 		student.setCode((String)codeDropdown.getSelectedItem());
 		int res1 = Integer.parseInt(res1TextField.getText());
 		student.setRes1(res1);
@@ -81,8 +75,6 @@ public class AddGrades extends JPanel {
 	}
 	
 	public void loadUI() throws Exception {
-		formButtons = new JPanel();
-		formButtons.setLayout(new GridBagLayout());
 		form = new JPanel();
 		form.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
 		
@@ -103,7 +95,7 @@ public class AddGrades extends JPanel {
 		formRight.setLayout(rightColumn);
 		
 		Dimension textFieldSize = new Dimension (300, 20);
-
+		
 		// Registration number
 		JPanel regNoPanel = new JPanel();
 		JLabel regNoLabel = new JLabel("Reg No: ");
@@ -156,7 +148,7 @@ public class AddGrades extends JPanel {
 		menuConstraints.gridy = 0;
 		menuConstraints.gridx = 0;
 		localButtons = new JPanel();
-		JButton applyButton = new JButton("Apply");
+		applyButton = new JButton("Apply");
 		localButtons.add(applyButton, menuConstraints);
 		backButton = new JButton("Back");
 		menuConstraints.gridx = 1;
