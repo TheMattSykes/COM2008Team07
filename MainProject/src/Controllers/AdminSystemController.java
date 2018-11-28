@@ -6,6 +6,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
 
 import Models.Classification;
 import Models.Department;
@@ -78,39 +81,115 @@ public class AdminSystemController extends Controller{
 		av.setDataAccounts(getAccountData());
 		av.loadAccountUI();
 		av.getBackButton().addActionListener(e -> initMenuView());
+		JButton deleteButton = av.getAccountDelete();
+		av.getAccountTable().getSelectionModel().addListSelectionListener(e -> {
+						if(!deleteButton.isEnabled()) {
+							deleteButton.setEnabled(true);
+						}
+					});
+		deleteButton.addActionListener(e -> {});
 	}
 	
 	public void initDepartmentView() throws Exception {
 		av.setDataDepartments(getDepartmentData());
 		av.loadDepartmentUI();
 		av.getBackButton().addActionListener(e -> initMenuView());
+		av.getDepartmentAdd().addActionListener(e -> initAddDepartmentView());
+		JButton deleteButton = av.getDepartmentDelete();
+		av.getDepartmentTable().getSelectionModel().addListSelectionListener(e -> {
+						if(!deleteButton.isEnabled()) {
+							deleteButton.setEnabled(true);
+						}
+					});
+		deleteButton.addActionListener(e -> {
+			Object[][] data = av.getDataDepartments();
+			JTable table = av.getDepartmentTable();
+			int row = table.getSelectedRow();
+			String deptCode = (String)(data[row][0]);
+			String deptName = (String)(data[row][1]);
+			System.out.println("Delete: "+deptCode+"  "+deptName);
+		});
 	}
 	
 	public void initDegreeView() throws Exception {
 		av.loadDegreeUI();
 		av.getBackButton().addActionListener(e -> initMenuView());
-		av.getDepartmentAdd().addActionListener(e -> initAddDepartmentView());
 	}
 	
 	public void initModuleView() throws Exception {
+		av.setDataModules(getModuleData());
 		av.loadModuleUI();
 		av.getBackButton().addActionListener(e -> initMenuView());
 	}
 	
 	public void initAddAccountView() {
-		
+		System.out.println("Change to the Account add view - WIP");
 	}
 	
 	public void initAddDepartmentView() {
+		if (ad == null) {
+			ad = new AddDepartment(av.getFrame());
+		}
 		
+		av.removeUI();
+		try {
+			ad.loadUI();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		
+		ad.getBackButton().addActionListener(e -> {
+			ad.removeUI();
+			try {
+				initDepartmentView();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		});
+		
+		ad.getApplyButton().addActionListener(e -> {
+			Department newDepartment = ad.getNewDepartment();
+			if ( newDepartment.getCode() != null && newDepartment.getName() != null ) {
+				// To do: Managing duplicate entries
+				//String query = "SELECT * FROM department";
+				//ArrayList<String[]> values = new ArrayList<String[]>();
+				//ArrayList<String[]> results = dc.executeQuery(query, values);
+					Object[] options = {"Yes", "No"};
+					int applyOption = JOptionPane.showOptionDialog(ad.getFrame(), "Confirm adding the department "+newDepartment.getName()+
+							" with code "+newDepartment.getCode(), "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, 
+							null, options, options[0]);
+					if (applyOption == 0) {
+						try {
+							String query = "INSERT INTO departments VALUES(?,?)";
+							ArrayList<String[]> values = new ArrayList<String[]>();
+							values.add(new String[] {newDepartment.getName(), "true"});
+							values.add(new String[] {newDepartment.getCode(), "true"});
+							dc.executeQuery(query, values);
+						} catch (Exception ex) {
+							ex.printStackTrace();
+						}
+					}
+					ad.removeUI();
+					try {
+						initDepartmentView();
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+			} else {
+				JOptionPane inputError = new JOptionPane("Please make sure both values have been entered");
+				JDialog dialog = inputError.createDialog("Failure");
+				dialog.setAlwaysOnTop(true);
+				dialog.setVisible(true);
+			}
+		});
 	}
 	
 	public void initAddDegreeView() {
-		
+		System.out.println("Change to the Degree add view - WIP");
 	}
 	
 	public void initAddModuleView() {
-		
+		System.out.println("Change to the Module add view - WIP");
 	}
 	
 	public Object[][] getAccountData() throws Exception {
@@ -141,7 +220,7 @@ public class AdminSystemController extends Controller{
 	
 	public Object[][] getDepartmentData() throws Exception {
 		
-		String query = "SELECT * FROM departments LIMIT ?";
+		String query = "SELECT code, name FROM departments LIMIT ?";
 		ArrayList<String[]> values = new ArrayList<String[]>();
 		values.add(new String[] {"100",""});
 		ArrayList<String[]> results = dc.executeQuery(query, values);
@@ -162,6 +241,34 @@ public class AdminSystemController extends Controller{
 		
 		return data;
 	}
-	// get degree data
-	// get module data
+	
+	public Object[][] getModuleData() throws Exception {
+		
+		String query = new String("SELECT * FROM modules LIMIT ?");
+		ArrayList<String[]> values = new ArrayList<String[]>();
+		values.add(new String[] {"1000", ""});
+		ArrayList<String[]> results = dc.executeQuery(query, values);
+		
+		ArrayList<Module> modules = new ArrayList<Module>();
+		
+		for (int i=0; i < results.size(); i++) {
+			modules.add(new Module(results.get(i)[0],results.get(i)[1],Integer.parseInt(results.get(i)[2]),results.get(i)[3],GraduateType.valueOf(results.get(i)[4].toUpperCase())));
+		}
+		
+		Object[][] data = new Object[results.size()][5];
+		
+		int row = 0;
+		for (Module module : modules) {
+			data[row][0] = module.getCode();
+			data[row][1] = module.getName();
+			data[row][2] = module.getCredits();
+			data[row][3] = module.getTeachingPeriod();
+			data[row][4] = module.getType();
+			row++;		
+		}
+		
+		return data;
+	}
+	
+	// get degree data WIP
 }

@@ -1,5 +1,6 @@
 package Views;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -130,17 +131,18 @@ public class AddDepartment extends JPanel {
 		// Remove UI, when logout is pressed
 		JButton logout = (JButton) frame.menuBar.getComponent(0);
 		logout.addActionListener(
-				new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						removeUI();
-					}
+			new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					removeUI();
 				}
+			}
 		);
 		
 		menuConstraints.gridx = 0;
 		frame.menuBar.add(localButtons, menuConstraints);
 		
-		frame.add(form);
+		frame.add(form, BorderLayout.CENTER);
+		frame.showMenuBar();
 		frame.revalidate();
 		frame.repaint();
 	}

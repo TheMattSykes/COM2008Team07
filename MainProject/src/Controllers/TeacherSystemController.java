@@ -134,7 +134,7 @@ public class TeacherSystemController extends Controller {
 			data[row][6] = student.getTutor();
 			data[row][7] = student.getPeriod();
 			data[row][8] = student.getLevel();
-			
+			data[row][9] = student.getRegistered();
 			row++;
 		}
 		
