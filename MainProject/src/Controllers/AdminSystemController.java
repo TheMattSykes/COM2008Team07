@@ -173,6 +173,14 @@ public class AdminSystemController extends Controller{
 		
 		av.removeUI();
 		try {
+			Object[][] departments = getDepartmentData();
+			String[] deptNames = new String[departments.length];
+			int i = 0;
+			for (Object[] department : departments) {
+				deptNames[i] = (String)department[1];
+				i++;
+			}
+			addModule.setAvailableDepartment(deptNames);
 			addModule.loadUI();
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -190,7 +198,7 @@ public class AdminSystemController extends Controller{
 	
 	public Object[][] getAccountData() throws Exception {
 		
-		String query = "SELECT userID, username, user_type FROM users LIMIT ?";
+		String query = "SELECT userID, username, user_type FROM users LIMIT ?;";
 		ArrayList<String[]> values = new ArrayList<String[]>();
 		values.add(new String[] {"1000",""});
 		ArrayList<String[]> results = dc.executeQuery(query,values);
@@ -216,7 +224,7 @@ public class AdminSystemController extends Controller{
 	
 	public Object[][] getDepartmentData() throws Exception {
 		
-		String query = "SELECT code, name FROM departments LIMIT ?";
+		String query = "SELECT code, name FROM departments LIMIT ?;";
 		ArrayList<String[]> values = new ArrayList<String[]>();
 		values.add(new String[] {"100",""});
 		ArrayList<String[]> results = dc.executeQuery(query, values);
@@ -240,7 +248,7 @@ public class AdminSystemController extends Controller{
 	
 	public Object[][] getModuleData() throws Exception {
 		
-		String query = new String("SELECT * FROM modules LIMIT ?");
+		String query = new String("SELECT * FROM modules LIMIT ?;");
 		ArrayList<String[]> values = new ArrayList<String[]>();
 		values.add(new String[] {"1000", ""});
 		ArrayList<String[]> results = dc.executeQuery(query, values);
@@ -280,7 +288,7 @@ public class AdminSystemController extends Controller{
 		if (d.getName().length() != 0 && d.getCode().length() != 0) {
 			// To do: Managing duplicate entries
 			try {
-				String query = "SELECT code, name FROM departments";
+				String query = "SELECT code, name FROM departments;";
 				ArrayList<String[]> values = new ArrayList<String[]>();
 				ArrayList<String[]> results = dc.executeQuery(query, values);
 				ArrayList<String> deptCodes = new ArrayList<String>();
@@ -302,7 +310,7 @@ public class AdminSystemController extends Controller{
 							" with code "+d.getCode(), "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, 
 							null, options, options[0]);
 					if (applyOption == 0) {
-						String insertQuery = "INSERT INTO departments VALUES(?,?)";
+						String insertQuery = "INSERT INTO departments VALUES(?,?);";
 						ArrayList<String[]> insertValues = new ArrayList<String[]>();
 						insertValues.add(new String[] {d.getName(), "true"});
 						insertValues.add(new String[] {d.getCode(), "true"});
@@ -356,4 +364,11 @@ public class AdminSystemController extends Controller{
 		
 	}
 	
+	public void addModule(Module m) {
+		
+	}
+	
+	public void deleteModule(Module m) {
+		
+	}
 }
