@@ -8,6 +8,7 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 
 import Models.Classification;
 import Models.Department;
@@ -80,6 +81,13 @@ public class AdminSystemController extends Controller{
 		av.setDataAccounts(getAccountData());
 		av.loadAccountUI();
 		av.getBackButton().addActionListener(e -> initMenuView());
+		JButton deleteButton = av.getAccountDelete();
+		av.getAccountTable().getSelectionModel().addListSelectionListener(e -> {
+						if(!deleteButton.isEnabled()) {
+							deleteButton.setEnabled(true);
+						}
+					});
+		deleteButton.addActionListener(e -> {});
 	}
 	
 	public void initDepartmentView() throws Exception {
@@ -87,6 +95,20 @@ public class AdminSystemController extends Controller{
 		av.loadDepartmentUI();
 		av.getBackButton().addActionListener(e -> initMenuView());
 		av.getDepartmentAdd().addActionListener(e -> initAddDepartmentView());
+		JButton deleteButton = av.getDepartmentDelete();
+		av.getDepartmentTable().getSelectionModel().addListSelectionListener(e -> {
+						if(!deleteButton.isEnabled()) {
+							deleteButton.setEnabled(true);
+						}
+					});
+		deleteButton.addActionListener(e -> {
+			Object[][] data = av.getDataDepartments();
+			JTable table = av.getDepartmentTable();
+			int row = table.getSelectedRow();
+			String deptCode = (String)(data[row][0]);
+			String deptName = (String)(data[row][1]);
+			System.out.println("Delete: "+deptCode+"  "+deptName);
+		});
 	}
 	
 	public void initDegreeView() throws Exception {
@@ -138,7 +160,7 @@ public class AdminSystemController extends Controller{
 							null, options, options[0]);
 					if (applyOption == 0) {
 						try {
-							String query = "INSERT INTO department VALUES(?,?)";
+							String query = "INSERT INTO departments VALUES(?,?)";
 							ArrayList<String[]> values = new ArrayList<String[]>();
 							values.add(new String[] {newDepartment.getName(), "true"});
 							values.add(new String[] {newDepartment.getCode(), "true"});

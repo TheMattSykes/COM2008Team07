@@ -59,26 +59,43 @@ public class AdminView extends JPanel {
 		frame = pf;
 	}
 	
-	public PrimaryFrame getFrame() { 
-		return frame;
-	}
-	
 	public void setDataAccounts(Object[][] a) {
 		accountsData = a;
+	}
+	
+	public Object[][] getDataAccounts() {
+		return accountsData;
 	}
 	
 	public void setDataDepartments(Object[][] d) {
 		departmentsData = d;
 	}
 	
+	public Object[][] getDataDepartments() {
+		return departmentsData;
+	}
+	
 	public void setDataDegrees(Object[][] d) {
 		degreesData = d;
+	}
+	
+	public Object[][] getDataDegrees() {
+		return degreesData;
 	}
 	
 	public void setDataModules(Object[][] m) {
 		modulesData = m;
 	}
 	
+	public Object[][] getDataModules() {
+		return modulesData;
+	}
+	
+	public PrimaryFrame getFrame() { 
+		return frame;
+	}
+	
+	// Menu buttons
 	public JButton getAccountButton() {
 		return menuAccount;
 	}
@@ -94,11 +111,12 @@ public class AdminView extends JPanel {
 	public JButton getModuleButton() {
 		return menuModule;
 	}
-	
+
 	public JButton getBackButton() {
 		return back;
 	}
 	
+	// Get functions for Account UI Components
 	public JButton getAccountAdd() {
 		return accountAdd;
 	}
@@ -107,6 +125,11 @@ public class AdminView extends JPanel {
 		return accountDelete;
 	}
 	
+	public JTable getAccountTable() {
+		return accountTable;
+	}
+	
+	// Get functions for Department UI Components
 	public JButton getDepartmentAdd() {
 		return departmentAdd;
 	}
@@ -115,6 +138,10 @@ public class AdminView extends JPanel {
 		return departmentDelete;
 	}
 	
+	public JTable getDepartmentTable() {
+		return departmentTable;
+	}
+	// Get functions for Degree UI Components
 	public JButton getDegreeAdd() {
 		return degreeAdd;
 	}
@@ -123,12 +150,20 @@ public class AdminView extends JPanel {
 		return degreeDelete;
 	}
 	
+	public JTable getDegreeTable() {
+		return degreeTable;
+	}
+	// Get functions for Module UI Components
 	public JButton getModuleAdd() {
 		return moduleAdd;
 	}
 	
 	public JButton getModuleDelete() {
 		return moduleDelete;
+	}
+	
+	public JTable getModuleTable() {
+		return moduleTable;
 	}
 	
 	public void viewChange() {
