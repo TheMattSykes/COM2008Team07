@@ -222,6 +222,7 @@ public class AddModule extends JPanel {
 		frame.menuBar.add(localButtons, menuConstraints);
 		
 		frame.add(form);
+		frame.showMenuBar();
 		frame.revalidate();
 		frame.repaint();
 	}
