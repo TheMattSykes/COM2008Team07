@@ -14,7 +14,7 @@ import Controllers.DatabaseController;
 public class PasswordUtilities {
 	
 	public static void main(String[] args) throws Exception {
-		String pass = "HelloThere!";
+		String pass = "Iamyourfather!";
 		
 		newPasswordChecker(pass);
 		
