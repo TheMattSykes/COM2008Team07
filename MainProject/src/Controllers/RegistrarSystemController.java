@@ -5,8 +5,10 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Random;
 import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import Models.Classification;
@@ -32,6 +34,8 @@ public class RegistrarSystemController extends Controller {
 	private Views currentView;
 	private ArrayList<Integer> regNumbersInUse;
 	private JButton logoutButton;
+	private ArrayList<Module> originalModules;
+	int totalCredits = 0;
 	
 	private Object[][] studentData;
 	
@@ -49,21 +53,27 @@ public class RegistrarSystemController extends Controller {
 		return user;
 	}
 	
-	public static void main(String[] args) {
-		// Main stuff
-	}
-	
-	
-	public void initController() {		
-		
-	}
-	
 	public void initDefaultView() throws Exception {
 		rv.setStudentsData(getStudentsData());
 		rv.loadUI();
 		currentView = Views.REGISTRARVIEW;
+
+		JButton addButton = rv.getAddButton();
+		JButton editButton = rv.getEditButton();
+		JButton deleteButton = rv.getDeleteButton();
+		JButton modulesButton = rv.getModulesButton();
+		// Row selection listener
+		rv.getTable().getSelectionModel().addListSelectionListener(e -> {
+        	if (!editButton.isEnabled())
+        		editButton.setEnabled(true);
+        	if (!deleteButton.isEnabled())
+        		deleteButton.setEnabled(true);
+        	if (!modulesButton.isEnabled())
+        		modulesButton.setEnabled(true);
+		});
+		
 		// Action listener for Add Student button
-		rv.getAddButton().addActionListener(e -> {				
+		addButton.addActionListener(e -> {				
 			try {
 				changeView(Views.ADDSTUDENT);
 			} catch (Exception ex) {
@@ -71,18 +81,8 @@ public class RegistrarSystemController extends Controller {
 			}
 		});
 		
-		// Action listener for Delete Student button
-		rv.getDeleteButton().addActionListener(e -> {
-			try {
-				deleteStudent();
-				changeView(Views.REGISTRARVIEW);
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-		});
-		
 		// Action listener for Edit Student Button
-		rv.getEditButton().addActionListener(e -> {
+		editButton.addActionListener(e -> {
 			try {
 				JTable table = rv.getTable();
 				selectedStudent = new Student();
@@ -103,8 +103,18 @@ public class RegistrarSystemController extends Controller {
 			}
 		});
 		
+		// Action listener for Delete Student button
+		deleteButton.addActionListener(e -> {
+			try {
+				deleteStudent();
+				changeView(Views.REGISTRARVIEW);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		});
+		
 		// Action listener for Add/Remove modules button
-		rv.getModulesButton().addActionListener(e -> {				
+		modulesButton.addActionListener(e -> {				
 			try {
 				JTable table = rv.getTable();
 				selectedStudent = new Student();
@@ -124,16 +134,6 @@ public class RegistrarSystemController extends Controller {
 				ex.printStackTrace();
 			}
 		});
-		
-		// Action listener for Logout Button
-		logoutButton = rv.getLogoutButton();
-		logoutButton.addActionListener(
-			new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					rv.removeUI();
-				}
-			}
-		);
 	}
 	
 	private void deleteStudent() throws Exception {
@@ -230,12 +230,6 @@ public class RegistrarSystemController extends Controller {
 				dialog.setVisible(true);
 			}
 		});
-		
-		// Action listener for Logout Button
-		logoutButton = as.getLogoutButton();
-		logoutButton.addActionListener(e -> {
-			as.removeUI();
-		});
 	}
 	
 	public void initEditStudentView() throws Exception {
@@ -302,12 +296,6 @@ public class RegistrarSystemController extends Controller {
 				dialog.setVisible(true);
 			}
 		});
-		
-		// Action listener for Logout Button
-		logoutButton = es.getLogoutButton();
-		logoutButton.addActionListener(e -> {
-			es.removeUI();
-		});
 	}
 	
 	public void initRegistrarModulesView() throws Exception {
@@ -320,17 +308,161 @@ public class RegistrarSystemController extends Controller {
 		currentView = Views.REGISTRARMODULES;
 		// Action listener for Back button
 		rm.getBackButton().addActionListener(e -> {				
+
+		ArrayList<Module> enrolledModules = getEnrolledModules();
+		rm.setCurrentModules(enrolledModules);
+		JLabel creditsLabel = rm.getCreditsLabel();
+		creditsLabel.setText(""+totalCredits);
+		ArrayList<Module> availableModules = getAvailableModules();
+		rm.setAvailableModules(availableModules);
+		rm.loadUI();
+		currentView = Views.REGISTRARMODULES;
+		
+		JButton removeButton = rm.getRemoveModuleButton();
+		JTable currentModulesTable = rm.getCurrentModulesTable();
+		// Row selection listener for currentModulesTable
+		currentModulesTable.getSelectionModel().addListSelectionListener(e -> {
+			if(!e.getValueIsAdjusting() && currentModulesTable.getSelectedRow() > -1) {
+				// A module has to be incomplete and optional, for it to be removable
+	        	if (!enrolledModules.get(currentModulesTable.getSelectedRow()).isCore() &&
+	        		enrolledModules.get(currentModulesTable.getSelectedRow()).getMaxGrade() == Grades.UNDEFINED) {
+	        		removeButton.setEnabled(true);
+	        	} else {
+	        		removeButton.setEnabled(false);
+	        	}
+			}
+		});
+		
+		DefaultTableModel currentModulesTableModel = rm.getCurrentModulesTableModel();
+		DefaultTableModel availableModulesTableModel = rm.getAvailableModulesTableModel();
+		
+		// Action listener for remove module button
+		removeButton.addActionListener(e -> {
+			availableModulesTableModel.addRow(new Object[] {enrolledModules.get(currentModulesTable.getSelectedRow()).getCode(),
+					enrolledModules.get(currentModulesTable.getSelectedRow()).getName(),
+					enrolledModules.get(currentModulesTable.getSelectedRow()).getCredits(),
+					enrolledModules.get(currentModulesTable.getSelectedRow()).getLevel()});
+			Module module = enrolledModules.get(currentModulesTable.getSelectedRow());
+			if (module.getLevel() == selectedStudent.getLevel()) {
+				totalCredits -= module.getCredits();
+				creditsLabel.setText(""+totalCredits);
+				if ((selectedStudent.getLevel() == 1 || selectedStudent.getLevel() == 2 || selectedStudent.getLevel() == 3 &&
+					totalCredits != 120) || selectedStudent.getLevel() == 4 && totalCredits != 180) {
+					rm.getApplyButton().setEnabled(false);
+				} else {
+					rm.getApplyButton().setEnabled(true);
+				}
+			}
+			availableModules.add(module);
+			enrolledModules.remove(currentModulesTable.getSelectedRow());
+			currentModulesTableModel.removeRow(currentModulesTable.getSelectedRow());
+			removeButton.setEnabled(false);
+		});
+		
+		JButton addButton = rm.getAddModuleButton();
+		JTable availableModulesTable = rm.getAvailableModulesTable();
+		// Row selection listener for availableModulesTable
+		availableModulesTable.getSelectionModel().addListSelectionListener(e -> {
+        	if (!addButton.isEnabled() && !e.getValueIsAdjusting() && availableModulesTable.getSelectedRow() > -1)
+        		addButton.setEnabled(true);
+		});
+		
+		// Action listener for add module button
+		addButton.addActionListener(e -> {
+			currentModulesTableModel.addRow(new Object[] {availableModules.get(availableModulesTable.getSelectedRow()).getCode(),
+					availableModules.get(availableModulesTable.getSelectedRow()).getName(),
+					Grades.UNDEFINED, availableModules.get(availableModulesTable.getSelectedRow()).getCredits(),
+					availableModules.get(availableModulesTable.getSelectedRow()).getLevel(), false});
+			Module module = availableModules.get(availableModulesTable.getSelectedRow());
+			module.setCore("no");
+			module.setDepartment(selectedStudent.getDegree());
+			module.setGrades(new Grades[] {Grades.UNDEFINED, null});
+			module.setScores(new int[] {0, 0});
+			enrolledModules.add(module);
+			totalCredits += module.getCredits();
+			creditsLabel.setText(""+totalCredits);
+			if ((selectedStudent.getLevel() == 1 || selectedStudent.getLevel() == 2 || selectedStudent.getLevel() == 3 &&
+				totalCredits != 120) || selectedStudent.getLevel() == 4 && totalCredits != 180) {
+				rm.getApplyButton().setEnabled(false);
+			} else {
+				rm.getApplyButton().setEnabled(true);
+			}
+			availableModules.remove(availableModulesTable.getSelectedRow());
+			availableModulesTableModel.removeRow(availableModulesTable.getSelectedRow());
+			addButton.setEnabled(false);
+		});
+		
+		// Action listener for Apply button
+		rm.getApplyButton().addActionListener(e -> {
+			try {
+				Object[] options = {"Yes", "No"};
+				int applyOption = JOptionPane.showOptionDialog(rm.getFrame(), "Confirm updating "+selectedStudent.getFirstName()+" "+
+						selectedStudent.getSecondName()+"'s modules in the database?", "Apply question", JOptionPane.YES_NO_OPTION, 
+						JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+				if (applyOption == 0) {
+					ArrayList<Module> addables = new ArrayList<Module>(enrolledModules);
+					addables.removeAll(originalModules);
+					ArrayList<Module> removables = new ArrayList<Module>(originalModules);
+					removables.removeAll(enrolledModules);
+					try {
+						// Delete modules
+						if (removables.size() > 0) {
+							String query = "DELETE FROM enrolled WHERE reg_number = ? AND  module_code IN (?";
+							ArrayList<String[]> values = new ArrayList<String[]>();
+							// Each value String[] has (1) the data, (2) boolean, which denotes whether it is a string
+							values.add(new String[] {Integer.toString(selectedStudent.getRegNumber()), "false"});
+							values.add(new String[] {removables.get(0).getCode(),"true"});
+							
+							for (Module removable : removables) {
+								query += ", ?";
+								values.add(new String[] {removable.getCode(),"true"});
+							}
+							query += ")";							
+							
+							dc.executeQuery(query, values);
+						}
+						
+						// Add modules
+						if (addables.size() > 0) {
+							String query = "INSERT INTO enrolled (reg_number, module_code, grade1, grade2) VALUES (?, ?, ?, ?)";
+							ArrayList<String[]> values = new ArrayList<String[]>();
+							// Each value String[] has (1) the data, (2) boolean, which denotes whether it is a string
+							values.add(new String[] {Integer.toString(selectedStudent.getRegNumber()), "false"});
+							values.add(new String[] {addables.get(0).getCode(),"true"});
+							values.add(new String[] {"NULL","true"});
+							values.add(new String[] {"NULL","true"});
+							
+							for (Module addable : addables) {
+								query += ", (?, ?, ?, ?)";
+								values.add(new String[] {Integer.toString(selectedStudent.getRegNumber()), "false"});
+								values.add(new String[] {addable.getCode(),"true"});
+								values.add(new String[] {"NULL","true"});
+								values.add(new String[] {"NULL","true"});
+							}						
+							
+							dc.executeQuery(query, values);
+						}
+						changeView(Views.REGISTRARVIEW);
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				JOptionPane optionPane = new JOptionPane("Error connecting to dabatase.", JOptionPane.ERROR_MESSAGE);    
+				JDialog dialog = optionPane.createDialog("Error");
+				dialog.setAlwaysOnTop(true);
+				dialog.setVisible(true);
+			}
+		});
+		
+		// Action listener for Back button
+		rm.getBackButton().addActionListener(e -> {
 			try {
 				changeView(Views.REGISTRARVIEW);
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
-		});
-		
-		// Action listener for Logout Button
-		logoutButton = rm.getLogoutButton();
-		logoutButton.addActionListener(e -> {
-			rm.removeUI();
 		});
 	}
 	
@@ -432,6 +564,7 @@ public class RegistrarSystemController extends Controller {
 		ArrayList<Module> modules = new ArrayList<Module>();
 		
 		if (results.size() > 0) {
+			totalCredits = 0;
 			
 			int count = 0;
 			for (String[] result : results) {
@@ -488,10 +621,20 @@ public class RegistrarSystemController extends Controller {
 				newModule.setLevel(Integer.parseInt(modResults[3]));
 				newModule.setType(GraduateType.valueOf(modResults[4].toUpperCase()));
 				
+				if (newModule.getLevel() == selectedStudent.getLevel())
+					totalCredits += newModule.getCredits();
+				
 				modules.add(newModule);
+			}
+			if ((selectedStudent.getLevel() == 1 || selectedStudent.getLevel() == 2 || selectedStudent.getLevel() == 3 &&
+				totalCredits != 120) || selectedStudent.getLevel() == 4 && totalCredits != 180) {
+				rm.getApplyButton().setEnabled(false);
+			} else {
+				rm.getApplyButton().setEnabled(true);
 			}
 		}
 		
+		originalModules = new ArrayList<Module>(modules);
 		return modules;
 	}
 	
@@ -503,6 +646,9 @@ public class RegistrarSystemController extends Controller {
 				max = score;
 			}
 		}
+		ArrayList<String[]> values = new ArrayList<String[]>();
+		values.add(new String[]{selectedStudent.getDegree(),"true"});
+		values.add(new String[]{Integer.toString(selectedStudent.getLevel()),"false"});
 		
 		return max;
 	}
@@ -579,5 +725,16 @@ public class RegistrarSystemController extends Controller {
 				return Classification.DISTINCTION;
 			}
 		}
+	}
+	
+	public void removeAllUI() {
+		if (rv != null)
+			rv.removeUI();
+		if (as != null)
+			as.removeUI();
+		if (es != null)
+			es.removeUI();
+		if (rm != null)
+			rm.removeUI();
 	}
 }
