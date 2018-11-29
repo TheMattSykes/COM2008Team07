@@ -407,11 +407,41 @@ public class AdminView extends JPanel {
 		degreePanel = new JPanel();
 		degreePanel.setLayout(new GridBagLayout());
 		GridBagConstraints degreeConstraints = new GridBagConstraints();
-		degreeConstraints.gridy = 0;
-		degreeConstraints.gridx = 1;
-		JLabel title = new JLabel("Degree UI");
-		degreePanel.add(title, degreeConstraints);
+		degreeConstraints.weightx = 1.0;
+		degreeConstraints.insets = new Insets(5,5,5,5);
 		
+		String[] columnNames = {"Degree Code", "Degree Name", "Level", "Lead Department", "Assisting Departments"};
+		
+		degreeTable = new JTable(degreesData, columnNames) {
+	        private static final long serialVersionUID = 1L;
+
+	        public boolean isCellEditable(int row, int column) {                
+	        	return false;               
+	        }
+	        
+	        @Override
+	        public Dimension getPreferredScrollableViewportSize() {
+	            Dimension dim = new Dimension(
+	            		// Width will get changed later anyway
+	                this.getColumnCount() * 100,
+	                // Set height of table, so it fits on the page
+	                this.getRowHeight() * 20);
+	            return dim;
+	        }
+		};
+		
+		TableColumnAdjuster tca = new TableColumnAdjuster(degreeTable);
+		tca.adjustColumns();
+		
+		JScrollPane scrollPane = new JScrollPane(degreeTable);
+		degreeTable.setFillsViewportHeight(true);
+		scrollPane.setPreferredSize(new Dimension(getWidth(),350));
+		
+		degreeConstraints.fill = GridBagConstraints.HORIZONTAL;
+		degreeConstraints.gridx = 0;
+		degreeConstraints.gridy = 1;
+		degreePanel.add(scrollPane, degreeConstraints);
+		// Adding the panel to the frame
 		frame.add(degreePanel, BorderLayout.CENTER);
 		frame.showMenuBar();
 		frame.revalidate();

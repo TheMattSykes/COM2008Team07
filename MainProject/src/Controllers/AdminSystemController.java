@@ -35,10 +35,10 @@ import java.util.Collections;
 public class AdminSystemController extends Controller{
 
 	private AdminView av;
-	private AddAccount addUser;
-	private AddDepartment addDept;
-	private AddDegree addDegree;
-	private AddModule addModule;
+	private AddAccount addAccountView;
+	private AddDepartment addDeptView;
+	private AddDegree addDegreeView;
+	private AddModule addModuleView;
 	private DatabaseController dc;
 	//private Views currentView;
 	
@@ -51,6 +51,11 @@ public class AdminSystemController extends Controller{
 	}
 
 	public void initMenuView() {
+		try {
+			getDegreeData();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 		av.loadMenuUI();
 		// Accounts button loads the Admin's Account UI
 		av.getAccountButton().addActionListener(e -> { 
@@ -135,8 +140,12 @@ public class AdminSystemController extends Controller{
 	}
 	
 	public void initDegreeView() throws Exception {
+		av.setDataDegrees(getDegreeData());
 		av.loadDegreeUI();
 		av.getBackButton().addActionListener(e -> initMenuView());
+		av.getDegreeAdd().addActionListener(e -> initAddDegreeView());
+		JButton deleteButton = av.getDegreeDelete();
+		
 	}
 	
 	public void initModuleView() throws Exception {
@@ -147,19 +156,19 @@ public class AdminSystemController extends Controller{
 	}
 	
 	public void initAddAccountView() {
-		if (addUser == null) {
-			addUser = new AddAccount(av.getFrame());
+		if (addAccountView == null) {
+			addAccountView = new AddAccount(av.getFrame());
 		}
 		
 		av.removeUI();
 		try {
-			addUser.loadUI();
+			addAccountView.loadUI();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 		
-		addUser.getBackButton().addActionListener(e -> {
-			addUser.removeUI();
+		addAccountView.getBackButton().addActionListener(e -> {
+			addAccountView.removeUI();
 			try {
 				initAccountView();
 			} catch (Exception ex) {
@@ -167,25 +176,25 @@ public class AdminSystemController extends Controller{
 			}
 		});
 		
-		addUser.getApplyButton().addActionListener(e -> {
-			addAccount(addUser.getDetails());
+		addAccountView.getApplyButton().addActionListener(e -> {
+			addAccount(addAccountView.getDetails());
 		});
 	}
 	
 	public void initAddDepartmentView() {
-		if (addDept == null) {
-			addDept = new AddDepartment(av.getFrame());
+		if (addDeptView == null) {
+			addDeptView = new AddDepartment(av.getFrame());
 		}
 		
 		av.removeUI();
 		try {
-			addDept.loadUI();
+			addDeptView.loadUI();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 		
-		addDept.getBackButton().addActionListener(e -> {
-			addDept.removeUI();
+		addDeptView.getBackButton().addActionListener(e -> {
+			addDeptView.removeUI();
 			try {
 				initDepartmentView();
 			} catch (Exception ex) {
@@ -193,18 +202,20 @@ public class AdminSystemController extends Controller{
 			}
 		});
 		
-		addDept.getApplyButton().addActionListener(e -> {
-			addDepartment(addDept.getNewDepartment());
+		addDeptView.getApplyButton().addActionListener(e -> {
+			addDepartment(addDeptView.getNewDepartment());
 		});
 	}
 	
 	public void initAddDegreeView() {
-		System.out.println("Change to the Degree add view - WIP");
+		//if (addDegreeView == null) {
+		//	addDegreeView = new AddDegree(av.getFrame());
+		//}
 	}
 	
 	public void initAddModuleView() {
-		if (addModule == null) {
-			addModule = new AddModule(av.getFrame());
+		if (addModuleView == null) {
+			addModuleView = new AddModule(av.getFrame());
 		}
 		
 		av.removeUI();
@@ -216,14 +227,14 @@ public class AdminSystemController extends Controller{
 				deptNames[i] = (String)department[1];
 				i++;
 			}
-			addModule.setAvailableDepartment(deptNames);
-			addModule.loadUI();
+			addModuleView.setAvailableDepartment(deptNames);
+			addModuleView.loadUI();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 		
-		addModule.getBackButton().addActionListener(e ->{
-			addModule.removeUI();
+		addModuleView.getBackButton().addActionListener(e ->{
+			addModuleView.removeUI();
 			try {
 				initModuleView();
 			} catch (Exception ex) {
@@ -310,7 +321,40 @@ public class AdminSystemController extends Controller{
 		return data;
 	}
 	
-	// public Object[][] getDegreeData() throws Exception { }
+	public Object[][] getDegreeData() throws Exception {
+		String degreeQuery = new String("SELECT * FROM degrees;");
+		String leadQuery = new String("SELECT * FROM leads;");
+		ArrayList<String[]> degreeResults = dc.executeQuery(degreeQuery, null);
+		ArrayList<String[]> leadResults = dc.executeQuery(leadQuery, null);
+		Object[][] data = new Object[degreeResults.size()][5];
+		int row = 0;
+		for (String[] degree : degreeResults) {
+			data[row][0] = degree[0];
+			data[row][1] = degree[1];
+			data[row][2] = degree[2];
+			for (String[] lead : leadResults) {
+				ArrayList<String> assisting = new ArrayList<String>();
+				if (degree[0].equals(lead[1])) {
+					if ( Integer.parseInt(lead[2]) == 1 ) {
+						data[row][3] = lead[0];
+					} else if ( Integer.parseInt(lead[2]) == 0 ) {
+						assisting.add(lead[0]);
+					}
+				}
+				String assistString = "";
+				for (int i = 0; i < assisting.size(); i++) {
+					if (assistString.equals("") ) {
+						assistString += assisting.get(i);
+					} else {
+						assistString += ", " + assisting.get(i);
+					}
+				}
+				data[row][4] = assistString;
+			}
+			row++;
+		}
+		return data;
+	}
 	
 	public void addAccount(String[] details) {
 		try {
@@ -356,7 +400,7 @@ public class AdminSystemController extends Controller{
 				hashedPass = PasswordUtilities.hash(newPass);
 				// Asking for confirmation
 				Object[] options = {"Yes", "No"};
-				int applyOption = JOptionPane.showOptionDialog(addUser.getFrame(), "Confirm adding user with username "+ username, "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, 
+				int applyOption = JOptionPane.showOptionDialog(addAccountView.getFrame(), "Confirm adding user with username "+ username, "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, 
 						null, options, options[0]);
 				if (applyOption == 0) {
 					// carry out query & redirect back to accounts view
@@ -368,7 +412,7 @@ public class AdminSystemController extends Controller{
 					values.add(new String[] {type.toString().toLowerCase(), "true"});
 					values.add(new String[] {salt, "true"});
 					dc.executeQuery(addQuery, values);
-					addUser.removeUI();
+					addAccountView.removeUI();
 					initAccountView();
 				} 
 			} else {
@@ -474,7 +518,7 @@ public class AdminSystemController extends Controller{
 					dialog.setVisible(true);
 				} else {
 					Object[] options = {"Yes", "No"};
-					int applyOption = JOptionPane.showOptionDialog(addDept.getFrame(), "Confirm adding the department "+d.getName()+
+					int applyOption = JOptionPane.showOptionDialog(addDeptView.getFrame(), "Confirm adding the department "+d.getName()+
 							" with code "+d.getCode(), "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, 
 							null, options, options[0]);
 					if (applyOption == 0) {
@@ -484,7 +528,7 @@ public class AdminSystemController extends Controller{
 						insertValues.add(new String[] {d.getCode(), "true"});
 						dc.executeQuery(insertQuery, insertValues);
 
-						addDept.removeUI();
+						addDeptView.removeUI();
 						try {
 							initDepartmentView();
 						} catch (Exception ex) {
@@ -539,4 +583,5 @@ public class AdminSystemController extends Controller{
 	public void deleteModule(Module m) {
 		
 	}
+	
 }
