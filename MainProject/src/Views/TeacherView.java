@@ -22,11 +22,10 @@ public class TeacherView extends JPanel {
 	private static final long serialVersionUID = 1L;
 	PrimaryFrame frame;
 	Object[][] studentsData;
-	JPanel studentInfo;
+	private JPanel teacherInfo;
 	private JPanel teacherButtons;
-	private JButton addGrades;
-	private JButton editGrades;
-	private JButton calculateMean;
+	private JButton viewGrades;
+	private JButton logoutButton;
 	private JTable table;
 	
 	public TeacherView(PrimaryFrame pf) {
@@ -50,61 +49,59 @@ public class TeacherView extends JPanel {
 	}
 	
 	public void removeUI() {
-		if (studentInfo != null)
-			frame.remove(studentInfo);
+		if (teacherInfo != null)
+			frame.remove(teacherInfo);
 		if (teacherButtons != null)
 			frame.menuBar.remove(teacherButtons);
 	}
 	
-	public JButton getAddButton() {
-		return addGrades;
-	}
-	
 	public JButton getEditButton() {
-		return editGrades;
+		return viewGrades;
 	}
 	
-	public JButton getCalculateButton() {
-		return calculateMean;
+	public JButton getLogoutButton() {
+		return logoutButton;
 	}
 	
 	public void loadUI() throws Exception {
-		String teacherName = "Dirk";
+		String regName = "Tony";
 		
-		JPanel studentDetails = new JPanel();
-		studentDetails.setLayout(new GridLayout(5,1));
+		JPanel registrarDetails = new JPanel();
+		registrarDetails.setLayout(new GridLayout(5,1));
 		
-		JLabel nameLabel = new JLabel("Name: "+teacherName);
+		JLabel nameLabel = new JLabel("Name: "+regName);
 		
-		studentDetails.add(nameLabel);
+		registrarDetails.add(nameLabel);
 		
 		String[] columnNames = {
 				"Reg. Number",
                 "Title",
-                "First Name",
-                "Second Name",
+                "Surname",
+                "Forename",
                 "Degree",
                 "Email",
                 "Tutor",
                 "Period",
-                "Level"
+                "Level",
         };
 		
 		
-		studentInfo = new JPanel();
+		teacherInfo = new JPanel();
 		
-		studentInfo.setLayout(new GridBagLayout());
-		GridBagConstraints stuConstraints = new GridBagConstraints();
-		stuConstraints.weightx = 1.0;
+		teacherInfo.setLayout(new GridBagLayout());
+		GridBagConstraints regConstraints = new GridBagConstraints();
+		regConstraints.weightx = 1.0;
 
-		studentInfo.setBorder(BorderFactory.createEmptyBorder(10, 10, 20, 10));
-	
-		stuConstraints.insets = new Insets(5,5,5,5);
+		// teacherInfo.setBorder(BorderFactory.createEmptyBorder(10, 10, 20, 10));
 		
-		stuConstraints.fill = GridBagConstraints.HORIZONTAL;
-		stuConstraints.gridx = 0;
-		stuConstraints.gridy = 0;
-		studentInfo.add(studentDetails, stuConstraints);
+		
+		
+		regConstraints.insets = new Insets(5,5,5,5);
+		
+		regConstraints.fill = GridBagConstraints.HORIZONTAL;
+		regConstraints.gridx = 0;
+		regConstraints.gridy = 0;
+		teacherInfo.add(registrarDetails, regConstraints);
 		
 		
 		table = new JTable(studentsData, columnNames) {
@@ -132,15 +129,12 @@ public class TeacherView extends JPanel {
 		JScrollPane scrollPane = new JScrollPane(table);
 		table.setFillsViewportHeight(true);
 		
-		// Add & edit grades and calculate mean grade buttons
+		// Add, edit and delete student buttons
 		teacherButtons = new JPanel();
 		teacherButtons.setLayout(new GridBagLayout());
 		
-		addGrades = new JButton("Add Grades");
-		editGrades = new JButton("Edit Grades");
-		editGrades.setEnabled(false);
-		calculateMean = new JButton("Calculate Mean Grade");
-		calculateMean.setEnabled(false);
+		viewGrades = new JButton("View Grades");
+		viewGrades.setEnabled(false);
 		
 		GridBagConstraints menuConstraints = new GridBagConstraints();
 		menuConstraints.insets = new Insets(0,5,0,5);		
@@ -148,11 +142,11 @@ public class TeacherView extends JPanel {
 		menuConstraints.gridy = 0;
 		
 		menuConstraints.gridx = 0;
-		teacherButtons.add(addGrades, menuConstraints);
+		teacherButtons.add(viewGrades, menuConstraints);
 		menuConstraints.gridx = 1;
-		teacherButtons.add(editGrades, menuConstraints);
-		menuConstraints.gridx = 2;
-		teacherButtons.add(calculateMean, menuConstraints);
+		
+		logoutButton = (JButton) frame.menuBar.getComponent(0);
+		
 		menuConstraints.gridx = 0;
 		frame.menuBar.add(teacherButtons, menuConstraints);
 		
@@ -160,22 +154,21 @@ public class TeacherView extends JPanel {
 		table.getSelectionModel().addListSelectionListener(
 			new ListSelectionListener() {
 		        public void valueChanged(ListSelectionEvent event) {
-		            //System.out.println(table.getValueAt(table.getSelectedRow(), 0).toString());
-		        	if (!editGrades.isEnabled())
-		        		editGrades.setEnabled(true);
-		        	if (!calculateMean.isEnabled())
-		        		calculateMean.setEnabled(true);
+		        	if (!viewGrades.isEnabled())
+		        		viewGrades.setEnabled(true);
 		        }
 			}
 	    );
 		
-		stuConstraints.insets = new Insets(5,5,5,5);
-		stuConstraints.fill = GridBagConstraints.HORIZONTAL;
-		stuConstraints.gridx = 0;
-		stuConstraints.gridy = 1;
-		studentInfo.add(scrollPane, stuConstraints);
+		regConstraints.insets = new Insets(5,5,5,5);
+		regConstraints.fill = GridBagConstraints.HORIZONTAL;
+		regConstraints.gridx = 0;
+		regConstraints.gridy = 1;
 		
-		frame.add(studentInfo, BorderLayout.CENTER);
+		scrollPane.setPreferredSize(new Dimension(getWidth(),350));
+		teacherInfo.add(scrollPane, regConstraints);
+		
+		frame.add(teacherInfo, BorderLayout.CENTER);
 		frame.showMenuBar();
 		frame.revalidate();
 		frame.repaint();
