@@ -25,6 +25,7 @@ public class EditGrades extends JPanel {
 	private JPanel formButtons;
 	private JPanel localButtons;
 	private JButton backButton;
+	private JButton logoutButton;
 	private JButton applyButton;
 	private JComboBox<Integer> regNoDropdown;
 	private JComboBox<String> codeDropdown;
@@ -58,6 +59,10 @@ public class EditGrades extends JPanel {
 	
 	public JButton getApplyButton() {
 		return applyButton;
+	}
+	
+	public JButton getLogoutButton() {
+		return logoutButton;
 	}
 	
 	public void setAvailableModules(String[] m) {
