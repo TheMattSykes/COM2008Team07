@@ -139,23 +139,6 @@ public class AccountController extends Controller {
 	}
 	
 	
-	
-	
-	
-	public static void main(String[] args) throws Exception {
-		String pass = "Generalkenobi!";
-		
-		pu.newPasswordChecker(pass);
-		
-		String salt = pu.generateSalt();
-		
-		String newPassword = pass + salt;
-		
-		System.out.println("Salt: "+salt);
-		System.out.print("New Password: "+pu.hash(newPassword));
-	}
-	
-	
 	/**
 	 * loginChecker()
 	 * Instantiates a DatabaseController

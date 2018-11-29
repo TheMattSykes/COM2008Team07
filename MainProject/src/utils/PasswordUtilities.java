@@ -12,6 +12,21 @@ import javax.swing.JOptionPane;
 import Controllers.DatabaseController;
 
 public class PasswordUtilities {
+	
+	public static void main(String[] args) throws Exception {
+		String pass = "HelloThere!";
+		
+		newPasswordChecker(pass);
+		
+		String salt = generateSalt();
+		
+		String newPassword = pass + salt;
+		
+		System.out.println("Salt: "+salt);
+		System.out.print("New Password: "+hash(newPassword));
+	}
+	
+	
 	/**
 	 * hash()
 	 * Uses java's MessageDigest and DatatypeConverter APIs to SHA-256 hash a string.
@@ -19,7 +34,7 @@ public class PasswordUtilities {
 	 * */
 	public static String hash(String stringToHash) throws NoSuchAlgorithmException, UnsupportedEncodingException {
 		// Define algorithm: SHA-256
-		MessageDigest stringDigest = MessageDigest.getInstance("SHA-256");
+		MessageDigest stringDigest = MessageDigest.getInstance("SHA-512");
 		
 		// Generate byte hash store in an array of bytes
 		byte[] hash = stringDigest.digest(
