@@ -27,12 +27,13 @@ import Views.AdminView;
 import Views.LoginView;
 import Views.PrimaryFrame;
 import Views.StudentView;
+import utils.PasswordUtilities;
 
 import java.util.Collection;
 import java.util.Collections;
 
 public class AdminSystemController extends Controller{
-	
+
 	private AdminView av;
 	private AddAccount addUser;
 	private AddDepartment addDept;
@@ -45,7 +46,6 @@ public class AdminSystemController extends Controller{
 		super(mainUser);
 		
 		dc = new DatabaseController();
-		
 		av = aview;
 		initMenuView();
 	}
@@ -109,8 +109,8 @@ public class AdminSystemController extends Controller{
 			Object[][] data = av.getDataAccounts();
 			JTable table = av.getAccountTable();
 			int row = table.getSelectedRow();
-			User targetUser = new User(Integer.parseInt((String)data[row][0]),(String)data[row][1],UserTypes.valueOf((String)data[row][2]));
-			System.out.println(targetUser.getUserID() + "  " + targetUser.getUsername() + "  " + targetUser.getUserType());
+			User targetUser = new User(Integer.parseInt(data[row][0]+""),(String)data[row][1],UserTypes.valueOf(data[row][2].toString()));
+			deleteAccount(targetUser);
 		});
 	}
 	
@@ -168,7 +168,6 @@ public class AdminSystemController extends Controller{
 		});
 		
 		addUser.getApplyButton().addActionListener(e -> {
-			System.out.println("Accept the user form & submit the account iformation");
 			addAccount(addUser.getDetails());
 		});
 	}
@@ -314,30 +313,73 @@ public class AdminSystemController extends Controller{
 	// public Object[][] getDegreeData() throws Exception { }
 	
 	public void addAccount(String[] details) {
-		Integer id = 0;
 		try {
-			String query = "SELECT MAX(userID) FROM users;";
-			ArrayList<String[]> results = dc.executeQuery(query, null);
-			id = Integer.parseInt(results.get(0)[0])+1;
+			// Start compiling an error message for a detailed error
+			String errorMessage = "Issue(s) with the data entered: \n";
+			Boolean error = false;
+			// Setting up variables for data
+			String salt;
+			String newPass;
+			String hashedPass;
+			ArrayList<String[]> results = new ArrayList<String[]>();
+			// Obtaining usernames
+			String query = "SELECT username FROM users;";
+			results = dc.executeQuery(query, null);
+			// Checking if any field is empty
+			String[] detailTitles = new String[] {"First Name", "Second Name", "User Type", "Password", "Password Confirmation"};
+			for (int i=0; i<details.length ; i++) {
+				if (details[i] == "") {
+					errorMessage += "The "+detailTitles[i]+" field is empty \n";
+					error = true;
+				}
+			}
+			// Checking password equality
+			if (!details[3].equals(details[4])) {
+				errorMessage += "Confirmation password doesnt match password \n";
+				error = true;
+			}
+			
+			// Checking password strength
+			if ( !PasswordUtilities.newPasswordChecker(details[3]) ) {
+				errorMessage += "Password must contain atleast one lower case, upper case and a symbol - as well as being atleast 8 characters long";
+				error = true;
+			}
+			
+			if ( !error ) {
+				// Compiling the user data into a new user.
+				Integer id = results.size()+1;
+				UserTypes type =  UserTypes.valueOf(details[2]);
+				String username = makeUsername(details[0], details[1], type);
+				// Finding the relevant password data
+				salt = PasswordUtilities.generateSalt();
+				newPass = details[3]+salt;
+				hashedPass = PasswordUtilities.hash(newPass);
+				// Asking for confirmation
+				Object[] options = {"Yes", "No"};
+				int applyOption = JOptionPane.showOptionDialog(addUser.getFrame(), "Confirm adding user with username "+ username, "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, 
+						null, options, options[0]);
+				if (applyOption == 0) {
+					// carry out query & redirect back to accounts view
+					String addQuery = "INSERT INTO users VALUES(?,?,?,?,?)";
+					ArrayList<String[]> values = new ArrayList<String[]>();
+					values.add(new String[] {"" + id, "false"});
+					values.add(new String[] {username, "true"});
+					values.add(new String[] {hashedPass, "true"});
+					values.add(new String[] {type.toString().toLowerCase(), "true"});
+					values.add(new String[] {salt, "true"});
+					dc.executeQuery(addQuery, values);
+					addUser.removeUI();
+					initAccountView();
+				} 
+			} else {
+				JOptionPane inputError = new JOptionPane(errorMessage);
+				JDialog dialog = inputError.createDialog("Failure");
+				dialog.setAlwaysOnTop(true);
+				dialog.setVisible(true);
+			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		UserTypes type =  UserTypes.valueOf(details[2]);
-		String username = makeUsername(details[0], details[1], type);
-		User newUser = new User(id, username, type);
-		// Waiting for access to password handling functions
-		// Check equality
-		// Check strength
-		// Generate Salt
-		// Hash
-		// Submit hashed password & salt to the DB 
-		Object[] options = {"Yes", "No"};
-		int applyOption = JOptionPane.showOptionDialog(addUser.getFrame(), "Confirm adding user with username "+ username, "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, 
-				null, options, options[0]);
-		if (applyOption == 0) {
-			// carry out query & redirect back to accounts view
-			System.out.println(id + "  " + username + "  " + type + " Awaiting password processing");
-		} 
 	}
 	
 	// Produces a Username for a user account based off of given name and type
@@ -373,7 +415,7 @@ public class AdminSystemController extends Controller{
 			JDialog dialog = inputError.createDialog("Failure");
 			dialog.setAlwaysOnTop(true);
 			dialog.setVisible(true);
-		} else if (typeCount(u.getUserType()) < 3) {
+		} else if (typeCount(u.getUserType()) < 2) {
 			JOptionPane inputError = new JOptionPane("You can't delete the last account of a type");
 			JDialog dialog = inputError.createDialog("Failure");
 			dialog.setAlwaysOnTop(true);
@@ -384,11 +426,11 @@ public class AdminSystemController extends Controller{
 					"Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 			if (applyOption == 0) {
 				try {
-					String query = "DELETE FROM users WHERE uid = ?;";
+					String query = "DELETE FROM users WHERE userID = ?;";
 					ArrayList<String[]> values = new ArrayList<String[]>();
 					values.add(new String[] {userID, "true"});
 					dc.executeQuery(query, values);
-					initDepartmentView();
+					initAccountView();
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
@@ -409,6 +451,7 @@ public class AdminSystemController extends Controller{
 		}
 		return count;
 	}
+	
 	public void addDepartment(Department d) {
 		if (d.getName().length() != 0 && d.getCode().length() != 0) {
 			// To do: Managing duplicate entries

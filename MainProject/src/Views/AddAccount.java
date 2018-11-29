@@ -65,8 +65,8 @@ public class AddAccount extends JPanel {
 				firstName.getText().trim(),
 				secondName.getText().trim(),
 				userType.getSelectedItem().toString(),
-				password.getPassword().toString(),
-				confirmPassword.getPassword().toString()
+				new String(password.getPassword()),
+				new String(confirmPassword.getPassword())
 		};
 		return values;
 	}
