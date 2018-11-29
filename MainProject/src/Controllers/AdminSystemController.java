@@ -316,9 +316,9 @@ public class AdminSystemController extends Controller{
 	public void addAccount(String[] details) {
 		Integer id = 0;
 		try {
-			String query = "SELECT MAX(uid) FROM users;";
+			String query = "SELECT MAX(userID) FROM users;";
 			ArrayList<String[]> results = dc.executeQuery(query, null);
-			id = Integer.parseInt(results.get(0)[0]);
+			id = Integer.parseInt(results.get(0)[0])+1;
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -332,7 +332,7 @@ public class AdminSystemController extends Controller{
 		// Hash
 		// Submit hashed password & salt to the DB 
 		Object[] options = {"Yes", "No"};
-		int applyOption = JOptionPane.showOptionDialog(addDept.getFrame(), "Confirm adding user with username "+ username, "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, 
+		int applyOption = JOptionPane.showOptionDialog(addUser.getFrame(), "Confirm adding user with username "+ username, "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, 
 				null, options, options[0]);
 		if (applyOption == 0) {
 			// carry out query & redirect back to accounts view
@@ -373,7 +373,7 @@ public class AdminSystemController extends Controller{
 			JDialog dialog = inputError.createDialog("Failure");
 			dialog.setAlwaysOnTop(true);
 			dialog.setVisible(true);
-		} else if (typeCount(u.getUserType()) < 2) {
+		} else if (typeCount(u.getUserType()) < 3) {
 			JOptionPane inputError = new JOptionPane("You can't delete the last account of a type");
 			JDialog dialog = inputError.createDialog("Failure");
 			dialog.setAlwaysOnTop(true);

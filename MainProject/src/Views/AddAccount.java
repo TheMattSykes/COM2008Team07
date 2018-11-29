@@ -101,7 +101,7 @@ public class AddAccount extends JPanel {
 		fNamePanel.add(fNameLabel, formConstraints);
 		formConstraints.gridx = 1;
 		fNamePanel.add(firstName, formConstraints);
-		formRight.add(fNamePanel);
+		formLeft.add(fNamePanel);
 		
 		// User second name
 		JPanel sNamePanel = new JPanel();
@@ -109,10 +109,10 @@ public class AddAccount extends JPanel {
 		secondName = new JTextField();
 		secondName.setPreferredSize(textFieldSize);
 		formConstraints.gridx = 0;
-		fNamePanel.add(sNameLabel, formConstraints);
+		sNamePanel.add(sNameLabel, formConstraints);
 		formConstraints.gridx = 1;
-		fNamePanel.add(secondName, formConstraints);
-		formRight.add(sNamePanel);
+		sNamePanel.add(secondName, formConstraints);
+		formLeft.add(sNamePanel);
 		
 		// User type
 		JPanel typePanel = new JPanel();
@@ -122,29 +122,29 @@ public class AddAccount extends JPanel {
 		typePanel.add(typeLabel,formConstraints);
 		formConstraints.gridx = 1;
 		typePanel.add(userType, formConstraints);
-		formRight.add(typePanel);
+		formLeft.add(typePanel);
 		
 		// Password
 		JPanel pwdPanel = new JPanel();
 		JLabel pwdLabel = new JLabel("Password: ");
-		secondName = new JTextField();
-		secondName.setPreferredSize(textFieldSize);
+		password = new JPasswordField();
+		password.setPreferredSize(textFieldSize);
 		formConstraints.gridx = 0;
 		pwdPanel.add(pwdLabel, formConstraints);
 		formConstraints.gridx = 1;
 		pwdPanel.add(password, formConstraints);
-		formLeft.add(pwdPanel);
+		formRight.add(pwdPanel);
 		
 		// Password confirm
 		JPanel cPwdPanel = new JPanel();
 		JLabel cPwdLabel = new JLabel("Confirm Password: ");
-		secondName = new JTextField();
-		secondName.setPreferredSize(textFieldSize);
+		confirmPassword = new JPasswordField();
+		confirmPassword.setPreferredSize(textFieldSize);
 		formConstraints.gridx = 0;
 		cPwdPanel.add(cPwdLabel, formConstraints);
 		formConstraints.gridx = 1;
 		cPwdPanel.add(confirmPassword, formConstraints);
-		formLeft.add(cPwdPanel);
+		formRight.add(cPwdPanel);
 		
 		accountForm.add(formLeft);
 		accountForm.add(formRight);
