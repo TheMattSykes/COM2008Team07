@@ -33,33 +33,42 @@ public class PasswordUtilities {
 	 * @throws UnsupportedEncodingException 
 	 * */
 	public static String hash(String stringToHash) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-		// Define algorithm: SHA-256
-		MessageDigest stringDigest = MessageDigest.getInstance("SHA-512");
 		
-		// Generate byte hash store in an array of bytes
-		byte[] hash = stringDigest.digest(
-				stringToHash.getBytes(StandardCharsets.UTF_8));
-		
-		// Convert the hash information into hexadecimal
-		// String hashValueOld = DatatypeConverter.printHexBinary(hash);
-		
-		// Build string of hex values
-		StringBuffer hashValue = new StringBuffer();
-		
-		for (int n = 0; n < hash.length; n++) {
-			String hexString = Integer.toHexString(0xFF & hash[n]);
+		try {
+			// Define algorithm: SHA-256
+			MessageDigest stringDigest = MessageDigest.getInstance("SHA-512");
 			
-			// Prevents error where hexString is only one char in length
-			if (hexString.length() < 2) {
-				hexString = "0" + hexString;
+			// Generate byte hash store in an array of bytes
+			byte[] hash = stringDigest.digest(
+					stringToHash.getBytes(StandardCharsets.UTF_8));
+			
+			// Convert the hash information into hexadecimal
+			// String hashValueOld = DatatypeConverter.printHexBinary(hash);
+			
+			// Build string of hex values
+			StringBuffer hashValue = new StringBuffer();
+			
+			for (int n = 0; n < hash.length; n++) {
+				String hexString = Integer.toHexString(0xFF & hash[n]);
+				
+				// Prevents error where hexString is only one char in length
+				if (hexString.length() < 2) {
+					hexString = "0" + hexString;
+				}
+				
+				hashValue.append(hexString);
 			}
 			
-			hashValue.append(hexString);
+			
+			System.out.println(hashValue.toString().toLowerCase());
+			
+			return hashValue.toString().toLowerCase();
+		} catch (NoSuchAlgorithmException e) {
+			JOptionPane.showMessageDialog(null, "Our password security systems are not compatible with your device"
+					+ " please install Java SE 1.8 to continue.", "System Error", JOptionPane.ERROR_MESSAGE);
 		}
 		
-		System.out.println(hashValue.toString().toLowerCase());
-		
-		return hashValue.toString().toLowerCase();
+		return null;
 	}
 	
 	/**

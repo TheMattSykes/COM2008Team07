@@ -343,8 +343,8 @@ public class RegistrarSystemController extends Controller {
 			if (module.getLevel() == selectedStudent.getLevel()) {
 				totalCredits -= module.getCredits();
 				creditsLabel.setText(""+totalCredits);
-				if ((selectedStudent.getLevel() == 1 || selectedStudent.getLevel() == 2 || selectedStudent.getLevel() == 3 &&
-					totalCredits != 120) || selectedStudent.getLevel() == 4 && totalCredits != 180) {
+				if ((selectedStudent.getLevel() == 1 || selectedStudent.getLevel() == 2 || selectedStudent.getLevel() == 3 || selectedStudent.getLevel() == 4 &&
+					totalCredits != 120) || selectedStudent.getLevel() == 6 && totalCredits != 180) {
 					rm.getApplyButton().setEnabled(false);
 				} else {
 					rm.getApplyButton().setEnabled(true);
@@ -378,12 +378,12 @@ public class RegistrarSystemController extends Controller {
 			enrolledModules.add(module);
 			totalCredits += module.getCredits();
 			creditsLabel.setText(""+totalCredits);
-			if ((selectedStudent.getLevel() == 1 || selectedStudent.getLevel() == 2 || selectedStudent.getLevel() == 3 &&
-				totalCredits != 120) || selectedStudent.getLevel() == 4 && totalCredits != 180) {
-				rm.getApplyButton().setEnabled(false);
-			} else {
-				rm.getApplyButton().setEnabled(true);
-			}
+			if ((selectedStudent.getLevel() == 1 || selectedStudent.getLevel() == 2 || selectedStudent.getLevel() == 3 || selectedStudent.getLevel() == 4 &&
+					totalCredits != 120) || selectedStudent.getLevel() == 6 && totalCredits != 180) {
+					rm.getApplyButton().setEnabled(false);
+				} else {
+					rm.getApplyButton().setEnabled(true);
+				}
 			availableModules.remove(availableModulesTable.getSelectedRow());
 			availableModulesTableModel.removeRow(availableModulesTable.getSelectedRow());
 			addButton.setEnabled(false);
