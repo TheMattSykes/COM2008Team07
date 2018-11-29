@@ -129,9 +129,9 @@ public class Module {
 	
 	public Boolean isCore() {
 		if (core != null) {
-			if (core.equals("yes") || core.equals("true")) {
+			if (core.toLowerCase().equals("yes") || core.toLowerCase().equals("true")) {
 				return true;
-			} else if (core.equals("no") || core.equals("false")) {
+			} else if (core.toLowerCase().equals("no") || core.toLowerCase().equals("false")) {
 				return false;
 			} else {
 				return false;
