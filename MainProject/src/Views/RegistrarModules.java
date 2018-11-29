@@ -31,7 +31,7 @@ public class RegistrarModules extends JPanel {
 	private JTable availableModulesTable;
 	private DefaultTableModel currentModulesTableModel;
 	private DefaultTableModel availableModulesTableModel;
-	private JLabel totalCreditsLabel2 = new JLabel();
+	private JLabel totalCreditsLabel = new JLabel();
 	private	JButton addModuleButton;
 	private JButton removeModuleButton;
 	private JPanel localButtons;
@@ -78,7 +78,7 @@ public class RegistrarModules extends JPanel {
 	}
 	
 	public JLabel getCreditsLabel() {
-		return totalCreditsLabel2;
+		return totalCreditsLabel;
 	}
 	
 	public JButton getRemoveModuleButton() {
@@ -215,7 +215,7 @@ public class RegistrarModules extends JPanel {
 		
 		twoColumnsConst.gridx = 0;
 	    twoColumnsConst.gridy = 1;
-		currentModulesScrollPane.setPreferredSize(new Dimension(getWidth()/2,300));
+		currentModulesScrollPane.setPreferredSize(new Dimension(getWidth()/2,275));
 		twoColumns.add(currentModulesScrollPane, twoColumnsConst);
 		
 		// Table of available (optional) modules
@@ -265,17 +265,15 @@ public class RegistrarModules extends JPanel {
 	    availableModulesTable.setFillsViewportHeight(true);
 	    
 	    twoColumnsConst.gridx = 1;
-	    availableModulesScrollPane.setPreferredSize(new Dimension(getWidth()/2,300));
+	    availableModulesScrollPane.setPreferredSize(new Dimension(getWidth()/2,275));
 		twoColumns.add(availableModulesScrollPane, twoColumnsConst);
 		
 		// Total number of credits for this year
 		JPanel totalCreditsPanel = new JPanel();
-		JLabel totalCreditsLabel1 = new JLabel("Total number of credits for level "+student.getLevel()+": ");
+		//totalCreditsLabel = new JLabel("Total number of credits for level "+student.getLevel()+": ");
 		twoColumnsConst.gridx = 0;
 		twoColumnsConst.gridy = 0;
-		totalCreditsPanel.add(totalCreditsLabel1);
-		twoColumnsConst.gridx = 1;
-		totalCreditsPanel.add(totalCreditsLabel2);
+		totalCreditsPanel.add(totalCreditsLabel);
 		twoColumnsConst.gridx = 0;
 		twoColumnsConst.gridy = 2;
 		twoColumns.add(totalCreditsPanel, twoColumnsConst);
