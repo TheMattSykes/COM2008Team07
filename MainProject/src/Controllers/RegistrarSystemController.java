@@ -342,8 +342,8 @@ public class RegistrarSystemController extends Controller {
 			if (module.getLevel() == selectedStudent.getLevel()) {
 				totalCredits -= module.getCredits();
 				String creditsLabelText ="<html>Total number of credits for level "+selectedStudent.getLevel()+" are: ";
-				if ((selectedStudent.getLevel() > 0 || selectedStudent.getLevel() < 5 &&
-					totalCredits != 120) || (selectedStudent.getLevel() == 6 && totalCredits != 180)) {
+				if (((selectedStudent.getLevel() > 0 || selectedStudent.getLevel() < 5) && totalCredits != 120) ||
+					(selectedStudent.getLevel() == 6 && totalCredits != 180)) {
 					creditsLabelText += totalCredits+"<br/><font color='red'>The total number of credits for this year has to be ";
 					if (selectedStudent.getLevel() > 0 && selectedStudent.getLevel() < 5) {
 						creditsLabelText += "120.";
@@ -387,8 +387,8 @@ public class RegistrarSystemController extends Controller {
 			enrolledModules.add(module);
 			totalCredits += module.getCredits();
 			String creditsLabelText ="<html>Total number of credits for level "+selectedStudent.getLevel()+" are: ";
-			if ((selectedStudent.getLevel() > 0 || selectedStudent.getLevel() < 5 &&
-				totalCredits != 120) || (selectedStudent.getLevel() == 6 && totalCredits != 180)) {
+			if (((selectedStudent.getLevel() > 0 || selectedStudent.getLevel() < 5) && totalCredits != 120) ||
+				(selectedStudent.getLevel() == 6 && totalCredits != 180)) {
 				creditsLabelText += totalCredits+"<br/><font color='red'>The total number of credits for this year has to be ";
 				if (selectedStudent.getLevel() > 0 && selectedStudent.getLevel() < 5) {
 					creditsLabelText += "120.";
@@ -648,10 +648,22 @@ public class RegistrarSystemController extends Controller {
 			}
 		}
 		
-		if ((selectedStudent.getLevel() == 1 || selectedStudent.getLevel() == 2 || selectedStudent.getLevel() == 3 &&
-			totalCredits != 120) || selectedStudent.getLevel() == 4 && totalCredits != 180) {
+		String creditsLabelText ="<html>Total number of credits for level "+selectedStudent.getLevel()+" are: ";
+		JLabel creditsLabel = rm.getCreditsLabel();
+		if (((selectedStudent.getLevel() > 0 || selectedStudent.getLevel() < 5) && totalCredits != 120) ||
+			(selectedStudent.getLevel() == 6 && totalCredits != 180)) {
+			creditsLabelText += totalCredits+"<br/><font color='red'>The total number of credits for this year has to be ";
+			if (selectedStudent.getLevel() > 0 && selectedStudent.getLevel() < 5) {
+				creditsLabelText += "120.";
+			} else if (selectedStudent.getLevel() == 6) {
+				creditsLabelText += "180.";
+			}
+			creditsLabelText += "</font></html>";
+			creditsLabel.setText(creditsLabelText);
 			rm.getApplyButton().setEnabled(false);
 		} else {
+			creditsLabelText += totalCredits+"</html>";
+			creditsLabel.setText(creditsLabelText);
 			rm.getApplyButton().setEnabled(true);
 		}
 		
