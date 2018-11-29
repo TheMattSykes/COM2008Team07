@@ -14,6 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
 import Controllers.TableColumnAdjuster;
@@ -161,7 +162,6 @@ public class RegistrarModules extends JPanel {
         };
 		
 		Object[][] currentModulesData = new Object[currentModules.size()][6];
-		int totalCredits = 0;
 		for (int i = 0; i < currentModules.size(); i++) {
 			currentModulesData[i][0] = currentModules.get(i).getCode();
 			currentModulesData[i][1] = currentModules.get(i).getName();
@@ -169,8 +169,6 @@ public class RegistrarModules extends JPanel {
 			currentModulesData[i][3] = currentModules.get(i).getCredits();
 			currentModulesData[i][4] = currentModules.get(i).getLevel();
 			currentModulesData[i][5] = currentModules.get(i).isCore();
-			if (currentModules.get(i).getLevel() == student.getLevel())
-				totalCredits += currentModules.get(i).getCredits();
 		}
 		
 		currentModulesTableModel = new DefaultTableModel(currentModulesData, currentModulesColumnNames);		
@@ -196,6 +194,8 @@ public class RegistrarModules extends JPanel {
 	    TableColumnAdjuster tca = new TableColumnAdjuster(currentModulesTable);
 	    tca.adjustColumns();
 	    
+	    currentModulesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+	    
 	    JScrollPane currentModulesScrollPane = new JScrollPane(currentModulesTable);
 	    currentModulesTable.setFillsViewportHeight(true);
 	    
@@ -215,7 +215,7 @@ public class RegistrarModules extends JPanel {
 		
 		twoColumnsConst.gridx = 0;
 	    twoColumnsConst.gridy = 1;
-		currentModulesScrollPane.setPreferredSize(new Dimension(getWidth()/2,275));
+		currentModulesScrollPane.setPreferredSize(new Dimension(getWidth()/2,300));
 		twoColumns.add(currentModulesScrollPane, twoColumnsConst);
 		
 		// Table of available (optional) modules
@@ -223,15 +223,17 @@ public class RegistrarModules extends JPanel {
 				"Module Code",
                 "Module Name",
                 "Credits",
-                "Level"
+                "Level",
+                "Core"
         };
 		
-		Object[][] availableModulesData = new Object[availableModules.size()][4];
+		Object[][] availableModulesData = new Object[availableModules.size()][5];
 		for (int i = 0; i < availableModules.size(); i++) {
 			availableModulesData[i][0] = availableModules.get(i).getCode();
 			availableModulesData[i][1] = availableModules.get(i).getName();
 			availableModulesData[i][2] = availableModules.get(i).getCredits();
 			availableModulesData[i][3] = availableModules.get(i).getLevel();
+			availableModulesData[i][4] = availableModules.get(i).isCore();
 		}
 		
 		availableModulesTableModel = new DefaultTableModel(availableModulesData, availableModulesColumnNames);		
@@ -257,17 +259,18 @@ public class RegistrarModules extends JPanel {
 	    TableColumnAdjuster tcaAvailable = new TableColumnAdjuster(availableModulesTable);
 	    tcaAvailable.adjustColumns();
 	    
+	    availableModulesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+	    
 	    JScrollPane availableModulesScrollPane = new JScrollPane(availableModulesTable);
 	    availableModulesTable.setFillsViewportHeight(true);
 	    
 	    twoColumnsConst.gridx = 1;
-	    availableModulesScrollPane.setPreferredSize(new Dimension(getWidth()/2,275));
+	    availableModulesScrollPane.setPreferredSize(new Dimension(getWidth()/2,300));
 		twoColumns.add(availableModulesScrollPane, twoColumnsConst);
 		
 		// Total number of credits for this year
 		JPanel totalCreditsPanel = new JPanel();
 		JLabel totalCreditsLabel1 = new JLabel("Total number of credits for level "+student.getLevel()+": ");
-		//totalCreditsLabel2 = new JLabel(""+totalCredits);
 		twoColumnsConst.gridx = 0;
 		twoColumnsConst.gridy = 0;
 		totalCreditsPanel.add(totalCreditsLabel1);
