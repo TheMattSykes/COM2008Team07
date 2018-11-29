@@ -258,7 +258,7 @@ public class RegistrarSystemController extends Controller {
 					if (applyOption == 0) {
 						try {
 							String query = "UPDATE students SET title = ?, surname = ?, forename = ?, degree = ?, "
-										 + "tutor = ?, period = ?, level = ?, registered = ? WHERE reg_number = ?;";
+										 + "tutor = ?, period = ?, level = ?, registered = ? WHERE reg_number = ?";
 							ArrayList<String[]> values = new ArrayList<String[]>();
 							
 							// Each value String[] has (1) the data, (2) boolean, which denotes whether it is a string
@@ -406,65 +406,72 @@ public class RegistrarSystemController extends Controller {
 			availableModules.remove(availableModulesTable.getSelectedRow());
 			availableModulesTableModel.removeRow(availableModulesTable.getSelectedRow());
 			addButton.setEnabled(false);
+			System.out.print("Currently added modules: ");
+			for (Module enrolledModule : enrolledModules) {   
+			    System.out.print(enrolledModule+", ");
+			}
+			System.out.println("");
 		});
 		
 		// Action listener for Apply button
 		rm.getApplyButton().addActionListener(e -> {
-			try {
-				Object[] options = {"Yes", "No"};
-				int applyOption = JOptionPane.showOptionDialog(rm.getFrame(), "Confirm updating "+selectedStudent.getFirstName()+" "+
-						selectedStudent.getSecondName()+"'s modules in the database?", "Apply question", JOptionPane.YES_NO_OPTION, 
-						JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-				if (applyOption == 0) {
-					ArrayList<Module> addables = new ArrayList<Module>(enrolledModules);
-					addables.removeAll(originalModules);
-					ArrayList<Module> removables = new ArrayList<Module>(originalModules);
-					removables.removeAll(enrolledModules);
-					try {
-						// Delete modules
-						if (removables.size() > 0) {
-							String query = "DELETE FROM enrolled WHERE reg_number = ? AND  module_code IN (?";
-							ArrayList<String[]> values = new ArrayList<String[]>();
-							// Each value String[] has (1) the data, (2) boolean, which denotes whether it is a string
-							values.add(new String[] {Integer.toString(selectedStudent.getRegNumber()), "false"});
-							values.add(new String[] {removables.get(0).getCode(),"true"});
-							
-							for (Module removable : removables) {
-								query += ", ?";
-								values.add(new String[] {removable.getCode(),"true"});
-							}
-							query += ")";							
-							
-							dc.executeQuery(query, values);
-						}
-						
-						// Add modules
-						if (addables.size() > 0) {
-							String query = "INSERT INTO enrolled (reg_number, module_code, grade1, grade2) VALUES (?, ?, NULL, NULL)";
-							ArrayList<String[]> values = new ArrayList<String[]>();
-							// Each value String[] has (1) the data, (2) boolean, which denotes whether it is a string
-							values.add(new String[] {Integer.toString(selectedStudent.getRegNumber()), "false"});
-							values.add(new String[] {addables.get(0).getCode(),"true"});
-							
-							for (Module addable : addables) {
-								query += ", (?, ?, NULL, NULL)";
+			if (currentView == Views.REGISTRARMODULES) {
+				try {
+					Object[] options = {"Yes", "No"};
+					int applyOption = JOptionPane.showOptionDialog(rm.getFrame(), "Confirm updating "+selectedStudent.getFirstName()+" "+
+							selectedStudent.getSecondName()+"'s modules in the database?", "Apply question", JOptionPane.YES_NO_OPTION, 
+							JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+					if (applyOption == 0) {
+						ArrayList<Module> addables = new ArrayList<Module>(enrolledModules);
+						addables.removeAll(originalModules);
+						ArrayList<Module> removables = new ArrayList<Module>(originalModules);
+						removables.removeAll(enrolledModules);
+						try {
+							// Delete modules
+							if (removables.size() > 0) {
+								String query = "DELETE FROM enrolled WHERE reg_number = ? AND  module_code IN (?";
+								ArrayList<String[]> values = new ArrayList<String[]>();
+								// Each value String[] has (1) the data, (2) boolean, which denotes whether it is a string
 								values.add(new String[] {Integer.toString(selectedStudent.getRegNumber()), "false"});
-								values.add(new String[] {addable.getCode(),"true"});
-							}						
+								values.add(new String[] {removables.get(0).getCode(),"true"});
+								
+								for (int i = 1; i < removables.size(); i++) {
+									query += ", ?";
+									values.add(new String[] {removables.get(i).getCode(),"true"});
+								}
+								query += ")";							
+								
+								dc.executeQuery(query, values);
+							}
 							
-							dc.executeQuery(query, values);
+							// Add modules
+							if (addables.size() > 0) {
+								String query = "INSERT INTO enrolled (reg_number, module_code, grade1, grade2) VALUES (?, ?, NULL, NULL)";
+								ArrayList<String[]> values = new ArrayList<String[]>();
+								// Each value String[] has (1) the data, (2) boolean, which denotes whether it is a string
+								values.add(new String[] {Integer.toString(selectedStudent.getRegNumber()), "false"});
+								values.add(new String[] {addables.get(0).getCode(),"true"});
+								
+								for (int i = 1; i < addables.size(); i++) {
+									query += ", (?, ?, NULL, NULL)";
+									values.add(new String[] {Integer.toString(selectedStudent.getRegNumber()), "false"});
+									values.add(new String[] {addables.get(i).getCode(),"true"});
+								}						
+								
+								dc.executeQuery(query, values);
+							}
+							changeView(Views.REGISTRARVIEW);
+						} catch (Exception ex) {
+							ex.printStackTrace();
 						}
-						changeView(Views.REGISTRARVIEW);
-					} catch (Exception ex) {
-						ex.printStackTrace();
 					}
+				} catch (Exception ex) {
+					ex.printStackTrace();
+					JOptionPane optionPane = new JOptionPane("Error connecting to dabatase.", JOptionPane.ERROR_MESSAGE);    
+					JDialog dialog = optionPane.createDialog("Error");
+					dialog.setAlwaysOnTop(true);
+					dialog.setVisible(true);
 				}
-			} catch (Exception ex) {
-				ex.printStackTrace();
-				JOptionPane optionPane = new JOptionPane("Error connecting to dabatase.", JOptionPane.ERROR_MESSAGE);    
-				JDialog dialog = optionPane.createDialog("Error");
-				dialog.setAlwaysOnTop(true);
-				dialog.setVisible(true);
 			}
 		});
 		
