@@ -556,9 +556,9 @@ public class RegistrarSystemController extends Controller {
 		ArrayList<String[]> results = dc.executeQuery(query,values);
 		ArrayList<Module> modules = new ArrayList<Module>();
 		
+		totalCredits = 0;
+		
 		if (results.size() > 0) {
-			
-			totalCredits = 0;
 			
 			for (String[] result : results) {
 				Module newModule = new Module();
