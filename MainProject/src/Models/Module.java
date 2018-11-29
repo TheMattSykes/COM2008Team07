@@ -120,18 +120,21 @@ public class Module {
 	}
 	
 	public Boolean isCore() {
-		return true;
+		if (core != null) {
+			if (core.equals("yes") || core.equals("true")) {
+				return true;
+			} else if (core.equals("no") || core.equals("false")) {
+				return false;
+			} else {
+				return false;
+			}
+		} else {
+			return true;
+		}
 	}
 	
-	public Boolean setCore(String inputCore) {
+	public void setCore(String inputCore) {
 		core = inputCore;
-		if (core.equals("yes")) {
-			return true;
-		}else if (core.equals("no")) {
-			return false;
-		} else {
-			return false;
-		}
-		
 	}
+	
 }

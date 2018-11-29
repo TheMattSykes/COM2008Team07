@@ -30,11 +30,12 @@ public class RegistrarModules extends JPanel {
 	private JTable availableModulesTable;
 	private DefaultTableModel currentModulesTableModel;
 	private DefaultTableModel availableModulesTableModel;
+	private JLabel totalCreditsLabel2 = new JLabel();
 	private	JButton addModuleButton;
 	private JButton removeModuleButton;
 	private JPanel localButtons;
 	private JButton backButton;
-	private JButton applyButton;
+	private JButton applyButton = new JButton ("Apply");
 	private JButton logoutButton;
 	private ArrayList<Module> currentModules;
 	private ArrayList<Module> availableModules;
@@ -75,6 +76,10 @@ public class RegistrarModules extends JPanel {
 		return availableModulesTableModel;
 	}
 	
+	public JLabel getCreditsLabel() {
+		return totalCreditsLabel2;
+	}
+	
 	public JButton getRemoveModuleButton() {
 		return removeModuleButton;
 	}
@@ -113,7 +118,7 @@ public class RegistrarModules extends JPanel {
 	
 	public void loadUI() throws Exception {
 		mainPanel = new JPanel();
-		mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 50));
+		mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 10, 0, 10));
 		
 		GridBagConstraints formConstraints = new GridBagConstraints();
 		formConstraints.weightx = 1.0;
@@ -164,7 +169,8 @@ public class RegistrarModules extends JPanel {
 			currentModulesData[i][3] = currentModules.get(i).getCredits();
 			currentModulesData[i][4] = currentModules.get(i).getLevel();
 			currentModulesData[i][5] = currentModules.get(i).isCore();
-			totalCredits += currentModules.get(i).getCredits();
+			if (currentModules.get(i).getLevel() == student.getLevel())
+				totalCredits += currentModules.get(i).getCredits();
 		}
 		
 		currentModulesTableModel = new DefaultTableModel(currentModulesData, currentModulesColumnNames);		
@@ -209,7 +215,7 @@ public class RegistrarModules extends JPanel {
 		
 		twoColumnsConst.gridx = 0;
 	    twoColumnsConst.gridy = 1;
-		currentModulesScrollPane.setPreferredSize(new Dimension(getWidth()/2,300));
+		currentModulesScrollPane.setPreferredSize(new Dimension(getWidth()/2,275));
 		twoColumns.add(currentModulesScrollPane, twoColumnsConst);
 		
 		// Table of available (optional) modules
@@ -255,14 +261,21 @@ public class RegistrarModules extends JPanel {
 	    availableModulesTable.setFillsViewportHeight(true);
 	    
 	    twoColumnsConst.gridx = 1;
-	    availableModulesScrollPane.setPreferredSize(new Dimension(getWidth()/2,300));
+	    availableModulesScrollPane.setPreferredSize(new Dimension(getWidth()/2,275));
 		twoColumns.add(availableModulesScrollPane, twoColumnsConst);
 		
 		// Total number of credits for this year
-		JLabel totalCreditsLabel = new JLabel("Total number of credits for level "+student.getLevel()+": "+totalCredits);
+		JPanel totalCreditsPanel = new JPanel();
+		JLabel totalCreditsLabel1 = new JLabel("Total number of credits for level "+student.getLevel()+": ");
+		//totalCreditsLabel2 = new JLabel(""+totalCredits);
+		twoColumnsConst.gridx = 0;
+		twoColumnsConst.gridy = 0;
+		totalCreditsPanel.add(totalCreditsLabel1);
+		twoColumnsConst.gridx = 1;
+		totalCreditsPanel.add(totalCreditsLabel2);
 		twoColumnsConst.gridx = 0;
 		twoColumnsConst.gridy = 2;
-		twoColumns.add(totalCreditsLabel, twoColumnsConst);
+		twoColumns.add(totalCreditsPanel, twoColumnsConst);
 		
 		// Remove Module Button
 		removeModuleButton = new JButton("Remove module");
@@ -286,7 +299,6 @@ public class RegistrarModules extends JPanel {
 		menuConstraints.gridx = 0;
 		
 		localButtons = new JPanel();
-		applyButton = new JButton("Apply");
 		localButtons.add(applyButton, menuConstraints);
 		backButton = new JButton("Back");
 		menuConstraints.gridx = 1;

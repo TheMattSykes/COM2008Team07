@@ -38,6 +38,7 @@ public class AccountController extends Controller {
 	private RegistrarView registrarViewer = null;
 	private AdminView adminViewer = null;
 	private TeacherView teacherViewer = null;
+	private RegistrarSystemController rc;
 
 	public AccountController(User mainUser, LoginView lview) {
 		user = mainUser;
@@ -93,7 +94,7 @@ public class AccountController extends Controller {
 				StudentSystemController sc = new StudentSystemController(user, studentViewer);
 			} else if (user.getUserType() == UserTypes.REGISTRAR) {
 				registrarViewer = new RegistrarView(lv.getFrame());
-				RegistrarSystemController rc = new RegistrarSystemController(user, registrarViewer);
+				rc = new RegistrarSystemController(user, registrarViewer);
 			} else if (user.getUserType() == UserTypes.ADMIN) {
 				adminViewer = new AdminView(lv.getFrame());
 				AdminSystemController ac = new AdminSystemController(user, adminViewer);
@@ -106,7 +107,7 @@ public class AccountController extends Controller {
 			if (studentViewer != null) {
 				studentViewer.removeUI();
 			} else if (registrarViewer != null) {
-				registrarViewer.removeUI();
+				rc.removeAllUI();
 			} else if (adminViewer != null) {
 				adminViewer.removeUI();
 			} else if (teacherViewer != null) {
