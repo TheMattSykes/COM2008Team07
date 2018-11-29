@@ -12,6 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -134,6 +135,8 @@ public class RegistrarView extends JPanel {
 	    // Adjust column widths, based on the data they contain (see java file for source)
 	    TableColumnAdjuster tca = new TableColumnAdjuster(table);
 	    tca.adjustColumns();
+	    
+	    table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		
 		JScrollPane scrollPane = new JScrollPane(table);
 		table.setFillsViewportHeight(true);

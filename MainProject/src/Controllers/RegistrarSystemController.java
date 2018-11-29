@@ -258,7 +258,7 @@ public class RegistrarSystemController extends Controller {
 					if (applyOption == 0) {
 						try {
 							String query = "UPDATE students SET title = ?, surname = ?, forename = ?, degree = ?, "
-										 + "tutor = ?, period = ?, level = ?, registered = ? WHERE reg_number = ?";
+										 + "tutor = ?, period = ?, level = ?, registered = ? WHERE reg_number = ?;";
 							ArrayList<String[]> values = new ArrayList<String[]>();
 							
 							// Each value String[] has (1) the data, (2) boolean, which denotes whether it is a string
@@ -269,8 +269,8 @@ public class RegistrarSystemController extends Controller {
 							values.add(new String[] {student.getTutor(), "true"});
 							values.add(new String[] {Character.toString(student.getPeriod()), "true"});
 							values.add(new String[] {Integer.toString(student.getLevel()), "true"});
-							values.add(new String[] {Integer.toString(student.getRegNumber()), "true"});
 							values.add(new String[] {student.getRegistered(), "true"});
+							values.add(new String[] {Integer.toString(student.getRegNumber()), "true"});
 							
 							dc.executeQuery(query, values);
 							changeView(Views.REGISTRARVIEW);
