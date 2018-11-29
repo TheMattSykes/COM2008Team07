@@ -19,9 +19,8 @@ public class UniversitySystem {
 		// registrar Bohemianrhapsody! are for registrar
 		// teacher Iamyourfather! are for teacher
 		
-		// Check drivers
-		FindDrivers fd = new FindDrivers();
-		fd.initDrivers();
+		// Initialise drivers
+		FindDrivers.initDrivers();
 		
 		User mainUser = new User();
 		
