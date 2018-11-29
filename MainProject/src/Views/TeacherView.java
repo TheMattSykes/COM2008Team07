@@ -46,6 +46,10 @@ public class TeacherView extends JPanel {
 	
 	public void viewChange() {
 		frame.getContentPane().removeAll();
+		
+		frame.showMenuBar();
+		frame.revalidate();
+		frame.repaint();
 	}
 	
 	public void removeUI() {
@@ -53,6 +57,10 @@ public class TeacherView extends JPanel {
 			frame.remove(teacherInfo);
 		if (teacherButtons != null)
 			frame.menuBar.remove(teacherButtons);
+		
+		frame.showMenuBar();
+		frame.revalidate();
+		frame.repaint();
 	}
 	
 	public JButton getEditButton() {
