@@ -33,10 +33,10 @@ public class ViewGrades extends JPanel {
 	Classification classi;
 	JPanel studentInfo;
 	Student student;
+	private JPanel localButtons;
 	private JPanel teacherButtons;
 	private JButton yearProg;
 	private JButton editGrades;
-	private JButton logoutButton;
 	private JButton backButton;
 	private JTable table;
 	
@@ -84,10 +84,6 @@ public class ViewGrades extends JPanel {
 		return backButton;
 	}
 	
-	public JButton getLogoutButton() {
-		return logoutButton;
-	}
-	
 	public void viewChange() {
 		frame.getContentPane().removeAll();
 	}
@@ -129,7 +125,8 @@ public class ViewGrades extends JPanel {
                 "Grade 1",
                 "Result 2",
                 "Grade 2",
-                "Level"
+                "Level",
+                "Period"
         };
 		
 		
@@ -216,13 +213,14 @@ public class ViewGrades extends JPanel {
 		stuConstraints.gridy = 2;
 		studentInfo.add(studentResults, stuConstraints);
 		
-		// edit grades and year progress buttons
+		// edit grades,year progress and back buttons
 		teacherButtons = new JPanel();
 		teacherButtons.setLayout(new GridBagLayout());
 				
 		editGrades = new JButton("Edit Grades");
 		editGrades.setEnabled(false);
 		yearProg = new JButton("Year Progression");
+		backButton = new JButton("Back");
 				
 		GridBagConstraints menuConstraints = new GridBagConstraints();
 		menuConstraints.insets = new Insets(0,5,0,5);		
@@ -234,9 +232,9 @@ public class ViewGrades extends JPanel {
 		menuConstraints.gridx = 1;
 		teacherButtons.add(yearProg, menuConstraints);
 		menuConstraints.gridx = 2;
-				
-		logoutButton = (JButton) frame.menuBar.getComponent(0);
-				
+		teacherButtons.add(backButton, menuConstraints);
+		menuConstraints.gridx = 3;
+		
 		menuConstraints.gridx = 0;
 		frame.menuBar.add(teacherButtons, menuConstraints);
 				

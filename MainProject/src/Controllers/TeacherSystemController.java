@@ -23,7 +23,6 @@ import Views.TeacherView;
 public class TeacherSystemController extends Controller {
 	
 	private TeacherView tv;
-	private Student studentUser;
 	private ViewGrades vg;
 	private EditGrades eg;
 	private Student selectedStudent;
@@ -34,6 +33,7 @@ public class TeacherSystemController extends Controller {
 	private JButton logoutButton;
 	
 	private Object[][] studentData;
+	private Object[][] tableData;
 	
 	public TeacherSystemController(User mainUser, TeacherView tview) throws Exception {
 		super(mainUser);
@@ -58,6 +58,7 @@ public class TeacherSystemController extends Controller {
 		
 	}
 	
+	//Default view when you log in
 	public void initDefaultView() throws Exception {
 		tv.setStudentsData(getStudentsData());
 		tv.loadUI();
@@ -78,7 +79,6 @@ public class TeacherSystemController extends Controller {
 				selectedStudent.setTutor((String)studentData[row][6]);
 				selectedStudent.setPeriod((Character)studentData[row][7]);
 				selectedStudent.setLevel((int)studentData[row][8]);
-				selectedStudent.setRegistered((String)studentData[row][9]);
 				changeView(Views.VIEWGRADES);
 			} catch (Exception ex) {
 				ex.printStackTrace();
@@ -119,12 +119,6 @@ public class TeacherSystemController extends Controller {
 				ex.printStackTrace();
 			}
 		});
-		
-		// Action listener for Logout Button
-		logoutButton = vg.getLogoutButton();
-		logoutButton.addActionListener(e -> {
-			vg.removeUI();
-		});
 	
 	}
 	
@@ -143,11 +137,6 @@ public class TeacherSystemController extends Controller {
 			}
 		});
 		
-		// Action listener for Logout Button
-		logoutButton = eg.getLogoutButton();
-		logoutButton.addActionListener(e -> {
-			eg.removeUI();
-		});
 	}
 	
 	// Changes to the specified view
@@ -203,10 +192,11 @@ public class TeacherSystemController extends Controller {
 		return data;
 	}
 	
+	// get data after you click on a student and view all their grades
 	public Object[][] getTableData() throws Exception {
 		DatabaseController dc = new DatabaseController();
 		
-		Boolean exists = false;
+		Boolean exists = true;
 		
 		String query = String.format("SELECT m.module_code,m.module_name,m.credits,e.grade1,e.grade2,a.level,m.teaching_period,m.graduation_level " + 
 				"FROM modules AS m, enrolled AS e, approval AS a " + 
@@ -214,7 +204,7 @@ public class TeacherSystemController extends Controller {
 		
 		ArrayList<String[]> values = new ArrayList<String[]>();
 		
-		values.add(new String[]{Integer.toString(studentUser.getRegNumber()),"false"});
+		values.add(new String[]{Integer.toString(selectedStudent.getRegNumber()),"true"});
 		
 		
 		String[] queries = {query};
@@ -288,7 +278,7 @@ public class TeacherSystemController extends Controller {
 		
 		vg.setClassification(classi);
 		
-		Object[][] data = new Object[modules.size()][8];
+		Object[][] data = new Object[modules.size()][9];
 		
 		int row = 0;
 		for (Module module : modules) {
@@ -311,9 +301,12 @@ public class TeacherSystemController extends Controller {
 			}
 			
 			data[row][7] = module.getLevel();
+			data[row][8] = module.getTeachingPeriod();
 			
 			row++;
 		}
+		
+		tableData = data;
 		
 		return data;
 	}
@@ -383,7 +376,7 @@ public class TeacherSystemController extends Controller {
 		
 		float finalValue = 0;
 		
-		if (studentUser.getLevel() >= 3) {
+		if (selectedStudent.getLevel() >= 3) {
 			if (type == GraduateType.UNDERGRADUATE) {
 				
 				if (!fourYearCourse) {
