@@ -303,8 +303,7 @@ public class RegistrarSystemController extends Controller {
 		ArrayList<Module> enrolledModules = getEnrolledModules();
 		rm.setCurrentModules(enrolledModules);
 		JLabel creditsLabel = rm.getCreditsLabel();
-		ArrayList<Module> availableModules = new ArrayList<Module>(getCoreModules());
-		availableModules.addAll(getOptionalModules());
+		ArrayList<Module> availableModules = new ArrayList<Module>(getAvailableModules());
 		// Remove duplicate modules (already enrolled)
 		for (Module enrolledModule : enrolledModules) {
 			availableModules.removeIf(module -> module.getCode().equals(enrolledModule.getCode()));
@@ -555,7 +554,7 @@ public class RegistrarSystemController extends Controller {
 	public String[] getAvailableDegrees() throws Exception {
 		String query = "SELECT degree_code FROM degrees LIMIT ?";
 		ArrayList<String[]> values = new ArrayList<String[]>();
-		values.add(new String[] {"1000", ""});
+		values.add(new String[] {"1000", "false"});
 		ArrayList<String[]> results = dc.executeQuery(query, values);
 		String[] availableDegrees = new String[results.size()];
 		
@@ -566,11 +565,14 @@ public class RegistrarSystemController extends Controller {
 		return availableDegrees;
 	}
 	
-	public ArrayList<Module> getEnrolledModules() throws Exception {
-		String query = String.format("SELECT module_code, grade1, grade2 FROM enrolled WHERE reg_number = ? ORDER BY module_code");
+	public ArrayList<Module> getEnrolledModules() throws Exception {		
+		String query = String.format("SELECT enrolled.module_code, enrolled.grade1, enrolled.grade2, modules.module_name, modules.credits, modules.teaching_period," + 
+				" modules.graduation_level, approval.core, approval.level FROM enrolled INNER JOIN modules ON enrolled.module_code=modules.module_code INNER JOIN" +
+				" approval ON enrolled.module_code=approval.module_code WHERE enrolled.reg_number = ? AND approval.degree_code = ?");
 		
 		ArrayList<String[]> values = new ArrayList<String[]>();
 		values.add(new String[]{Integer.toString(selectedStudent.getRegNumber()),"false"});		
+		values.add(new String[]{selectedStudent.getDegree(), "true"});
 		
 		ArrayList<String[]> results = dc.executeQuery(query,values);
 		ArrayList<Module> modules = new ArrayList<Module>();
@@ -617,29 +619,18 @@ public class RegistrarSystemController extends Controller {
 				newModule.setScores(studentResults);
 				newModule.setGrades(studentGrades);
 				
-				System.out.println("STARTING MOD QUERY...");
-				String modQuery = String.format("SELECT module_name, credits, teaching_period, graduation_level FROM modules WHERE module_code = ? ORDER BY module_code");
-				ArrayList<String[]> modValues = new ArrayList<String[]>();
-				modValues.add(new String[]{code,"true"});
-				String[] modResults = dc.executeQuery(modQuery,modValues).get(0);
-				modQuery = String.format("SELECT core, level FROM approval WHERE degree_code = ? AND module_code = ? ORDER BY module_code");
-				modValues = new ArrayList<String[]>();
-				modValues.add(new String[] {selectedStudent.getDegree(),"true"});
-				modValues.add(new String[] {code,"true"});
-				String[] modLevels = dc.executeQuery(modQuery,modValues).get(0);
 				
-				
-				newModule.setName(modResults[0]);
-				newModule.setCredits(Integer.parseInt(modResults[1]));
-				newModule.setTeachingPeriod(modResults[2]);
+				newModule.setName(result[3]);
+				newModule.setCredits(Integer.parseInt(result[4]));
+				newModule.setTeachingPeriod(result[5]);
 				String core;
-				if (modLevels[0] == "0")
+				if (result[7] == "0")
 					core = "false";
 				else
 					core = "true";
 				newModule.setCore(core);
-				newModule.setLevel(Integer.parseInt(modLevels[1]));
-				newModule.setType(GraduateType.valueOf(modResults[3].toUpperCase()));
+				newModule.setLevel(Integer.parseInt(result[8]));
+				newModule.setType(GraduateType.valueOf(result[6].toUpperCase()));
 				
 				if (newModule.getLevel() == selectedStudent.getLevel())
 					totalCredits += newModule.getCredits();
@@ -671,8 +662,9 @@ public class RegistrarSystemController extends Controller {
 		return modules;
 	}
 	
-	public ArrayList<Module> getOptionalModules() throws Exception {
-		String query = String.format("SELECT module_code, level FROM approval WHERE degree_code = ? AND core = b'0' AND level = ? ORDER BY module_code");
+	public ArrayList<Module> getAvailableModules() throws Exception {
+		String query = String.format("SELECT approval.module_code, approval.core, approval.level, modules.module_name, modules.credits, modules.teaching_period," + 
+				" modules.graduation_level FROM approval INNER JOIN modules ON approval.module_code=modules.module_code WHERE approval.degree_code = ? AND approval.level = ?");
 		
 		ArrayList<String[]> values = new ArrayList<String[]>();
 		values.add(new String[]{selectedStudent.getDegree(),"true"});
@@ -682,66 +674,27 @@ public class RegistrarSystemController extends Controller {
 		ArrayList<Module> modules = new ArrayList<Module>();
 		
 		if (results.size() > 0) {
-			
+					
 			for (String[] result : results) {
 				Module newModule = new Module();
 				
 				String code = result[0];
 				newModule.setCode(code);
-				newModule.setCore("false");
-				
-				System.out.println("STARTING MOD QUERY...");
-				String modQuery = String.format("SELECT module_name, credits, teaching_period, graduation_level FROM modules WHERE module_code = ?");
-				ArrayList<String[]> modValues = new ArrayList<String[]>();
-				modValues.add(new String[]{code,"true"});
-				String[] modResults = dc.executeQuery(modQuery,modValues).get(0);
-				
-				newModule.setName(modResults[0]);
-				newModule.setCredits(Integer.parseInt(modResults[1]));
-				newModule.setTeachingPeriod(modResults[2]);
-				newModule.setLevel(Integer.parseInt(result[1]));
-				newModule.setType(GraduateType.valueOf(modResults[3].toUpperCase()));
+				String core;
+				if (result[1] == "0")
+					core = "false";
+				else
+					core = "true";
+				newModule.setCore(core);
+				newModule.setLevel(Integer.parseInt(result[2]));
+				newModule.setName(result[3]);
+				newModule.setCredits(Integer.parseInt(result[4]));
+				newModule.setTeachingPeriod(result[5]);
+				newModule.setType(GraduateType.valueOf(result[6].toUpperCase()));
 				
 				modules.add(newModule);
 			}
-		}
-		
-		return modules;
-	}
-	
-	public ArrayList<Module> getCoreModules() throws Exception {
-		String query = String.format("SELECT module_code, level FROM approval WHERE degree_code = ? AND core = b'1' AND level = ? ORDER BY module_code");
-		
-		ArrayList<String[]> values = new ArrayList<String[]>();
-		values.add(new String[]{selectedStudent.getDegree(),"true"});
-		values.add(new String[]{Integer.toString(selectedStudent.getLevel()),"false"});
-		
-		ArrayList<String[]> results = dc.executeQuery(query,values);
-		ArrayList<Module> modules = new ArrayList<Module>();
-		
-		if (results.size() > 0) {
 			
-			for (String[] result : results) {
-				Module newModule = new Module();
-				
-				String code = result[0];
-				newModule.setCode(code);
-				newModule.setCore("true");
-				
-				System.out.println("STARTING MOD QUERY...");
-				String modQuery = String.format("SELECT module_name, credits, teaching_period, graduation_level FROM modules WHERE module_code = ?");
-				ArrayList<String[]> modValues = new ArrayList<String[]>();
-				modValues.add(new String[]{code,"true"});
-				String[] modResults = dc.executeQuery(modQuery,modValues).get(0);
-				
-				newModule.setName(modResults[0]);
-				newModule.setCredits(Integer.parseInt(modResults[1]));
-				newModule.setTeachingPeriod(modResults[2]);
-				newModule.setLevel(Integer.parseInt(result[1]));
-				newModule.setType(GraduateType.valueOf(modResults[3].toUpperCase()));
-				
-				modules.add(newModule);
-			}
 		}
 		
 		return modules;
