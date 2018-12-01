@@ -1,5 +1,7 @@
 package Controllers;
 
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.Random;
 import javax.swing.JTable;
@@ -127,11 +129,11 @@ public class RegistrarSystemController extends Controller {
 		
 		if (deleteOption == 0) {
 			String regNumber = Integer.toString(selectedStudent.getRegNumber());
-			
-			String query = "DELETE FROM students WHERE reg_number = ?";
+			String query = "DELETE students, users FROM students INNER JOIN users ON students.userID=users.userID WHERE students.reg_number = ?";
 			ArrayList<String[]> values = new ArrayList<String[]>();
 			values.add(new String[] {regNumber, "false"});
 			dc.executeQuery(query, values);
+			
 			changeView(Views.REGISTRARVIEW);
 		}
 	}
