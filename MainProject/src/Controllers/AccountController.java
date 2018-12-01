@@ -47,6 +47,9 @@ public class AccountController extends Controller {
 	
 	private static PasswordUtilities pu;
 	private RegistrarSystemController rc;
+	private AdminSystemController ac;
+	private StudentSystemController sc;
+	private TeacherSystemController tc;
 
 	public AccountController(User mainUser, LoginView lview) {
 		super(mainUser);
@@ -98,27 +101,27 @@ public class AccountController extends Controller {
 			
 			if (user.getUserType() == UserTypes.STUDENT) {
 				studentViewer = new StudentView(lv.getFrame());
-				StudentSystemController sc = new StudentSystemController(user, studentViewer);
+				sc = new StudentSystemController(user, studentViewer);
 			} else if (user.getUserType() == UserTypes.REGISTRAR) {
 				registrarViewer = new RegistrarView(lv.getFrame());
 				rc = new RegistrarSystemController(user, registrarViewer);
 			} else if (user.getUserType() == UserTypes.ADMIN) {
 				adminViewer = new AdminView(lv.getFrame());
-				AdminSystemController ac = new AdminSystemController(user, adminViewer);
+				ac = new AdminSystemController(user, adminViewer);
 			} else if (user.getUserType() == UserTypes.TEACHER) {
 				teacherViewer = new TeacherView(lv.getFrame());
-				TeacherSystemController tc = new TeacherSystemController(user, teacherViewer);
+				tc = new TeacherSystemController(user, teacherViewer);
 			}
 		} else {
 			
 			if (studentViewer != null) {
-				studentViewer.removeUI();
+				sc.removeAllUI();
 			} else if (registrarViewer != null) {
 				rc.removeAllUI();
 			} else if (adminViewer != null) {
-				adminViewer.removeUI();
+				ac.removeAllUI();
 			} else if (teacherViewer != null) {
-				teacherViewer.removeUI();
+				tc.removeAllUI();
 			}
 			
 			lv.viewLogoutChange();

@@ -6,34 +6,27 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
-import java.awt.Window;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 
-import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.table.TableColumn;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import Controllers.TableColumnAdjuster;
 import Models.Classification;
-import Models.Grades;
-import Models.GraduateType;
-import Models.Module;
 import Models.Student;
 
 public class ViewGrades extends JPanel {
+	private static final long serialVersionUID = 1L;
 	PrimaryFrame frame;
 	Object[][] data;
 	Classification classi;
 	JPanel studentInfo;
 	Student student;
-	private JPanel localButtons;
 	private JPanel teacherButtons;
 	private JButton yearProg;
 	private JButton editGrades;
@@ -89,7 +82,10 @@ public class ViewGrades extends JPanel {
 	}
 	
 	public void removeUI() {
-		frame.remove(studentInfo);
+		if (studentInfo != null)
+			frame.remove(studentInfo);
+		if (teacherButtons != null)
+			frame.remove(teacherButtons);
 	}
 	
 	public void loadUI() {

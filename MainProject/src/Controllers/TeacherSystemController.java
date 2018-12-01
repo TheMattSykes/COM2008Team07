@@ -3,7 +3,6 @@ package Controllers;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Random;
 import javax.swing.JTable;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -30,7 +29,6 @@ public class TeacherSystemController extends Controller {
 	private Views currentView;
 	private ArrayList<Integer> regNumbersInUse;
 	private Module newModule;
-	private JButton logoutButton;
 	
 	private Object[][] studentData;
 	private Object[][] tableData;
@@ -83,12 +81,6 @@ public class TeacherSystemController extends Controller {
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
-		});
-		
-		// Action listener for Logout Button
-		logoutButton = tv.getLogoutButton();
-		logoutButton.addActionListener(e -> {
-			tv.removeUI();
 		});
 	}
 
@@ -423,5 +415,14 @@ public class TeacherSystemController extends Controller {
 		}
 		
 		return Classification.INCOMPLETE;
+	}
+	
+	public void removeAllUI() {
+		if (tv != null)
+			tv.removeUI();
+		if (vg != null)
+			vg.removeUI();
+		if (eg != null)
+			eg.removeUI();
 	}
 }

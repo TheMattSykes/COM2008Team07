@@ -568,6 +568,20 @@ public class AdminSystemController extends Controller{
 		}
 	}
 	
+	public void removeAllUI() {
+		if (av != null)
+			av.removeUI();
+		if (addAccountView != null)
+			addAccountView.removeUI();
+		if (addDeptView != null)
+			addDeptView.removeUI();
+		if (addDegreeView != null)
+			addDegreeView.removeUI();
+		if (addModuleView != null)
+			addModuleView.removeUI();
+		
+	}
+	
 	public void addDegree(Degree d) {
 
 	}

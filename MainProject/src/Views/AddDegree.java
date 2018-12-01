@@ -13,7 +13,7 @@ import Models.GraduateType;
 
 public class AddDegree extends JPanel {
 	private static final long serialVersionUID = 1L;
-	PrimaryFrame pf;
+	PrimaryFrame frame;
 	private JPanel form;
 	private JPanel buttonPanel;
 	private ArrayList<String> departmentNames;
@@ -25,4 +25,15 @@ public class AddDegree extends JPanel {
 	private JCheckBox industryChoice;
 	private JButton apply;
 	private JButton back;
+	
+	public AddDegree(PrimaryFrame pf) {
+		frame = pf;
+	}
+	
+	public void removeUI() {
+		if (form != null)
+			frame.remove(form);
+		if (buttonPanel != null)
+			frame.menuBar.remove(buttonPanel);
+	}
 }

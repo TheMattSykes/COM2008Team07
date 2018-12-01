@@ -320,4 +320,9 @@ public class StudentSystemController extends Controller {
 		
 		return Classification.INCOMPLETE;
 	}
+	
+	public void removeAllUI() {
+		if (sv != null)
+			sv.removeUI();
+	}
 }
