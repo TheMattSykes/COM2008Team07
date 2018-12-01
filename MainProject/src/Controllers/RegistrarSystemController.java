@@ -157,46 +157,61 @@ public class RegistrarSystemController extends Controller {
 				Student student = as.getNewStudent();
 
 				if (student != null && student.isComplete()) {
-					String email = student.getFirstName().substring(0, 1).toLowerCase()+student.getSecondName().toLowerCase();
-					String query = "SELECT * FROM students WHERE email LIKE '"+email+"%'";
+					// Get number of emails already in the system, which are the same as this
+					String username = student.getFirstName().substring(0, 1).toLowerCase()+student.getSecondName().toLowerCase();
+					String query = "SELECT * FROM students WHERE email LIKE '"+username+"%'";
 					ArrayList<String[]> values = new ArrayList<String[]>();
-					//values.add(new String[] {student.getSecondName(), "true"});
-					//values.add(new String[] {student.getFirstName(), "true"});
 					ArrayList<String[]> results = dc.executeQuery(query, values);
 					System.out.println("Email results size: "+results.size());
 					
-					email += (results.size()+1);
-					email += "@snowbelle.ac.uk";
-					student.setEmail(email);
-					System.out.println("Email: "+email);
+					username += (results.size()+1);
 					
-					Object[] options = {"Yes", "No"};
-					int applyOption = JOptionPane.showOptionDialog(as.getFrame(), "Confirm adding "+student.getFirstName()+" "+
-							student.getSecondName()+" to the students table in the database?", "Apply question", JOptionPane.YES_NO_OPTION, 
-							JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-					if (applyOption == 0) {
-						student.setCode(generateRandomReg());
-						try {
-							query = "INSERT INTO students VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?)";
-							values = new ArrayList<String[]>();
-							
-							// Each value String[] has (1) the data, (2) boolean, which denotes whether it is a string
-							values.add(new String[] {Integer.toString(student.getRegNumber()), "false"});
-							values.add(new String[] {student.getTitle(), "true"});
-							values.add(new String[] {student.getSecondName(), "true"});
-							values.add(new String[] {student.getFirstName(), "true"});
-							values.add(new String[] {student.getDegree(), "true"});
-							values.add(new String[] {student.getEmail(), "true"});
-							values.add(new String[] {student.getTutor(), "true"});
-							values.add(new String[] {Character.toString(student.getPeriod()), "true"});
-							values.add(new String[] {Integer.toString(student.getLevel()), "false"});
-							values.add(new String[] {student.getRegistered(), "true"});
-							
-							dc.executeQuery(query, values);
-							changeView(Views.REGISTRARVIEW);
-						} catch (Exception ex) {
-							ex.printStackTrace();
+					// Get user corresponding to this student
+					query = "SELECT * FROM users WHERE username = ?";
+					values.add(new String[] {username, "true"});
+					ArrayList<String[]> user = dc.executeQuery(query, values);
+					
+					if (user.size() > 0) {
+						String userID = user.get(0)[0];
+						
+						String email = username+"@snowbelle.ac.uk";
+						student.setEmail(email);
+						
+						Object[] options = {"Yes", "No"};
+						int applyOption = JOptionPane.showOptionDialog(as.getFrame(), "Confirm adding "+student.getFirstName()+" "+
+								student.getSecondName()+" to the students table in the database?", "Apply question", JOptionPane.YES_NO_OPTION, 
+								JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+						if (applyOption == 0) {
+							student.setCode(generateRandomReg());
+							try {
+								query = "INSERT INTO students VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+								values = new ArrayList<String[]>();
+								
+								// Each value String[] has (1) the data, (2) boolean, which denotes whether it is a string
+								values.add(new String[] {Integer.toString(student.getRegNumber()), "false"});
+								values.add(new String[] {student.getTitle(), "true"});
+								values.add(new String[] {student.getSecondName(), "true"});
+								values.add(new String[] {student.getFirstName(), "true"});
+								values.add(new String[] {student.getDegree(), "true"});
+								values.add(new String[] {student.getEmail(), "true"});
+								values.add(new String[] {student.getTutor(), "true"});
+								values.add(new String[] {Character.toString(student.getPeriod()), "true"});
+								values.add(new String[] {Integer.toString(student.getLevel()), "false"});
+								values.add(new String[] {userID, "false"});
+								values.add(new String[] {student.getRegistered(), "true"});
+								
+								dc.executeQuery(query, values);
+								changeView(Views.REGISTRARVIEW);
+							} catch (Exception ex) {
+								ex.printStackTrace();
+							}
 						}
+					} else {
+						JOptionPane optionPane = new JOptionPane("There is no user account with the username "+username+" (generated automatically)."
+								+ "\n Please make sure an admin has created an account for the student.", JOptionPane.ERROR_MESSAGE);    
+						JDialog dialog = optionPane.createDialog("Error");
+						dialog.setAlwaysOnTop(true);
+						dialog.setVisible(true);
 					}
 				} else {
 					JOptionPane optionPane = new JOptionPane("Please make sure all the values have been filled in correctly."+
@@ -329,7 +344,7 @@ public class RegistrarSystemController extends Controller {
 				String creditsLabelText ="<html>Total number of credits for level "+selectedStudent.getLevel()+" are: ";
 				if (((selectedStudent.getLevel() > 0 || selectedStudent.getLevel() < 5) && totalCredits != 120) ||
 					(selectedStudent.getLevel() == 6 && totalCredits != 180)) {
-					creditsLabelText += totalCredits+"<br/><font color='red'>The total number of credits for this year has to be ";
+					creditsLabelText += totalCredits+"<br/><font color='red'>The total number of credits for this level have to be ";
 					if (selectedStudent.getLevel() > 0 && selectedStudent.getLevel() < 5) {
 						creditsLabelText += "120.";
 					} else if (selectedStudent.getLevel() == 6) {
@@ -374,7 +389,7 @@ public class RegistrarSystemController extends Controller {
 			String creditsLabelText ="<html>Total number of credits for level "+selectedStudent.getLevel()+" are: ";
 			if (((selectedStudent.getLevel() > 0 || selectedStudent.getLevel() < 5) && totalCredits != 120) ||
 				(selectedStudent.getLevel() == 6 && totalCredits != 180)) {
-				creditsLabelText += totalCredits+"<br/><font color='red'>The total number of credits for this year has to be ";
+				creditsLabelText += totalCredits+"<br/><font color='red'>The total number of credits for this level have to be ";
 				if (selectedStudent.getLevel() > 0 && selectedStudent.getLevel() < 5) {
 					creditsLabelText += "120.";
 				} else if (selectedStudent.getLevel() == 6) {
@@ -632,7 +647,7 @@ public class RegistrarSystemController extends Controller {
 		JLabel creditsLabel = rm.getCreditsLabel();
 		if (((selectedStudent.getLevel() > 0 || selectedStudent.getLevel() < 5) && totalCredits != 120) ||
 			(selectedStudent.getLevel() == 6 && totalCredits != 180)) {
-			creditsLabelText += totalCredits+"<br/><font color='red'>The total number of credits for this year has to be ";
+			creditsLabelText += totalCredits+"<br/><font color='red'>The total number of credits for this level have to be ";
 			if (selectedStudent.getLevel() > 0 && selectedStudent.getLevel() < 5) {
 				creditsLabelText += "120.";
 			} else if (selectedStudent.getLevel() == 6) {
