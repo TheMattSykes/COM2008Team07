@@ -129,8 +129,25 @@ public class RegistrarSystemController extends Controller {
 		
 		if (deleteOption == 0) {
 			String regNumber = Integer.toString(selectedStudent.getRegNumber());
-			String query = "DELETE students, users FROM students INNER JOIN users ON students.userID=users.userID WHERE students.reg_number = ?";
+			//String query = "DELETE students, users FROM students INNER JOIN users ON students.userID=users.userID WHERE students.reg_number = ?";
+			// It's a shame that our account isn't authorised to do cascading deletions in the DB...
+			String query = "SELECT userID FROM students WHERE reg_number = ?";
 			ArrayList<String[]> values = new ArrayList<String[]>();
+			values.add(new String[] {regNumber, "false"});
+			ArrayList<String[]> results = dc.executeQuery(query, values);
+			String userID = results.get(0)[0];
+			query = "UPDATE students SET userID = NULL WHERE reg_number = ?";
+			dc.executeQuery(query, values);
+			query = "DELETE FROM enrolled WHERE reg_number = ?";
+			dc.executeQuery(query, values);
+			if (userID != null) {
+				query = "DELETE FROM users WHERE userID = ?";
+				values = new ArrayList<String[]>();
+				values.add(new String[] {userID, "false"});
+				dc.executeQuery(query, values);
+			}
+			query = "DELETE FROM students WHERE reg_number = ?";
+			values = new ArrayList<String[]>();
 			values.add(new String[] {regNumber, "false"});
 			dc.executeQuery(query, values);
 			
