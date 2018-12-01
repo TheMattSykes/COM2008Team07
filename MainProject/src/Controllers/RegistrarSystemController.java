@@ -67,6 +67,19 @@ public class RegistrarSystemController extends Controller {
         		deleteButton.setEnabled(true);
         	if (!modulesButton.isEnabled())
         		modulesButton.setEnabled(true);
+        	JTable table = rv.getTable();
+			selectedStudent = new Student();
+			int row = table.getSelectedRow();
+			selectedStudent.setCode((int)studentData[row][0]);
+			selectedStudent.setTitle((String)studentData[row][1]);
+			selectedStudent.setSecondName((String)studentData[row][2]);
+			selectedStudent.setFirstName((String)studentData[row][3]);
+			selectedStudent.setDegree((String)studentData[row][4]);
+			selectedStudent.setEmail((String)studentData[row][5]);
+			selectedStudent.setTutor((String)studentData[row][6]);
+			selectedStudent.setPeriod((Character)studentData[row][7]);
+			selectedStudent.setLevel((int)studentData[row][8]);
+			selectedStudent.setRegistered((String)studentData[row][9]);
 		});
 		
 		// Action listener for Add Student button
@@ -81,19 +94,6 @@ public class RegistrarSystemController extends Controller {
 		// Action listener for Edit Student Button
 		editButton.addActionListener(e -> {
 			try {
-				JTable table = rv.getTable();
-				selectedStudent = new Student();
-				int row = table.getSelectedRow();
-				selectedStudent.setCode((int)studentData[row][0]);
-				selectedStudent.setTitle((String)studentData[row][1]);
-				selectedStudent.setSecondName((String)studentData[row][2]);
-				selectedStudent.setFirstName((String)studentData[row][3]);
-				selectedStudent.setDegree((String)studentData[row][4]);
-				selectedStudent.setEmail((String)studentData[row][5]);
-				selectedStudent.setTutor((String)studentData[row][6]);
-				selectedStudent.setPeriod((Character)studentData[row][7]);
-				selectedStudent.setLevel((int)studentData[row][8]);
-				selectedStudent.setRegistered((String)studentData[row][9]);
 				changeView(Views.EDITSTUDENT);
 			} catch (Exception ex) {
 				ex.printStackTrace();
@@ -103,8 +103,7 @@ public class RegistrarSystemController extends Controller {
 		// Action listener for Delete Student button
 		deleteButton.addActionListener(e -> {
 			try {
-				deleteStudent();
-				changeView(Views.REGISTRARVIEW);
+				deleteStudentEvent();
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
@@ -113,19 +112,6 @@ public class RegistrarSystemController extends Controller {
 		// Action listener for Add/Remove modules button
 		modulesButton.addActionListener(e -> {				
 			try {
-				JTable table = rv.getTable();
-				selectedStudent = new Student();
-				int row = table.getSelectedRow();
-				selectedStudent.setCode((int)studentData[row][0]);
-				selectedStudent.setTitle((String)studentData[row][1]);
-				selectedStudent.setSecondName((String)studentData[row][2]);
-				selectedStudent.setFirstName((String)studentData[row][3]);
-				selectedStudent.setDegree((String)studentData[row][4]);
-				selectedStudent.setEmail((String)studentData[row][5]);
-				selectedStudent.setTutor((String)studentData[row][6]);
-				selectedStudent.setPeriod((Character)studentData[row][7]);
-				selectedStudent.setLevel((int)studentData[row][8]);
-				selectedStudent.setRegistered((String)studentData[row][9]);
 				changeView(Views.REGISTRARMODULES);
 			} catch (Exception ex) {
 				ex.printStackTrace();
@@ -133,21 +119,21 @@ public class RegistrarSystemController extends Controller {
 		});
 	}
 	
-	private void deleteStudent() throws Exception {
-		JTable table = rv.getTable();
+	private void deleteStudentEvent() throws Exception {		
+		Object[] options = {"Yes", "No"};
 		
-		int row = table.getSelectedRow();
+		int logoutOption = JOptionPane.showOptionDialog(rv.getFrame(), "Are you sure you want to delete "+selectedStudent.getFirstName()+" "+selectedStudent.getSecondName()+" from the database?", "Delete question", JOptionPane.YES_NO_OPTION, 
+				JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 		
-		System.out.println("ROW: " + row);
-		
-		String regNumber = studentData[row][0].toString();
-		
-		String query = "DELETE FROM students WHERE reg_number = ?";
-		ArrayList<String[]> values = new ArrayList<String[]>();
-		values.add(new String[] {regNumber, "false"});
-		dc.executeQuery(query, values);
-		
-		System.out.println("UserID: " + regNumber);
+		if (logoutOption == 0) {			
+			String regNumber = Integer.toString(selectedStudent.getRegNumber());
+			
+			String query = "DELETE FROM students WHERE reg_number = ?";
+			ArrayList<String[]> values = new ArrayList<String[]>();
+			values.add(new String[] {regNumber, "false"});
+			dc.executeQuery(query, values);
+			changeView(Views.REGISTRARVIEW);
+		}
 	}
 
 	public void initAddStudentView() throws Exception {
