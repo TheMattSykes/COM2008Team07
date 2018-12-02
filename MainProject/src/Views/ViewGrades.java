@@ -82,6 +82,8 @@ public class ViewGrades extends JPanel {
 	}
 	
 	public void removeUI() {
+		frame.remove(studentInfo);
+		frame.menuBar.remove(teacherButtons);
 		if (studentInfo != null)
 			frame.remove(studentInfo);
 		if (teacherButtons != null)

@@ -299,7 +299,7 @@ public class TeacherSystemController extends Controller {
 			
 			row++;
 		}
-		
+	 
 		tableData = data;
 		
 		return data;
@@ -363,7 +363,6 @@ public class TeacherSystemController extends Controller {
 				postGradTotal += weightedScore;
 			}
 		}
-		
 		
 		vg.setYearAverages(levelTotals);
 		
