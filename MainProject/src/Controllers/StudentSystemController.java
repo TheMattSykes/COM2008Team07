@@ -127,9 +127,9 @@ public class StudentSystemController extends Controller {
 				String code = result[0];
 				newModule.setCode(code);
 				
-				for (int i = 0; i < result.length; i++) {
-					System.out.println("Result No. "+i+": "+result[i]);
-				}
+				//for (int i = 0; i < result.length; i++) {
+					//System.out.println("Result No. "+i+": "+result[i]);
+				//}
 				
 				newModule.setName(result[1]);
 				

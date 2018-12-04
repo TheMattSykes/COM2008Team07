@@ -121,6 +121,7 @@ public class TeacherSystemController extends Controller {
 				int row = table.getSelectedRow();
 				System.out.println("TEST C1 PASS");
 				selectedModule.setCode((String)tableData[row][0]);
+				System.out.println(selectedModule.getCode());
 				selectedModule.setName((String)tableData[row][1]);
 				selectedModule.setCredits((int)tableData[row][2]);
 				System.out.println("TEST C2 PASS");
@@ -305,18 +306,35 @@ public void gradeInputError() {
 		
 		eg.getApplyButton().addActionListener(e -> {
 			try {
+				System.out.println("APPLY BUTTON PRESSED");
 				selectedModule = editGrades(selectedModule);
-				String query = "UPDATE students SET grade1 = ?, grade2 = ? WHERE module_code = ?";
+				String query = "";
 				ArrayList<String[]> values = new ArrayList<String[]>();
 						
 				// Each value String[] has (1) the data, (2) boolean, which denotes whether it is a string
+				
+				int[] grades = selectedModule.getScores();
+				Grades[] g = selectedModule.getGrades();
+				
+				if (grades.length > 0 && g[0] != Grades.UNDEFINED) {
+					query = "UPDATE enrolled SET grade1 = ? WHERE module_code = ? AND reg_number = ?";
+					values.add(new String[] {Integer.toString(grades[0]), "false"});
+					
+					if (grades.length > 1 && g[1] != Grades.UNDEFINED) {
+						query = "UPDATE enrolled SET grade1 = ?, grade2 = ? WHERE module_code = ? AND reg_number = ?";
+						values.add(new String[] {Integer.toString(grades[1]), "false"});
+					}
+				}
+				
 				values.add(new String[] {selectedModule.getCode(), "true"});
-						
+				
+				values.add(new String[] {Integer.toString(selectedStudent.getRegNumber()), "false"});
+				
 				dc.executeQuery(query, values);
 				changeView(Views.VIEWGRADES);
 				} catch (Exception ex) {
 			      ex.printStackTrace();
-			      JOptionPane optionPane = new JOptionPane("Error connecting to dabatase.", JOptionPane.ERROR_MESSAGE);    
+			      JOptionPane optionPane = new JOptionPane("Error in input", JOptionPane.ERROR_MESSAGE);    
 				  JDialog dialog = optionPane.createDialog("Error");
 				  dialog.setAlwaysOnTop(true);
 				  dialog.setVisible(true);
