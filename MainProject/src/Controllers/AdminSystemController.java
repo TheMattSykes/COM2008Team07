@@ -435,9 +435,8 @@ public class AdminSystemController extends Controller{
 						null, options, options[0]);
 				if (applyOption == 0) {
 					// carry out query & redirect back to accounts view
-					String addQuery = "INSERT INTO users VALUES(?,?,?,?,?)";
+					String addQuery = "INSERT INTO users(username,password,user_type,salt) VALUES(?,?,?,?)";
 					ArrayList<String[]> values = new ArrayList<String[]>();
-					values.add(new String[] {"" + id, "false"});
 					values.add(new String[] {username, "true"});
 					values.add(new String[] {hashedPass, "true"});
 					values.add(new String[] {type.toString().toLowerCase(), "true"});

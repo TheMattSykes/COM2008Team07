@@ -82,7 +82,7 @@ public class TeacherView extends JPanel {
 	 * @throws Exception
 	 */
 	public void loadUI() throws Exception {
-		String regName = "Tony";
+		String regName = "Teacher";
 		
 		JPanel registrarDetails = new JPanel();
 		registrarDetails.setLayout(new GridLayout(5,1));

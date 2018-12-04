@@ -1,3 +1,7 @@
+/**
+ * 
+ */
+
 package Controllers;
 
 import java.util.ArrayList;
@@ -80,7 +84,8 @@ public class StudentSystemController extends Controller {
 			student.setTutor(results[6]);
 			student.setPeriod(results[7].charAt(0));
 			student.setLevel(Integer.parseInt(results[8]));
-			System.out.println("Reg Number: "+results[0]);
+			student.setRegistered(results[10]);
+			student.setProgress(results[11]);
 			
 			sv.setStudent(student);
 		}

@@ -1,3 +1,10 @@
+/**
+ * StudentViews
+ * 
+ * Defines the UI for the student when logged in.
+ * Consists of: their information, their modules/results and their year averages/classifications.
+ */
+
 package Views;
 
 import java.awt.BorderLayout;
@@ -25,11 +32,12 @@ import Models.Module;
 import Models.Student;
 
 public class StudentView extends JPanel {
-	PrimaryFrame frame;
-	Object[][] data;
-	Classification classi;
-	JPanel studentInfo;
-	Student student;
+	
+	private PrimaryFrame frame;
+	private Object[][] data;
+	private Classification classi;
+	private JPanel studentInfo;
+	private Student student;
 	
 	float[] yearAverages;
 	
@@ -42,6 +50,8 @@ public class StudentView extends JPanel {
 		return frame;
 	}
 	
+	
+	// Allow exterior classes to set data
 	public void setData(Object[][] d) {
 		data = d;
 	}
@@ -68,23 +78,34 @@ public class StudentView extends JPanel {
 		frame.remove(studentInfo);
 	}
 	
+	/**
+	 * loadUI
+	 * Define the UI elements and their content.
+	 */
 	public void loadUI() {
+		
+		// Retrieve student information
 		String stuName = student.getTitle() + " " + student.getFirstName() + " " + student.getSecondName();
 		int regNumber = student.getRegNumber();
 		String degree = student.getDegree();
 		int year = student.getLevel();
 		String email = student.getEmail();
 		String tutor = student.getTutor();
+		String registration = student.getRegistered();
+		String progress = student.getProgress();
 		
 		JPanel studentDetails = new JPanel();
-		studentDetails.setLayout(new GridLayout(5,1));
+		studentDetails.setLayout(new GridLayout(4,2));
 		
+		// Student information
 		JLabel nameLabel = new JLabel("Name: "+stuName);
 		JLabel regLabel = new JLabel("Registration Number: "+regNumber);
 		JLabel degLabel = new JLabel("Degree: "+degree);
 		JLabel yearLabel = new JLabel("Year: "+year);
 		JLabel emailLabel = new JLabel("Email: "+email);
 		JLabel tutorLabel = new JLabel("Tutor: "+tutor);
+		JLabel statusLabel = new JLabel("Status: "+registration);
+		JLabel progressLabel = new JLabel("Year Progress: "+progress);
 		
 		studentDetails.add(nameLabel);
 		studentDetails.add(regLabel);
@@ -92,7 +113,11 @@ public class StudentView extends JPanel {
 		studentDetails.add(yearLabel);
 		studentDetails.add(emailLabel);
 		studentDetails.add(tutorLabel);
+		studentDetails.add(statusLabel);
+		studentDetails.add(progressLabel);
 		
+		
+		// Define column names for table
 		String[] columnNames = {
 				"Code",
                 "Name",
@@ -110,8 +135,6 @@ public class StudentView extends JPanel {
 		studentInfo.setLayout(new GridBagLayout());
 		GridBagConstraints stuConstraints = new GridBagConstraints();
 		stuConstraints.weightx = 1.0;
-
-		// studentInfo.setBorder(BorderFactory.createEmptyBorder(10, 10, 20, 10));
 		
 		
 		
@@ -161,12 +184,12 @@ public class StudentView extends JPanel {
 		
 		
 		JPanel studentResults = new JPanel();
-		// studentDetails.setLayout(new GridLayout((1+(yearAverages.length)),1));
 		
 		studentResults.setLayout(new GridBagLayout());
 		
 		GridBagConstraints resConstraints = new GridBagConstraints();
 		
+		// Round values
 		DecimalFormat df = new DecimalFormat("#.00");
 		
 		for (int y = 0; y < student.getLevel(); y++) {
@@ -182,6 +205,7 @@ public class StudentView extends JPanel {
 			studentResults.add(yearResultsLabel, resConstraints);
 		}
 		
+		// Display overall result
 		JLabel resultLabel = new JLabel("Overall Result: "+classi);
 		resConstraints.insets = new Insets(10,10,10,10);
 		resConstraints.fill = GridBagConstraints.HORIZONTAL;
