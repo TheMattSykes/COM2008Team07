@@ -18,6 +18,7 @@ import Models.Enrolled;
 import Models.User;
 import Models.Views;
 import Views.ViewGrades;
+import utils.GradingUtils;
 import Views.EditGrades;
 import Views.TeacherView;
 import Views.Progress;
@@ -114,16 +115,51 @@ public class TeacherSystemController extends Controller {
 				selectedModule.setCode((String)tableData[row][0]);
 				selectedModule.setName((String)tableData[row][1]);
 				selectedModule.setCredits((int)tableData[row][2]);
-				int[] studentResults = new int[2];
-				studentResults[0] = (int)(tableData[row][3]);
-				studentResults[1] = (int)(tableData[row][5]);
-				Grades[] studentGrades = new Grades[2];
-				studentGrades[0] = (Grades)(tableData[row][4]);
-				studentGrades[1] = (Grades)(tableData[row][6]);
+				//studentResults[0] = (int)tableData[row][3];
+				
+				//Grades[] studentGrades = new Grades[2];
+				//studentGrades[0] = Grades.valueOf(tableData[row][4]));
+				
+				GradingUtils gu = new GradingUtils();
+				
+				String valueOne = "";
+				String valueTwo = "";
+				
+				if (tableData[row][3] != null && tableData[row][3] != "") {
+					valueOne = tableData[row][3].toString();
+					System.out.println("v1: "+valueOne);
+				}
+				
+				if (tableData[row][5] != null && tableData[row][5] != "") {
+					valueTwo = tableData[row][5].toString();
+					System.out.println("v2: "+valueTwo);
+				}
+				
+				String[] results = new String[] {valueOne, valueTwo};
+				
+				gu.studentResults(results);
+				
+				System.out.println("TEST E PASS");
+				
+				Grades[] studentGrades = gu.getStudentGrades();
+				int[] studentResults = gu.getStudentResults();
+				
+				
+				/*
+				if (tableData[row][5] != null && tableData[row][6] != null) {
+					studentResults[1] = (int)tableData[row][5];
+					studentGrades[1] = (Grades)(tableData[row][6]);
+				} else {
+					studentResults[1] = 0;
+					studentGrades[1] = Grades.UNDEFINED;
+				}*/
+				
+				System.out.println("TEST B PASSED");
 				selectedModule.setScores(studentResults);
 				selectedModule.setGrades(studentGrades);
 				selectedModule.setLevel((int)tableData[row][7]);
 				selectedModule.setTeachingPeriod((String)tableData[row][8]);
+				System.out.println("TEST C PASSED");
 				changeView(Views.EDITGRADES);
 			} catch (Exception ex) {
 				ex.printStackTrace();
