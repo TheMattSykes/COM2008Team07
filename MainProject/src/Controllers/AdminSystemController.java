@@ -145,7 +145,18 @@ public class AdminSystemController extends Controller{
 		av.getBackButton().addActionListener(e -> initMenuView());
 		av.getDegreeAdd().addActionListener(e -> initAddDegreeView());
 		JButton deleteButton = av.getDegreeDelete();
-		
+		av.getDegreeTable().getSelectionModel().addListSelectionListener(e -> {
+						if(!deleteButton.isEnabled()) {
+							deleteButton.setEnabled(true);
+						}
+					});
+		deleteButton.addActionListener(e -> {
+			Object[][] data = av.getDataDegrees();
+			JTable table = av.getDegreeTable();
+			int row = table.getSelectedRow();
+			Degree targetDegree = new Degree((String)(data[row][0]), (String)(data[row][1]));
+			deleteDegree(targetDegree);
+		});
 	}
 	
 	public void initModuleView() throws Exception {
@@ -208,9 +219,29 @@ public class AdminSystemController extends Controller{
 	}
 	
 	public void initAddDegreeView() {
-		//if (addDegreeView == null) {
-		//	addDegreeView = new AddDegree(av.getFrame());
-		//}
+		if (addDegreeView == null) {
+			addDegreeView = new AddDegree(av.getFrame());
+		}
+		av.removeUI();
+		try {
+			addDegreeView.setDeptData(getDepartmentData());
+			addDegreeView.loadUI();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		
+		addDegreeView.getBackButton().addActionListener(e -> {
+			addDegreeView.removeUI();
+			try {
+				initDegreeView();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		});
+		
+		addDegreeView.getApplyButton().addActionListener(e -> {
+			addDegree(addDegreeView.getNewDegree());
+		});
 	}
 	
 	public void initAddModuleView() {
@@ -332,8 +363,8 @@ public class AdminSystemController extends Controller{
 			data[row][0] = degree[0];
 			data[row][1] = degree[1];
 			data[row][2] = degree[2];
+			ArrayList<String> assisting = new ArrayList<String>();
 			for (String[] lead : leadResults) {
-				ArrayList<String> assisting = new ArrayList<String>();
 				if (degree[0].equals(lead[1])) {
 					if ( Integer.parseInt(lead[2]) == 1 ) {
 						data[row][3] = lead[0];
@@ -426,6 +457,7 @@ public class AdminSystemController extends Controller{
 		}
 	}
 	
+	
 	// Produces a Username for a user account based off of given name and type
 	public String makeUsername(String fn, String sn, UserTypes type) {
 		String base = "";
@@ -450,6 +482,7 @@ public class AdminSystemController extends Controller{
 		}
 		return base;
 	}
+	
 	
 	public void deleteAccount(User u) {
 		String userID = u.getUserID() + "";
@@ -482,6 +515,7 @@ public class AdminSystemController extends Controller{
 		}
 	}
 	
+	
 	public int typeCount(UserTypes t) {
 		Integer count = 0;
 		try {
@@ -495,6 +529,7 @@ public class AdminSystemController extends Controller{
 		}
 		return count;
 	}
+	
 	
 	public void addDepartment(Department d) {
 		if (d.getName().length() != 0 && d.getCode().length() != 0) {
@@ -547,6 +582,7 @@ public class AdminSystemController extends Controller{
 		}
 	}
 	
+	
 	public void deleteDepartment(Department d) {
 		String deptCode = d.getCode();
 		String deptName = d.getName();
@@ -568,6 +604,7 @@ public class AdminSystemController extends Controller{
 		}
 	}
 	
+	
 	public void removeAllUI() {
 		if (av != null)
 			av.removeUI();
@@ -579,15 +616,119 @@ public class AdminSystemController extends Controller{
 			addDegreeView.removeUI();
 		if (addModuleView != null)
 			addModuleView.removeUI();
-		
 	}
+	
 	
 	public void addDegree(Degree d) {
-
+		try {
+			// Checking if the name is unique 
+			String testQuery = "SELECT * FROM degrees";
+			ArrayList<String[]> result = dc.executeQuery(testQuery, null);
+			ArrayList<String> names = new ArrayList<String>();
+			for (int i = 0; i < result.size(); i++) {
+				names.add(result.get(i)[1]);
+			}
+			if (names.contains(d.getName())) {
+				JOptionPane inputError = new JOptionPane("There is already a module with that name, please make sure the name is unique");
+				JDialog dialog = inputError.createDialog("Failure");
+				dialog.setAlwaysOnTop(true);
+				dialog.setVisible(true);
+			} else {
+				// Asking for confirmation before entering the new degree into the table
+				Object[] options = {"Yes", "No"};
+				int applyOption = JOptionPane.showOptionDialog(addDegreeView.getFrame(), "Confirm adding the department "+d.getName()+
+						" with code "+d.getCode(), "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, 
+						null, options, options[0]);
+				if (applyOption == 0) {
+					// Inserting new degrees into the Degrees table
+					d.setCode(getDegreeCode(d.getLead().getCode(), d.getType()));
+					String query = "INSERT INTO degrees VALUES (?,?,?);";
+					ArrayList<String[]> values = new ArrayList<String[]>();
+					values.add(new String[] {d.getCode(), "true"});
+					values.add(new String[] {d.getName(), "true"});
+					values.add(new String[] {d.getLevel().toString(), "false"});
+					dc.executeQuery(query, values);
+					
+					// Inserting the lead degree into Leads table
+					Department lead = d.getLead();
+					System.out.println("Lead: " + lead.getCode() + "    " + d.getCode());
+					String leadQuery = "INSERT INTO leads VALUES (?,?,?);";
+					ArrayList<String[]> leadValues = new ArrayList<String[]>();
+					leadValues.add(new String[] {lead.getCode(), "true"});
+					leadValues.add(new String[] {d.getCode(), "true"});
+					leadValues.add(new String[] {"1", "false"});
+					dc.executeQuery(leadQuery, leadValues);
+					
+					// Inserting assisting leads into Leads table
+					ArrayList<Department> assisting = d.getAssist();
+					for (Department dept : assisting) {
+						if (!dept.getCode().equals(lead.getCode())){
+							String assistQuery = "INSERT INTO leads VALUES (?,?,?);";
+							ArrayList<String[]> assistValues = new ArrayList<String[]>();
+							System.out.println("Assist: " + dept.getCode());
+							assistValues.add(new String[] {dept.getCode(), "true"});
+							assistValues.add(new String[] {d.getCode(), "true"});
+							assistValues.add(new String[] {"0", "false"});
+							dc.executeQuery(assistQuery, assistValues);
+						}
+					}
+				}
+			}
+			addDegreeView.removeUI();
+			initDegreeView();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 	
+	
+	public String getDegreeCode(String leadCode, GraduateType type) {
+		String id = leadCode;
+		if (type == GraduateType.UNDERGRADUATE) {
+			id += "U";
+		} else if (type == GraduateType.POSTGRADUATE) {
+			id += "P";
+		}
+		String query = "SELECT * FROM degrees WHERE degree_code LIKE '"+id+"%';";
+		try {
+			ArrayList<String[]> result = dc.executeQuery(query, null);
+			String serial = "";
+			if ( result.size() == 0 ) {
+				serial = "01";
+			} else if ( result.size() < 9 ) {
+				serial = "0"+(result.size()+1);
+			} else if ( serial.length() >= 9 ) {
+				serial = Integer.toString(result.size()+1);
+			}
+			id += serial;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return id;
+	}
+
 	public void deleteDegree(Degree d) {
-		
+		String degreeCode = d.getCode();
+		String degreeName = d.getName();
+		Object[] options = {"Yes", "No"};
+		int applyOption = JOptionPane.showOptionDialog(av.getFrame(), "Confirm deleting the degree "+degreeName+
+				" with code "+degreeCode, "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, 
+				null, options, options[0]);
+		if (applyOption == 0) {
+			try {
+				String degreeQuery = "DELETE FROM degrees WHERE degree_code = ?";
+				ArrayList<String[]> degreeValues = new ArrayList<String[]>();
+				degreeValues.add(new String[] {degreeCode, "true"});
+				dc.executeQuery(degreeQuery, degreeValues);
+				String leadsQuery = "DELETE FROM leads WHERE degree_code = ?";
+				ArrayList<String[]> leadsValues = new ArrayList<String[]>();
+				leadsValues.add(new String[] {degreeCode, "true"});
+				dc.executeQuery(leadsQuery, leadsValues);
+				initDegreeView();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
 	}
 	
 	public void addModule(Module m) {
