@@ -15,6 +15,7 @@ import Models.User;
 import Views.LoginView;
 import Views.PrimaryFrame;
 import Views.StudentView;
+import utils.GradingUtils;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -135,36 +136,26 @@ public class StudentSystemController extends Controller {
 				newModule.setCredits(Integer.parseInt(result[2]));
 				
 				int[] studentResults = new int[2];
-				Grades[] studentGrades = new Grades[2];
 				
-				if (result[3] != null) {
-					studentResults[0] = (int) Float.parseFloat(result[3]);
-					
-					if (studentResults[0] >= 40) {
-						studentGrades[0] = Grades.PASS;
-					} else {
-						studentGrades[0] = Grades.FAIL;
-					}
-				} else {
-					studentResults[0] = 0;
-					studentGrades[0] = Grades.UNDEFINED;
+				GradingUtils su = new GradingUtils();
+				
+				String valueOne = "";
+				String valueTwo = "";
+				
+				if (result[3] != null && result[3] != "") {
+					valueOne = result[3].toString();
 				}
 				
-				if (result[4] != null) {
-					studentResults[1] = (int) Float.parseFloat(result[4]);
-					
-					if (studentResults[1] >= 40) {
-						studentGrades[1] = Grades.PASS;
-					} else {
-						studentGrades[1] = Grades.FAIL;
-					}
-				} else {
-					studentResults[1] = 0;
-					studentGrades[1] = Grades.UNDEFINED;
+				if (result[4] != null && result[4] != "") {
+					valueTwo = result[4].toString();
 				}
 				
-				newModule.setScores(studentResults);
-				newModule.setGrades(studentGrades);
+				String[] res = new String[] {valueOne, valueTwo};
+				
+				su.studentResults(res);
+				
+				newModule.setScores(su.getStudentResults());
+				newModule.setGrades(su.getStudentGrades());
 				
 				newModule.setLevel(Integer.parseInt(result[5]));
 				
@@ -175,9 +166,10 @@ public class StudentSystemController extends Controller {
 			}
 		}
 		
-		Classification classi = calculateClass(GraduateType.UNDERGRADUATE, modules.toArray(new Module[modules.size()]));
 		
-		sv.setClassification(classi);
+		GradingUtils gu = new GradingUtils();
+		sv.setClassification(gu.calculateClass(GraduateType.UNDERGRADUATE, modules.toArray(new Module[modules.size()]), studentUser));
+		sv.setYearAverages(gu.getYearAverages());
 		
 		Object[][] data = new Object[modules.size()][8];
 		
@@ -207,118 +199,6 @@ public class StudentSystemController extends Controller {
 		}
 		
 		return data;
-	}
-	
-	public int getMax(int[] scores) {
-		int max = 0;
-		
-		for (int score : scores) {
-			if (score > max) {
-				max = score;
-			}
-		}
-		
-		return max;
-	}
-	
-	public Classification calculateClass(GraduateType type, Module[] mods) {
-		
-		float[] levelTotals = new float[4];
-		float postGradTotal = 0;
-		
-		Boolean fourYearCourse = false;
-		
-		Boolean degreeFailed = false;
-		
-		int yearCredits = 0;
-		
-		// Determine how many credits are in a year for graduate type
-		if (type == GraduateType.UNDERGRADUATE) {
-			yearCredits = 120;
-		} else {
-			yearCredits = 180;
-		}
-		
-		// Get all module scores by level
-		for (Module mod : mods) {
-			int level = mod.getLevel();
-			int[] scores = mod.getScores();
-			int score = getMax(scores);
-			int credits = mod.getCredits();
-			
-			if (level == 4) {
-				fourYearCourse = true;
-			}
-			
-			float weightedScore = (((float)credits / (float)yearCredits) * (float)score);
-			
-			
-			if (type == GraduateType.UNDERGRADUATE) {
-				levelTotals[level-1] += weightedScore;
-				
-				if (score < 40 && level != 4) {
-					degreeFailed = true;
-				} 
-				
-				if (score < 50 && level == 4) {
-					degreeFailed = true;
-				}
-			} else {
-				postGradTotal += weightedScore;
-			}
-		}
-		
-		
-		sv.setYearAverages(levelTotals);
-		
-		
-		float finalValue = 0;
-		
-		if (studentUser.getLevel() >= 3) {
-			if (type == GraduateType.UNDERGRADUATE) {
-				
-				if (!fourYearCourse) {
-					float convertedLv2Total = (float) ((1.0/3.0)*levelTotals[1]);
-					float convertedLv3Total = (float) ((2.0/3.0)*levelTotals[2]);
-					
-					finalValue = ( convertedLv2Total + convertedLv3Total );
-					
-					System.out.println("YEAR 2 Total: "+levelTotals[1]+"    (1/3 Version): "+convertedLv2Total);
-					System.out.println("YEAR 3 Total: "+levelTotals[2]+"    (1/3 Version): "+convertedLv3Total);
-					System.out.println("Final Value: "+finalValue);
-				} else {
-					finalValue = ( ((1/5)*levelTotals[1]) + ((2/5)*levelTotals[2]) + ((2/5)*levelTotals[3]) );
-				}
-				
-				if (finalValue < 39.5 || degreeFailed) {
-					return Classification.FAIL;
-				} else if (finalValue >= 39.5 && finalValue < 44.5) {
-					return Classification.PASS;
-				} else if (finalValue >= 44.5 && finalValue < 49.5) {
-					return Classification.THIRD;
-				} else if (finalValue >= 49.5 && finalValue < 59.5) {
-					return Classification.LOWER_SECOND;
-				} else if (finalValue >= 59.5 && finalValue < 69.5) {
-					return Classification.UPPER_SECOND;
-				} else {
-					return Classification.FIRST;
-				}
-			} else {
-				finalValue = postGradTotal;
-				
-				if (finalValue < 49.5) {
-					return Classification.FAIL;
-				} else if (finalValue >= 49.5 && finalValue < 59.5) {
-					return Classification.PASS;
-				} else if (finalValue >= 59.5 && finalValue < 69.5) {
-					return Classification.MERIT;
-				} else {
-					return Classification.DISTINCTION;
-				}
-			}
-		}
-		
-		return Classification.INCOMPLETE;
 	}
 	
 	public void removeAllUI() {
