@@ -29,7 +29,7 @@ public class PasswordUtilities {
 	
 	/**
 	 * hash()
-	 * Uses java's MessageDigest and DatatypeConverter APIs to SHA-256 hash a string.
+	 * Uses java's MessageDigest and DatatypeConverter APIs to SHA-512 hash a string.
 	 * @throws UnsupportedEncodingException 
 	 * */
 	public static String hash(String stringToHash) throws NoSuchAlgorithmException, UnsupportedEncodingException {

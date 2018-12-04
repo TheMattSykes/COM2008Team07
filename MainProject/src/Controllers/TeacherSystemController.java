@@ -100,26 +100,37 @@ public class TeacherSystemController extends Controller {
 		vg.setStudent(selectedStudent);
 		vg.setData(getTableData());
 		vg.loadUI();
+		System.out.println("UI LOADED");
 		currentView = Views.VIEWGRADES;
 		
 		JButton editButton = vg.getEditButton();
 		
+		System.out.println("TEST A PASS");
+		
 		// Action listener for Edit Grades Button
 		vg.getEditButton().addActionListener(e -> {
 			try {
+				System.out.println("TEST B1 PASS");
 				if (!editButton.isEnabled())
 	        		editButton.setEnabled(true);
-	        	JTable table = tv.getTable();
+				System.out.println("TEST B2 PASS");
+	        		JTable table = tv.getTable();
+	        		System.out.println("TEST B3 PASS");
 				selectedModule = new Module();
+				System.out.println("TEST B4 PASS");
 				int row = table.getSelectedRow();
+				System.out.println("TEST C1 PASS");
 				selectedModule.setCode((String)tableData[row][0]);
 				selectedModule.setName((String)tableData[row][1]);
 				selectedModule.setCredits((int)tableData[row][2]);
+				System.out.println("TEST C2 PASS");
 				//studentResults[0] = (int)tableData[row][3];
 				
 				//Grades[] studentGrades = new Grades[2];
 				//studentGrades[0] = Grades.valueOf(tableData[row][4]));
 				
+				
+				System.out.println("TEST D PASS");
 				GradingUtils gu = new GradingUtils();
 				
 				String valueOne = "";
@@ -204,7 +215,8 @@ public class TeacherSystemController extends Controller {
 		});
 		
 		// Action listener for Apply button
-		pg.getApplyButton().addActionListener(e -> {
+		
+		eg.getApplyButton().addActionListener(e -> {
 			try {
 				Module selectedModule = eg.editGrades();
 				String query = "UPDATE students SET grade1 = ?, grade2 = ? WHERE module_code = ?";
@@ -424,7 +436,10 @@ public class TeacherSystemController extends Controller {
 			data[row][2] = module.getCredits();
 			
 			int[] scores = module.getScores();
+			
+			System.out.println("STARTING TEST SCORES");
 			Grades[] grades = module.getGrades();
+			System.out.println("TEST SCORES PASSED");
 			
 			data[row][3] = scores[0];
 			data[row][4] = grades[0].toString();
