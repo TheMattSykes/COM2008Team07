@@ -63,7 +63,7 @@ public class TeacherView extends JPanel {
 		frame.repaint();
 	}
 	
-	public JButton getEditButton() {
+	public JButton getViewButton() {
 		return viewGrades;
 	}
 	
@@ -91,6 +91,7 @@ public class TeacherView extends JPanel {
                 "Tutor",
                 "Period",
                 "Level",
+                "Year Progression"
         };
 		
 		

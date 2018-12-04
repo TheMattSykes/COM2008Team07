@@ -12,10 +12,11 @@ public class Student {
 	private char period;
 	private int level;
 	private String registered;
+	private String progress;
 	
 	public Student() {}
 	
-	public Student(int r, String t, String fn, String sn, String d, String e, String tu, char p, int l, String reg) {
+	public Student(int r, String t, String fn, String sn, String d, String e, String tu, char p, int l, String reg, String prog) {
 		regNumber = r;
 		title = t;
 		firstName = fn;
@@ -26,6 +27,7 @@ public class Student {
 		period = p;
 		level = l;
 		registered = reg;
+		progress = prog;
 	}
 	
 	public int getRegNumber() {
@@ -108,6 +110,14 @@ public class Student {
 	
 	public void setRegistered(String inputReg) {
 		registered = inputReg;
+	}
+	
+	public String getProgress() {
+		return progress;
+	}
+	
+	public void setProgress(String inputProg) {
+		progress = inputProg;
 	}
 	
 	public boolean isComplete() {

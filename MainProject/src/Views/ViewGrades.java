@@ -97,6 +97,7 @@ public class ViewGrades extends JPanel {
 		int year = student.getLevel();
 		String email = student.getEmail();
 		String tutor = student.getTutor();
+		String progress = student.getProgress();
 		
 		JPanel studentDetails = new JPanel();
 		studentDetails.setLayout(new GridLayout(5,1));
@@ -107,6 +108,7 @@ public class ViewGrades extends JPanel {
 		JLabel yearLabel = new JLabel("Year: "+year);
 		JLabel emailLabel = new JLabel("Email: "+email);
 		JLabel tutorLabel = new JLabel("Tutor: "+tutor);
+		JLabel progressLabel = new JLabel("Year Progress: "+progress);
 		
 		studentDetails.add(nameLabel);
 		studentDetails.add(regLabel);
@@ -114,6 +116,7 @@ public class ViewGrades extends JPanel {
 		studentDetails.add(yearLabel);
 		studentDetails.add(emailLabel);
 		studentDetails.add(tutorLabel);
+		studentDetails.add(progressLabel);
 		
 		String[] columnNames = {
 				"Code",
@@ -124,7 +127,7 @@ public class ViewGrades extends JPanel {
                 "Result 2",
                 "Grade 2",
                 "Level",
-                "Period"
+                "Period",
         };
 		
 		
@@ -168,7 +171,7 @@ public class ViewGrades extends JPanel {
 		JScrollPane scrollPane = new JScrollPane(table);
 		table.setFillsViewportHeight(true);
 		
-		scrollPane.setPreferredSize(new Dimension(getWidth(),350));
+		scrollPane.setPreferredSize(new Dimension(getWidth(),325));
 		
 		stuConstraints.insets = new Insets(5,5,5,5);
 		stuConstraints.fill = GridBagConstraints.HORIZONTAL;

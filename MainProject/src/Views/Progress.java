@@ -5,7 +5,6 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -13,14 +12,13 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 
-import Models.Enrolled;
+import Models.Student;
 import Models.GraduateType;
 import Models.Module;
 
-public class EditGrades extends JPanel {
+public class Progress extends JPanel {
 	private static final long serialVersionUID = 1L;
 	PrimaryFrame frame;
 	private JPanel form;
@@ -29,14 +27,10 @@ public class EditGrades extends JPanel {
 	private JButton backButton;
 	private JButton logoutButton;
 	private JButton applyButton;
-	private JTextField grade1TextField;
-	private JTextField grade2TextField;
-	private Module selectedModule;
-	private Module module;
-	private int result1;
-	private int result2;
+	private JComboBox<String> progressDropdown;
+	private Student student;
 	
-	public EditGrades(PrimaryFrame pf) {
+	public Progress(PrimaryFrame pf) {
 		frame = pf;
 	}
 	
@@ -67,14 +61,13 @@ public class EditGrades extends JPanel {
 		return logoutButton;
 	}
 	
-	public void setSelectedModule(Module sm) {
-		selectedModule = sm;
+	public void setStudent(Student stu) {
+		student = stu;
 	}
 	
-	public Module editGrades() {
-		int grade1 = Integer.parseInt(grade1TextField.getText());
-		int grade2 = Integer.parseInt(grade2TextField.getText());
-		return module;
+	public Student getYearProgression() {
+		student.setProgress((String)progressDropdown.getSelectedItem());
+		return student;
 	}
 	
 	public void loadUI() throws Exception {
@@ -97,29 +90,16 @@ public class EditGrades extends JPanel {
 		formLeft.setLayout(leftColumn);
 		formRight.setLayout(rightColumn);
 		
-		Dimension textFieldSize = new Dimension (300, 20);
-		
-		// Result 1
-		JPanel grade1Panel = new JPanel();
-		JLabel grade1Label = new JLabel("Grade 1: ");
-		JTextField grade1TextField = new JTextField();
-		grade1TextField.setPreferredSize(textFieldSize);
+		// Module code
+		JPanel progressPanel = new JPanel();
+		JLabel progressLabel = new JLabel("Year Progression: ");
+		progressDropdown = new JComboBox<String>(new String[] {"Progressing","Repeating","Graduating","Fail","null"});
+		progressDropdown.setSelectedItem(student.getProgress());
 		formConstraints.gridx = 0;
-		grade1Panel.add(grade1Label, formConstraints);
+		progressPanel.add(progressLabel, formConstraints);
 		formConstraints.gridx = 1;
-		grade1Panel.add(grade1TextField, formConstraints);
-		formLeft.add(grade1Panel);
-		
-		// Result 2
-		JPanel grade2Panel = new JPanel();
-		JLabel grade2Label = new JLabel("Grade 2: ");
-		JTextField grade2TextField = new JTextField();
-		grade2TextField.setPreferredSize(textFieldSize);
-		formConstraints.gridx = 0;
-		grade2Panel.add(grade2Label, formConstraints);
-		formConstraints.gridx = 1;
-		grade2Panel.add(grade2TextField, formConstraints);
-		formLeft.add(grade2Panel);
+		progressPanel.add(progressDropdown, formConstraints);
+		formLeft.add(progressPanel); 
 		
 		form.add(formLeft);
 		form.add(formRight);

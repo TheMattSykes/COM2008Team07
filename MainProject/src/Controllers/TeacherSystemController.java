@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import javax.swing.JTable;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import Models.Classification;
@@ -13,22 +14,28 @@ import Models.Grades;
 import Models.GraduateType;
 import Models.Module;
 import Models.Student;
+import Models.Enrolled;
 import Models.User;
 import Models.Views;
 import Views.ViewGrades;
 import Views.EditGrades;
 import Views.TeacherView;
+import Views.Progress;
 
 public class TeacherSystemController extends Controller {
 	
 	private TeacherView tv;
 	private ViewGrades vg;
 	private EditGrades eg;
+	private Progress pg;
 	private Student selectedStudent;
 	private DatabaseController dc;
 	private Views currentView;
 	private ArrayList<Integer> regNumbersInUse;
 	private Module newModule;
+	private Module module;
+	private Module selectedModule;
+	private Enrolled enrolled;
 	
 	private Object[][] studentData;
 	private Object[][] tableData;
@@ -63,7 +70,7 @@ public class TeacherSystemController extends Controller {
 		currentView = Views.TEACHERVIEW;
         
 		// Action listener for View Grades Button
-		tv.getEditButton().addActionListener(e -> {
+		tv.getViewButton().addActionListener(e -> {
 			try {
 				JTable table = tv.getTable();
 				selectedStudent = new Student();
@@ -77,6 +84,7 @@ public class TeacherSystemController extends Controller {
 				selectedStudent.setTutor((String)studentData[row][6]);
 				selectedStudent.setPeriod((Character)studentData[row][7]);
 				selectedStudent.setLevel((int)studentData[row][8]);
+				selectedStudent.setProgress((String)studentData[row][9]);
 				changeView(Views.VIEWGRADES);
 			} catch (Exception ex) {
 				ex.printStackTrace();
@@ -93,13 +101,41 @@ public class TeacherSystemController extends Controller {
 		vg.loadUI();
 		currentView = Views.VIEWGRADES;
 		
+		JButton editButton = vg.getEditButton();
+		
 		// Action listener for Edit Grades Button
 		vg.getEditButton().addActionListener(e -> {
 			try {
-				JTable table = vg.getTable();
+				if (!editButton.isEnabled())
+	        		editButton.setEnabled(true);
+	        	JTable table = tv.getTable();
+				selectedModule = new Module();
+				int row = table.getSelectedRow();
+				selectedModule.setCode((String)tableData[row][0]);
+				selectedModule.setName((String)tableData[row][1]);
+				selectedModule.setCredits((int)tableData[row][2]);
+				int[] studentResults = new int[2];
+				studentResults[0] = (int)(tableData[row][3]);
+				studentResults[1] = (int)(tableData[row][5]);
+				Grades[] studentGrades = new Grades[2];
+				studentGrades[0] = (Grades)(tableData[row][4]);
+				studentGrades[1] = (Grades)(tableData[row][6]);
+				selectedModule.setScores(studentResults);
+				selectedModule.setGrades(studentGrades);
+				selectedModule.setLevel((int)tableData[row][7]);
+				selectedModule.setTeachingPeriod((String)tableData[row][8]);
 				changeView(Views.EDITGRADES);
 			} catch (Exception ex) {
 				ex.printStackTrace();
+			}
+		});
+		
+		// Action listener for Year Progression button
+		vg.getProgButton().addActionListener(e -> {				
+			try {
+				changeView(Views.PROGRESS);
+			} catch (Exception ex) {
+			  ex.printStackTrace();
 			}
 		});
 		
@@ -118,18 +154,80 @@ public class TeacherSystemController extends Controller {
 		if (eg == null)
 			eg = new EditGrades(tv.getFrame());
         
+		eg.setSelectedModule(selectedModule);
 		eg.loadUI();
 		currentView = Views.EDITGRADES;
+		
 		// Action listener for Back button
 		eg.getBackButton().addActionListener(e -> {				
 			try {
-				changeView(Views.TEACHERVIEW);
+				changeView(Views.VIEWGRADES);
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
 		});
 		
+		// Action listener for Apply button
+		pg.getApplyButton().addActionListener(e -> {
+			try {
+				Module selectedModule = eg.editGrades();
+				String query = "UPDATE students SET grade1 = ?, grade2 = ? WHERE module_code = ?";
+				ArrayList<String[]> values = new ArrayList<String[]>();
+						
+				// Each value String[] has (1) the data, (2) boolean, which denotes whether it is a string
+				values.add(new String[] {selectedModule.getCode(), "true"});
+						
+				dc.executeQuery(query, values);
+				changeView(Views.VIEWGRADES);
+				} catch (Exception ex) {
+			      ex.printStackTrace();
+			      JOptionPane optionPane = new JOptionPane("Error connecting to dabatase.", JOptionPane.ERROR_MESSAGE);    
+				  JDialog dialog = optionPane.createDialog("Error");
+				  dialog.setAlwaysOnTop(true);
+				  dialog.setVisible(true);
+				}
+		    });
 	}
+	
+	public void initprogressView() throws Exception {
+		if (pg == null)
+			pg = new Progress(tv.getFrame());
+        
+		pg.setStudent(selectedStudent);
+		pg.loadUI();
+		currentView = Views.PROGRESS;
+		
+		// Action listener for Back button
+		pg.getBackButton().addActionListener(e -> {				
+			try {
+				changeView(Views.VIEWGRADES);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		});
+		
+		// Action listener for Apply button
+		pg.getApplyButton().addActionListener(e -> {
+			try {
+				Student student = pg.getYearProgression();
+				String query = "UPDATE students SET year_progression = ? WHERE reg_number = ?";
+				ArrayList<String[]> values = new ArrayList<String[]>();
+						
+				// Each value String[] has (1) the data, (2) boolean, which denotes whether it is a string
+				values.add(new String[] {student.getProgress(), "true"});
+				values.add(new String[] {Integer.toString(student.getRegNumber()), "true"});
+						
+				dc.executeQuery(query, values);
+				changeView(Views.VIEWGRADES);
+				} catch (Exception ex) {
+			      ex.printStackTrace();
+			      JOptionPane optionPane = new JOptionPane("Error connecting to dabatase.", JOptionPane.ERROR_MESSAGE);    
+				  JDialog dialog = optionPane.createDialog("Error");
+				  dialog.setAlwaysOnTop(true);
+				  dialog.setVisible(true);
+				}
+		    });
+		}
 	
 	// Changes to the specified view
 	public void changeView(Views changeTo) throws Exception {
@@ -137,12 +235,20 @@ public class TeacherSystemController extends Controller {
 			tv.removeUI();
 		} else if (currentView == Views.VIEWGRADES) {
 			vg.removeUI();
+		} else if (currentView == Views.EDITGRADES) {
+			eg.removeUI();
+		} else if (currentView == Views.PROGRESS) {
+			pg.removeUI();
 		} 
 		
 		if (changeTo == Views.TEACHERVIEW) {
 			initDefaultView();
 		} else if (changeTo == Views.VIEWGRADES) {
 			initviewGradesView();
+		} else if (changeTo == Views.EDITGRADES) {
+			initeditGradesView();
+		} else if (changeTo == Views.PROGRESS) {
+			initprogressView();
 		}
 	}
 	
@@ -160,11 +266,11 @@ public class TeacherSystemController extends Controller {
 		for (int i = 0; i < results.size(); i++) {
 			students.add(new Student(Integer.parseInt(results.get(i)[0]),results.get(i)[1],results.get(i)[2],
 					results.get(i)[3],results.get(i)[4], results.get(i)[5], results.get(i)[6], 
-					results.get(i)[7].charAt(0), Integer.parseInt(results.get(i)[8]), results.get(i)[10]));
+					results.get(i)[7].charAt(0), Integer.parseInt(results.get(i)[8]), results.get(i)[10],results.get(i)[11]));
 			regNumbersInUse.add(Integer.parseInt(results.get(i)[0]));
 		}
 		
-		Object[][] data = new Object[results.size()][9];
+		Object[][] data = new Object[results.size()][10];
 		
 		int row = 0;
 		for (Student student : students) {
@@ -177,6 +283,7 @@ public class TeacherSystemController extends Controller {
 			data[row][6] = student.getTutor();
 			data[row][7] = student.getPeriod();
 			data[row][8] = student.getLevel();
+			data[row][9] = student.getProgress();
 			
 			row++;
 		}
