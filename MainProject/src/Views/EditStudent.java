@@ -14,6 +14,11 @@ import javax.swing.JTextField;
 
 import Models.Student;
 
+/**
+ * The EditStudent view is similar to the AddStudent view, except all the fields and boxes are already filled in
+ * with the selected student's details, whom the registrar wishes to make changes to.
+ * @author Martin Szemethy
+ */
 public class EditStudent extends JPanel {
 	private static final long serialVersionUID = 1L;
 	PrimaryFrame frame;
@@ -72,6 +77,11 @@ public class EditStudent extends JPanel {
 		student = stu;
 	}
 	
+	/**
+	 * getNewStudent()
+	 * Gets the new details of the student (after the registrar has made all the changes they wanted).
+	 * @return the student object, with all the required changes being made to it.
+	 */
 	public Student getNewStudent() {
 		student.setTitle((String)titleDropdown.getSelectedItem());
 		String firstName = forenameTextField.getText().trim();
@@ -90,6 +100,11 @@ public class EditStudent extends JPanel {
 		return student;
 	}
 	
+	/**
+	 * loadUI()
+	 * Loads the UI, with all the fields, boxes and buttons needed for the registrar to be able to make changes to a student.
+	 * @throws Exception
+	 */
 	public void loadUI() throws Exception {
 		form = new JPanel();
 		form.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
@@ -201,7 +216,7 @@ public class EditStudent extends JPanel {
 		JPanel periodPanel = new JPanel();
 		JLabel periodLabel = new JLabel("Period: ");
 		periodDropdown =
-				new JComboBox<Character>(new Character[] {'A','B','C','D','E','F','G','H','I','J','K'});
+				new JComboBox<Character>(new Character[] {'A','B','C','D','E','F','G','H','I','J'});
 		periodDropdown.setSelectedItem(student.getPeriod());
 		formConstraints.gridx = 0;
 		periodPanel.add(periodLabel, formConstraints);
@@ -239,6 +254,8 @@ public class EditStudent extends JPanel {
 		menuConstraints.fill = GridBagConstraints.HORIZONTAL;
 		menuConstraints.gridy = 0;
 		menuConstraints.gridx = 0;
+		
+		// Add the Apply and Back buttons to the bottom of the view (just above Log out)
 		localButtons = new JPanel();
 		applyButton = new JButton("Apply");
 		localButtons.add(applyButton, menuConstraints);

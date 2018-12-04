@@ -1,7 +1,5 @@
 package Controllers;
 
-import java.sql.SQLException;
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.Random;
 import javax.swing.JTable;
@@ -23,6 +21,10 @@ import Views.EditStudent;
 import Views.RegistrarModules;
 import Views.RegistrarView;
 
+/**
+ * The RegistrarSystemController controls the parts of the system, which are accessed by all users of type registrar.
+ * @author Martin Szemethy
+ */
 public class RegistrarSystemController extends Controller {
 	
 	private RegistrarView rv;
@@ -38,6 +40,13 @@ public class RegistrarSystemController extends Controller {
 	
 	private Object[][] studentData;
 	
+	/**
+	 * RegistrarSystemController()
+	 * The constructor of the controller.
+	 * @param mainUser is the user object, the registrar in this case
+	 * @param rview is the default registrar view
+	 * @throws Exception
+	 */
 	public RegistrarSystemController(User mainUser, RegistrarView rview) throws Exception {
 		super(mainUser);
 		
@@ -48,10 +57,19 @@ public class RegistrarSystemController extends Controller {
 		initDefaultView();
 	}
 	
+	/**
+	 * getUser()
+	 * @return the user, which will be of type registrar in this case
+	 */
 	public User getUser() {
 		return user;
 	}
 	
+	/**
+	 * initDefaultView()
+	 * Initialises (loads) the default view for the registrar
+	 * @throws Exception
+	 */
 	public void initDefaultView() throws Exception {
 		rv.setStudentsData(getStudentsData());
 		rv.loadUI();
@@ -121,6 +139,11 @@ public class RegistrarSystemController extends Controller {
 		});
 	}
 	
+	/**
+	 * deleteStudentEvent()
+	 * The code that runs, when the registrar wishes to delete a specific student
+	 * @throws Exception
+	 */
 	private void deleteStudentEvent() throws Exception {
 		Object[] options = {"Yes", "No"};
 		
@@ -155,6 +178,11 @@ public class RegistrarSystemController extends Controller {
 		}
 	}
 
+	/**
+	 * initAddStudentView()
+	 * Initialises (loads) the Add Student view, which is where the registrar can add a new student to the database
+	 * @throws Exception
+	 */
 	public void initAddStudentView() throws Exception {
 		if (as == null)
 			as = new AddStudent(rv.getFrame());
@@ -249,6 +277,11 @@ public class RegistrarSystemController extends Controller {
 		});
 	}
 	
+	/**
+	 * initEditStudentView()
+	 * Initialises (loads) the Edit Student view, which is where the registrar can edit the details of a student in the database.
+	 * @throws Exception
+	 */
 	public void initEditStudentView() throws Exception {
 		if (es == null)
 			es = new EditStudent(rv.getFrame());
@@ -315,6 +348,11 @@ public class RegistrarSystemController extends Controller {
 		});
 	}
 	
+	/**
+	 * initRegistrarModulesView()
+	 * Initialises (loads) the Registrar Modules view, which is where the registrar can add/delete to/from a student's list of modules.
+	 * @throws Exception
+	 */
 	public void initRegistrarModulesView() throws Exception {
 		if (rm == null)
 			rm = new RegistrarModules(rv.getFrame());
@@ -499,7 +537,12 @@ public class RegistrarSystemController extends Controller {
 		});
 	}
 	
-	// Changes to the specified view
+	/**
+	 * changeView()
+	 * Changes the view of the registrar.
+	 * @param changeTo is the view you wish to change to (has to be a view for the registrar)
+	 * @throws Exception
+	 */
 	public void changeView(Views changeTo) throws Exception {
 		if (currentView == Views.REGISTRARVIEW) {
 			rv.removeUI();
@@ -522,7 +565,10 @@ public class RegistrarSystemController extends Controller {
 		}
 	}
 	
-	// Generates a random Reg. number, that is not yet used in the students table of the DB
+	/*
+	 * generateRandomReg()
+	 * Generates a random Reg. number, that is not yet used in the students table of the DB
+	 */
 	public int generateRandomReg() {
 		int minReg = 10000000;
 		int maxReg = 99999999;
@@ -534,7 +580,11 @@ public class RegistrarSystemController extends Controller {
 		return regNumber;
 	}
 	
-	// Gets the data of all the students currently in the database
+	/*
+	 * getStudentsData()
+	 * Gets the data of all the students currently in the database, so they can be displayed in a table.
+	 * @throws Exception
+	 */
 	public Object[][] getStudentsData() throws Exception {
 		
 		String query = "SELECT * FROM students LIMIT ?";
@@ -573,6 +623,11 @@ public class RegistrarSystemController extends Controller {
 		return data;
 	}
 	
+	/*
+	 * getAvailableDegrees()
+	 * Gets all the available degrees currently in the database.
+	 * @throws Exception
+	 */
 	public String[] getAvailableDegrees() throws Exception {
 		String query = "SELECT degree_code FROM degrees LIMIT ?";
 		ArrayList<String[]> values = new ArrayList<String[]>();
@@ -587,9 +642,13 @@ public class RegistrarSystemController extends Controller {
 		return availableDegrees;
 	}
 	
-	public ArrayList<Module> getEnrolledModules() throws Exception {
-		//String query = String.format("SELECT module_code, grade1, grade2 FROM enrolled WHERE reg_number = ? ORDER BY module_code");
-		
+	/**
+	 * getEnrolledModules()
+	 * Gets all the modules the selected student is currently enrolled in.
+	 * @return the currently enrolled modules, by the selected student.
+	 * @throws Exception
+	 */
+	public ArrayList<Module> getEnrolledModules() throws Exception {		
 		String query = String.format("SELECT enrolled.module_code, enrolled.grade1, enrolled.grade2, modules.module_name, modules.credits, modules.teaching_period," + 
 				" modules.graduation_level, approval.core, approval.level FROM enrolled INNER JOIN modules ON enrolled.module_code=modules.module_code INNER JOIN" +
 				" approval ON enrolled.module_code=approval.module_code WHERE enrolled.reg_number = ? AND approval.degree_code = ?");
@@ -685,6 +744,12 @@ public class RegistrarSystemController extends Controller {
 		return modules;
 	}
 	
+	/**
+	 * getAvailableModules()
+	 * Gets all the available modules for the selected student, at their current level.
+	 * @return all the modules the selected student can take, at their current level.
+	 * @throws Exception
+	 */
 	public ArrayList<Module> getAvailableModules() throws Exception {
 		String query = String.format("SELECT approval.module_code, approval.core, approval.level, modules.module_name, modules.credits, modules.teaching_period," + 
 				" modules.graduation_level FROM approval INNER JOIN modules ON approval.module_code=modules.module_code WHERE approval.degree_code = ? AND approval.level = ?");
@@ -721,6 +786,12 @@ public class RegistrarSystemController extends Controller {
 		return modules;
 	}
 	
+	/**
+	 * getMax()
+	 * Gets the biggest int, of an array of ints.
+	 * @param scores is the array of ints
+	 * @return the biggest int in the array
+	 */
 	public int getMax(int[] scores) {
 		int max = 0;
 		
@@ -736,6 +807,13 @@ public class RegistrarSystemController extends Controller {
 		return max;
 	}
 	
+	/**
+	 * calculateClass()
+	 * Calculates the degree classification of a student, given their graduate type and array of modules.
+	 * @param type is the type of degree the student is taking
+	 * @param mods is the array of modules the student is taking
+	 * @return the degree classification
+	 */
 	public Classification calculateClass(GraduateType type, Module[] mods) {
 		
 		float[] levelTotals = new float[4];
@@ -810,6 +888,10 @@ public class RegistrarSystemController extends Controller {
 		}
 	}
 	
+	/**
+	 * removeAllUI()
+	 * Removes all the UI of the registrar (used when logging out).
+	 */
 	public void removeAllUI() {
 		if (rv != null)
 			rv.removeUI();

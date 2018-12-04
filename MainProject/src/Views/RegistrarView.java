@@ -13,11 +13,15 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import Controllers.TableColumnAdjuster;
 
+/**
+ * The RegistrarView is the default view all users of type registrar see, once logged in.
+ * It displays a table of all the students in the database and their details and has links to all other parts of the system,
+ * accessible by all users of type registrar.
+ * @author Martin Szemethy
+ */
 public class RegistrarView extends JPanel {
 	private static final long serialVersionUID = 1L;
 	PrimaryFrame frame;
@@ -79,6 +83,11 @@ public class RegistrarView extends JPanel {
 		return logoutButton;
 	}
 	
+	/**
+	 * loadUI()
+	 * Loads the UI, with the table and all the necessary buttons, for the registrar to see.
+	 * @throws Exception
+	 */
 	public void loadUI() throws Exception {		
 		JPanel registrarDetails = new JPanel();
 		registrarDetails.setLayout(new GridLayout(5,1));

@@ -21,6 +21,10 @@ import Controllers.TableColumnAdjuster;
 import Models.Module;
 import Models.Student;
 
+/**
+ * The RegistrarModules is the view that allows the registrar to add/remove modules to/from a specified student's list of modules.
+ * @author Martin Szemethy
+ */
 public class RegistrarModules extends JPanel {
 	private static final long serialVersionUID = 1L;
 	
@@ -37,7 +41,6 @@ public class RegistrarModules extends JPanel {
 	private JPanel localButtons;
 	private JButton backButton;
 	private JButton applyButton = new JButton ("Apply");
-	private JButton logoutButton;
 	private ArrayList<Module> currentModules;
 	private ArrayList<Module> availableModules;
 	
@@ -61,14 +64,22 @@ public class RegistrarModules extends JPanel {
 			frame.menuBar.remove(localButtons);
 	}
 	
+	/**
+	 * getCurrentModulesTable()
+	 * Gets the table that displays the list of modules the student is currently/should be currently enrolled in.
+	 * @return the JTable described above.
+	 */
 	public JTable getCurrentModulesTable() {
 		return currentModulesTable;
 	}
 	
+	// Like the function above, except for the other table (which has a list of modules available to the student, but
+	// the student isn't enrolled in).
 	public JTable getAvailableModulesTable() {
 		return availableModulesTable;
 	}
 	
+	// Table models, used for adding/deleting rows dynamically.
 	public DefaultTableModel getCurrentModulesTableModel() {
 		return currentModulesTableModel;
 	}
@@ -97,14 +108,16 @@ public class RegistrarModules extends JPanel {
 		return applyButton;
 	}
 	
-	public JButton getLogoutButton() {
-		return logoutButton;
-	}
-	
+	/**
+	 * setStudent()
+	 * Sets the student the registrar wishes to add/delete modules for.
+	 * @param stu
+	 */
 	public void setStudent(Student stu) {
 		student = stu;
 	}
 	
+	// These 2 set the modules to be displayed in each of the 2 tables in the view, at the beginning.
 	public void setCurrentModules(ArrayList<Module> mod) {
 		currentModules = mod;
 	}
@@ -117,6 +130,12 @@ public class RegistrarModules extends JPanel {
 		return currentModules;
 	}
 	
+	/**
+	 * loadUI()
+	 * Loads the UI of RegistrarModules, with the student's details, the 2 tables of the modules and
+	 * all the necessary buttons.
+	 * @throws Exception
+	 */
 	public void loadUI() throws Exception {
 		mainPanel = new JPanel();
 		mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 10, 0, 10));
@@ -299,13 +318,12 @@ public class RegistrarModules extends JPanel {
 		menuConstraints.gridy = 0;
 		menuConstraints.gridx = 0;
 		
+		// Adding Apply and Back buttons at the bottom of the view (just above Log out)
 		localButtons = new JPanel();
 		localButtons.add(applyButton, menuConstraints);
 		backButton = new JButton("Back");
 		menuConstraints.gridx = 1;
 		localButtons.add(backButton, menuConstraints);
-		
-		logoutButton = (JButton) frame.menuBar.getComponent(0);
 		
 		menuConstraints.gridx = 0;
 		frame.menuBar.add(localButtons, menuConstraints);

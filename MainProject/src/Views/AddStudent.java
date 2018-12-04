@@ -14,6 +14,10 @@ import javax.swing.JTextField;
 
 import Models.Student;
 
+/**
+ * The AddStudent view is for the registrar to specify all the details of a new student they wish to add to the database.
+ * @author Martin Szemethy
+ */
 public class AddStudent extends JPanel {
 	private static final long serialVersionUID = 1L;
 	PrimaryFrame frame;
@@ -63,10 +67,20 @@ public class AddStudent extends JPanel {
 		return logoutButton;
 	}
 	
+	/**
+	 * setAvailableDegrees()
+	 * Sets the degrees a new student can be enrolled on.
+	 * @param d is the array of all the degrees.
+	 */
 	public void setAvailableDegrees(String[] d) {
 		availableDegrees = d;
 	}
 	
+	/**
+	 * getNewStudent()
+	 * Gets all the details of the new student, the registrar wishes to add to the database.
+	 * @return the new student, specified by the registrar
+	 */
 	public Student getNewStudent() {
 		Student student = new Student();
 		student.setTitle((String)titleDropdown.getSelectedItem());
@@ -86,6 +100,12 @@ public class AddStudent extends JPanel {
 		return student;
 	}
 	
+	/**
+	 * loadUI()
+	 * Loads the UI, with all the necessary fields and boxes and buttons,
+	 * needed for the registrar to specify the new student to be added.
+	 * @throws Exception
+	 */
 	public void loadUI() throws Exception {
 		form = new JPanel();
 		form.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
