@@ -100,31 +100,26 @@ public class TeacherSystemController extends Controller {
 		vg.setStudent(selectedStudent);
 		vg.setData(getTableData());
 		vg.loadUI();
-		System.out.println("UI LOADED");
 		currentView = Views.VIEWGRADES;
 		
 		JButton editButton = vg.getEditButton();
 		
-		System.out.println("TEST A PASS");
-		
 		// Action listener for Edit Grades Button
 		vg.getEditButton().addActionListener(e -> {
 			try {
-				System.out.println("TEST B1 PASS");
 				if (!editButton.isEnabled())
 	        		editButton.setEnabled(true);
-				System.out.println("TEST B2 PASS");
-	        		JTable table = tv.getTable();
-	        		System.out.println("TEST B3 PASS");
+				
+				
+	        		JTable table = vg.getTable();
 				selectedModule = new Module();
-				System.out.println("TEST B4 PASS");
 				int row = table.getSelectedRow();
-				System.out.println("TEST C1 PASS");
+				System.out.println("SELECTED ROW: "+row);
+				
 				selectedModule.setCode((String)tableData[row][0]);
 				System.out.println(selectedModule.getCode());
 				selectedModule.setName((String)tableData[row][1]);
 				selectedModule.setCredits((int)tableData[row][2]);
-				System.out.println("TEST C2 PASS");
 				//studentResults[0] = (int)tableData[row][3];
 				
 				//Grades[] studentGrades = new Grades[2];
