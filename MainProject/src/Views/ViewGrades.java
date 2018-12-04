@@ -253,12 +253,12 @@ public class ViewGrades extends JPanel {
 		// Row selection listener
 		table.getSelectionModel().addListSelectionListener(
 			new ListSelectionListener() {
-				        public void valueChanged(ListSelectionEvent event) {
-				        	if (!editGrades.isEnabled())
-				        		editGrades.setEnabled(true);
-				        }
-					}
-			    );
+		        public void valueChanged(ListSelectionEvent event) {
+				   	if (!editGrades.isEnabled())
+				   		editGrades.setEnabled(true);
+				}
+			}
+	    );
 		
 		frame.add(studentInfo, BorderLayout.CENTER);
 		frame.showMenuBar();

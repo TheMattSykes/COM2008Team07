@@ -66,6 +66,11 @@ public class Progress extends JPanel {
 		student = stu;
 	}
 	
+	/**
+	 * getYearProgression()
+	 * Gets the new details of the student (after the teacher has made all the changes on year progression).
+	 * @return the student object, with all the required changes being made to it.
+	 */
 	public Student getYearProgression() {
 		student.setProgress((String)progressDropdown.getSelectedItem());
 		return student;

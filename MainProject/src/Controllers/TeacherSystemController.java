@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import javax.swing.JTable;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import Models.Classification;
@@ -14,7 +13,6 @@ import Models.Grades;
 import Models.GraduateType;
 import Models.Module;
 import Models.Student;
-import Models.Enrolled;
 import Models.User;
 import Models.Views;
 import Views.ViewGrades;
@@ -23,6 +21,10 @@ import Views.EditGrades;
 import Views.TeacherView;
 import Views.Progress;
 
+/**
+ * The TeacherSystemController controls the parts of the system, which are accessed by all users of type teacher.
+ * @author Matt Sykes, Amira Abraham
+ */
 public class TeacherSystemController extends Controller {
 	
 	private TeacherView tv;
@@ -33,14 +35,18 @@ public class TeacherSystemController extends Controller {
 	private DatabaseController dc;
 	private Views currentView;
 	private ArrayList<Integer> regNumbersInUse;
-	private Module newModule;
-	private Module module;
 	private Module selectedModule;
-	private Enrolled enrolled;
 	
 	private Object[][] studentData;
 	private Object[][] tableData;
 	
+	/**
+	 * TeacherSystemController()
+	 * The constructor of the controller.
+	 * @param mainUser is the user object, the teacher in this case
+	 * @param rview is the default teacher view
+	 * @throws Exception
+	 */
 	public TeacherSystemController(User mainUser, TeacherView tview) throws Exception {
 		super(mainUser);
 		
@@ -51,6 +57,10 @@ public class TeacherSystemController extends Controller {
 		initDefaultView();
 	}
 	
+	/**
+	 * getUser()
+	 * @return the user, which will be of type teacher in this case
+	 */
 	public User getUser() {
 		return user;
 	}
@@ -64,7 +74,11 @@ public class TeacherSystemController extends Controller {
 		
 	}
 	
-	//Default view when you log in
+	/**
+	 * initDefaultView()
+	 * Initialises (loads) the default view for the teacher
+	 * @throws Exception
+	 */
 	public void initDefaultView() throws Exception {
 		tv.setStudentsData(getStudentsData());
 		tv.loadUI();
@@ -93,7 +107,13 @@ public class TeacherSystemController extends Controller {
 		});
 	}
 
-	public void initviewGradesView() throws Exception {
+	/**
+	 * initViewGradesView()
+	 * Initialises (loads) the View Grades view, which is where the teacher can view all the enrolled modules by a student.
+	 * (includes module code, name, credits, scores, grades, level and period)
+	 * @throws Exception
+	 */
+	public void initViewGradesView() throws Exception {
 		if (vg == null)
 			vg = new ViewGrades(tv.getFrame());
 		
@@ -193,11 +213,7 @@ public class TeacherSystemController extends Controller {
 	
 	}
 	
-	
-	
-	
-	
-public void gradeInputError() {
+    public void gradeInputError() {
 		
 	}
 	
@@ -275,12 +291,12 @@ public void gradeInputError() {
 		return m;
 	}
 	
-	
-	
-	
-	
-	
-	public void initeditGradesView() throws Exception {
+	/**
+	 * initEditStudentView()
+	 * Initialises (loads) the Edit Student view, which is where the teacher can edit the grades of a module taken by the student.
+	 * @throws Exception
+	 */
+	public void initEditGradesView() throws Exception {
 		if (eg == null)
 			eg = new EditGrades(tv.getFrame());
         
@@ -298,7 +314,6 @@ public void gradeInputError() {
 		});
 		
 		// Action listener for Apply button
-		
 		eg.getApplyButton().addActionListener(e -> {
 			try {
 				System.out.println("APPLY BUTTON PRESSED");
@@ -337,7 +352,12 @@ public void gradeInputError() {
 		    });
 	}
 	
-	public void initprogressView() throws Exception {
+	/**
+	 * initProgressView()
+	 * Initialises (loads) the Progress view, which is where the teacher can change the year progression of a student.
+	 * @throws Exception
+	 */
+	public void initProgressView() throws Exception {
 		if (pg == null)
 			pg = new Progress(tv.getFrame());
         
@@ -377,7 +397,12 @@ public void gradeInputError() {
 		    });
 		}
 	
-	// Changes to the specified view
+	/**
+	 * changeView()
+	 * Changes the view of the teacher.
+	 * @param changeTo is the view you wish to change to (has to be a view for the teacher)
+	 * @throws Exception
+	 */
 	public void changeView(Views changeTo) throws Exception {
 		if (currentView == Views.TEACHERVIEW) {
 			tv.removeUI();
@@ -392,15 +417,19 @@ public void gradeInputError() {
 		if (changeTo == Views.TEACHERVIEW) {
 			initDefaultView();
 		} else if (changeTo == Views.VIEWGRADES) {
-			initviewGradesView();
+			initViewGradesView();
 		} else if (changeTo == Views.EDITGRADES) {
-			initeditGradesView();
+			initEditGradesView();
 		} else if (changeTo == Views.PROGRESS) {
-			initprogressView();
+			initProgressView();
 		}
 	}
 	
-	// Gets the data of all the students currently in the database
+	/**
+	 * getStudentsData()
+	 * Gets the data of all the students currently in the database, so they can be displayed in a table.
+	 * @throws Exception
+	 */
 	public Object[][] getStudentsData() throws Exception {
 		
 		String query = "SELECT * FROM students LIMIT ?";
@@ -441,7 +470,12 @@ public void gradeInputError() {
 		return data;
 	}
 	
-	// get data after you click on a student and view all their grades
+	/**
+	 * getTableData()
+	 * Gets all the modules the selected student is currently enrolled in.
+	 * @return the currently enrolled modules, by the selected student.
+	 * @throws Exception
+	 */
 	public Object[][] getTableData() throws Exception {
 		DatabaseController dc = new DatabaseController();
 		
@@ -563,6 +597,12 @@ public void gradeInputError() {
 		return data;
 	}
 	
+	/**
+	 * getMax()
+	 * Gets the biggest int, of an array of ints.
+	 * @param scores is the array of ints
+	 * @return the biggest int in the array
+	 */
 	public int getMax(int[] scores) {
 		int max = 0;
 		
@@ -575,6 +615,13 @@ public void gradeInputError() {
 		return max;
 	}
 	
+	/**
+	 * calculateClass()
+	 * Calculates the degree classification of a student, given their graduate type and array of modules.
+	 * @param type is the type of degree the student is taking
+	 * @param mods is the array of modules the student is taking
+	 * @return the degree classification
+	 */
 	public Classification calculateClass(GraduateType type, Module[] mods) {
 		
 		float[] levelTotals = new float[4];
@@ -623,7 +670,6 @@ public void gradeInputError() {
 		}
 		
 		vg.setYearAverages(levelTotals);
-		
 		
 		float finalValue = 0;
 		
@@ -674,6 +720,10 @@ public void gradeInputError() {
 		return Classification.INCOMPLETE;
 	}
 	
+	/**
+	 * removeAllUI()
+	 * Removes all the UI of the teacher (used when logging out).
+	 */
 	public void removeAllUI() {
 		if (tv != null)
 			tv.removeUI();
