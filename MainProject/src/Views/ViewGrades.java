@@ -20,6 +20,12 @@ import Controllers.TableColumnAdjuster;
 import Models.Classification;
 import Models.Student;
 
+/**
+ * The ViewGrades view is for the teacher to view all details about the enrolled modules by a student
+ * (including module name, code, credits, results, grades, level and period). 
+ * @author Amira Abraham
+ */
+
 public class ViewGrades extends JPanel {
 	private static final long serialVersionUID = 1L;
 	PrimaryFrame frame;
@@ -90,6 +96,11 @@ public class ViewGrades extends JPanel {
 			frame.remove(teacherButtons);
 	}
 	
+	/**
+	 * loadUI()
+	 * Loads the UI, with the table and all the necessary buttons, for the teacher to see.
+	 * @throws Exception
+	 */
 	public void loadUI() {
 		String stuName = student.getTitle() + " " + student.getFirstName() + " " + student.getSecondName();
 		int regNumber = student.getRegNumber();

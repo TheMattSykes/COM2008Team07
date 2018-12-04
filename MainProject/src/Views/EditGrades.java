@@ -10,21 +10,22 @@ import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 
 import Models.Enrolled;
-import Models.GraduateType;
 import Models.Module;
 
+/**
+ * The EditGrades view is for the teacher to add or update grade1 or grade2 
+ * for a module that the student is taking.
+ * @author Amira Abraham
+ */
 public class EditGrades extends JPanel {
 	private static final long serialVersionUID = 1L;
 	PrimaryFrame frame;
 	private JPanel form;
-	private JPanel formButtons;
 	private JPanel localButtons;
 	private JButton backButton;
 	private JButton logoutButton;
@@ -33,8 +34,7 @@ public class EditGrades extends JPanel {
 	private JTextField grade2TextField;
 	private Module selectedModule;
 	private Module module;
-	private int result1;
-	private int result2;
+	private Enrolled enrolled;
 	
 	public EditGrades(PrimaryFrame pf) {
 		frame = pf;
@@ -71,12 +71,23 @@ public class EditGrades extends JPanel {
 		selectedModule = sm;
 	}
 	
+	/**
+	 * editGrades()
+	 * Gets the new grades of a module which the student is taking (after the teacher
+	 * has made all the changes they wanted).
+	 * @return the module object, with all the required changes being made to it.
+	 */
 	public Module editGrades() {
 		int grade1 = Integer.parseInt(grade1TextField.getText());
 		int grade2 = Integer.parseInt(grade2TextField.getText());
 		return module;
 	}
 	
+	/**
+	 * loadUI()
+	 * Loads the UI, with all the fields, boxes and buttons needed for the teacher to be able to make grades changes to a module.
+	 * @throws Exception
+	 */
 	public void loadUI() throws Exception {
 		form = new JPanel();
 		form.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
@@ -98,6 +109,20 @@ public class EditGrades extends JPanel {
 		formRight.setLayout(rightColumn);
 		
 		Dimension textFieldSize = new Dimension (300, 20);
+		
+		//  Module code
+		JPanel regPanel = new JPanel();
+		JLabel regLabel = new JLabel("Module code: ");
+		JTextField regTextField = new JTextField();
+		regTextField.setText(selectedModule.getCode());
+		regTextField.setEnabled(false);
+		regTextField.setPreferredSize(textFieldSize);
+		formConstraints.gridx = 0;
+		formConstraints.gridy = 0;
+		regPanel.add(regLabel, formConstraints);
+		formConstraints.gridx = 1;
+		regPanel.add(regTextField, formConstraints);
+		formLeft.add(regPanel);
 		
 		// Result 1
 		JPanel grade1Panel = new JPanel();

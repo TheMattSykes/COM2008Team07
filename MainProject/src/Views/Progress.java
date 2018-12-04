@@ -1,6 +1,5 @@
 package Views;
 
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -12,17 +11,19 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 import Models.Student;
-import Models.GraduateType;
-import Models.Module;
 
+/**
+ * The Progress view is for the teacher to update the year progression of a student,
+ * which will cause a student to be registered for their next period of study, either
+ * progressing to next level, repeating a level, or graduating or failing to progress. 
+ * @author Amira Abraham
+ */
 public class Progress extends JPanel {
 	private static final long serialVersionUID = 1L;
 	PrimaryFrame frame;
 	private JPanel form;
-	private JPanel formButtons;
 	private JPanel localButtons;
 	private JButton backButton;
 	private JButton logoutButton;
@@ -69,7 +70,13 @@ public class Progress extends JPanel {
 		student.setProgress((String)progressDropdown.getSelectedItem());
 		return student;
 	}
-	
+
+	/**
+	 * loadUI()
+	 * Loads the UI, with all the fields, boxes and buttons needed for the teacher 
+	 * to be able to select year progression of a student.
+	 * @throws Exception
+	 */
 	public void loadUI() throws Exception {
 		form = new JPanel();
 		form.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));

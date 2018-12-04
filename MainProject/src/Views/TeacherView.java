@@ -7,7 +7,6 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -18,6 +17,12 @@ import javax.swing.event.ListSelectionListener;
 
 import Controllers.TableColumnAdjuster;
 
+/**
+ * The RegistrarView is the default view all users of type teacher see, once logged in.
+ * It displays a table of all the students in the database and their details and has links to all other parts of the system,
+ * accessible by all users of type teacher.
+ * @author Amira Abraham
+ */
 public class TeacherView extends JPanel {
 	private static final long serialVersionUID = 1L;
 	PrimaryFrame frame;
@@ -71,6 +76,11 @@ public class TeacherView extends JPanel {
 		return logoutButton;
 	}
 	
+	/**
+	 * loadUI()
+	 * Loads the UI, with the table and all the necessary buttons, for the teacher to see.
+	 * @throws Exception
+	 */
 	public void loadUI() throws Exception {
 		String regName = "Tony";
 		
