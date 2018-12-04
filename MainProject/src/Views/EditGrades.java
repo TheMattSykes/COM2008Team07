@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import Models.Enrolled;
+import Models.Grades;
 import Models.Module;
 
 /**
@@ -44,6 +45,14 @@ public class EditGrades extends JPanel {
 		return frame;
 	}
 	
+	public JTextField getG1TextField() {
+		return grade1TextField;
+	}
+	
+	public JTextField getG2TextField() {
+		return grade2TextField;
+	}
+	
 	public void viewChange() {
 		frame.getContentPane().removeAll();
 	}
@@ -69,18 +78,6 @@ public class EditGrades extends JPanel {
 	
 	public void setSelectedModule(Module sm) {
 		selectedModule = sm;
-	}
-	
-	/**
-	 * editGrades()
-	 * Gets the new grades of a module which the student is taking (after the teacher
-	 * has made all the changes they wanted).
-	 * @return the module object, with all the required changes being made to it.
-	 */
-	public Module editGrades() {
-		int grade1 = Integer.parseInt(grade1TextField.getText());
-		int grade2 = Integer.parseInt(grade2TextField.getText());
-		return module;
 	}
 	
 	/**
@@ -127,7 +124,7 @@ public class EditGrades extends JPanel {
 		// Result 1
 		JPanel grade1Panel = new JPanel();
 		JLabel grade1Label = new JLabel("Grade 1: ");
-		JTextField grade1TextField = new JTextField();
+		grade1TextField = new JTextField();
 		grade1TextField.setPreferredSize(textFieldSize);
 		formConstraints.gridx = 0;
 		grade1Panel.add(grade1Label, formConstraints);
@@ -138,7 +135,7 @@ public class EditGrades extends JPanel {
 		// Result 2
 		JPanel grade2Panel = new JPanel();
 		JLabel grade2Label = new JLabel("Grade 2: ");
-		JTextField grade2TextField = new JTextField();
+		grade2TextField = new JTextField();
 		grade2TextField.setPreferredSize(textFieldSize);
 		formConstraints.gridx = 0;
 		grade2Panel.add(grade2Label, formConstraints);

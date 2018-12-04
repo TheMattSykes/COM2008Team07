@@ -197,6 +197,93 @@ public class TeacherSystemController extends Controller {
 	
 	}
 	
+	
+	
+	
+	
+public void gradeInputError() {
+		
+	}
+	
+	/**
+	 * editGrades()
+	 * Gets the new grades of a module which the student is taking (after the teacher
+	 * has made all the changes they wanted).
+	 * @return the module object, with all the required changes being made to it.
+	 */
+	public Module editGrades(Module m) {
+		
+		String score1String = eg.getG1TextField().getText();
+		String score2String = eg.getG2TextField().getText();
+		
+		int score1 = 0;
+		int score2 = 0;
+		
+		Boolean score1valid = false;
+		Boolean score2valid = false;
+		
+		Grades grade1 = Grades.UNDEFINED;
+		Grades grade2 = Grades.UNDEFINED;
+		
+		if (score1String != "") {
+			try {
+				int score1try = Integer.parseInt(score1String);
+				
+				if (score1try >= 0 && score1try <= 100) {
+					
+					score1valid = true;
+					score1 = score1try;
+					
+					if (score1try >= 40) {
+						grade1 = Grades.PASS;
+					} else {
+						grade1 = Grades.FAIL;
+					}
+				} else {
+					gradeInputError();
+				}
+			} catch (NumberFormatException e) {
+				gradeInputError();
+			}
+		} else {
+			gradeInputError();
+		}
+		
+		if (score2String != "") {
+			try {
+				int score2try = Integer.parseInt(score2String);
+				
+				if (score2try >= 0 && score2try <= 100) {
+					
+					score2valid = true;
+					score2 = score2try;
+					
+					if (score2try >= 40) {
+						grade2 = Grades.PASS;
+					} else {
+						grade2 = Grades.FAIL;
+					}
+				} else {
+					gradeInputError();
+				}
+			} catch (NumberFormatException e) {
+				gradeInputError();
+			}
+		} else {
+			gradeInputError();
+		}
+		
+		m.setScores(new int[] {score1, score2});
+		m.setGrades(new Grades[] {grade1, grade2});
+		
+		return m;
+	}
+	
+	
+	
+	
+	
+	
 	public void initeditGradesView() throws Exception {
 		if (eg == null)
 			eg = new EditGrades(tv.getFrame());
@@ -218,7 +305,7 @@ public class TeacherSystemController extends Controller {
 		
 		eg.getApplyButton().addActionListener(e -> {
 			try {
-				Module selectedModule = eg.editGrades();
+				selectedModule = editGrades(selectedModule);
 				String query = "UPDATE students SET grade1 = ?, grade2 = ? WHERE module_code = ?";
 				ArrayList<String[]> values = new ArrayList<String[]>();
 						
