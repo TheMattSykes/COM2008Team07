@@ -148,7 +148,7 @@ public class GradingUtils {
 				postGradTotal += weightedScore;
 				levelTotals[5] += weightedScore;
 				
-				if (score < 50 && level == 4) {
+				if (score < 50 && level == 6) {
 					degreeFailed = true;
 				}
 			}
