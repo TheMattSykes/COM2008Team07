@@ -1,3 +1,9 @@
+/**
+ * AddDepartment View
+ * 
+ * Defines form for adding a new department to the database.
+ */
+
 package Views;
 
 import java.awt.BorderLayout;
@@ -14,10 +20,6 @@ import javax.swing.JTextField;
 
 import Models.Department;
 
-/**
- * AddDepartment View
- * Defines form for adding a new department to the database.
- */
 public class AddDepartment extends JPanel {
 	private static final long serialVersionUID = 1L;
 	PrimaryFrame frame;

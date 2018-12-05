@@ -1,3 +1,9 @@
+/*
+ * AddModule view
+ * 
+ * Defines form for adding new modules to the DB
+ */
+
 package Views;
 
 import java.awt.Dimension;

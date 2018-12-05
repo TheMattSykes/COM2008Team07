@@ -1,3 +1,8 @@
+/*
+ * EditModule view
+ * 
+ * Defines forms for adding a module to a degree
+ */
 package Views;
 
 import java.awt.BorderLayout;

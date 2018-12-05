@@ -1,3 +1,9 @@
+/**
+ * AddDegree View
+ * 
+ * Defines form for adding a new degree to the database.
+ */
+
 package Views;
 
 import java.awt.Dimension;
@@ -21,10 +27,6 @@ import Models.Degree;
 import Models.Department;
 import Models.GraduateType;
 
-/**
- * AddDegree View
- * Defines form for adding a new degree to the database.
- */
 public class AddDegree extends JPanel {
 	private static final long serialVersionUID = 1L;
 	PrimaryFrame frame;

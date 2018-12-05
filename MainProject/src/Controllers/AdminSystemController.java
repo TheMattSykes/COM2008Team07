@@ -1,7 +1,8 @@
 /**
  * AdminSystemController
  * 
- * ...
+ * Main class for the admin side of the system.
+ * This class is initiated whenever an admin signs into the system.
  */
 
 package Controllers;
@@ -38,8 +39,8 @@ public class AdminSystemController extends Controller{
 	private AddModule addModuleView;
 	private EditModule editModuleView;
 	private DatabaseController dc;
-	//private Views currentView;
 	
+	// Constructor/Initiation of the admin Controller
 	public AdminSystemController (User mainUser, AdminView aview) throws Exception {
 		super(mainUser);
 		
@@ -48,13 +49,11 @@ public class AdminSystemController extends Controller{
 		initMenuView();
 	}
 
+	// Initiates the menu view and sets up the buttons defined in AdminView
 	public void initMenuView() {
-		try {
-			getDegreeData();
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
+		// Launching the menuUI in the Admin View
 		av.loadMenuUI();
+		// Setting up the menu button actions
 		// Accounts button loads the Admin's Account UI
 		av.getAccountButton().addActionListener(e -> { 
 				try {
@@ -92,10 +91,12 @@ public class AdminSystemController extends Controller{
 			});
 	}
 	
+	// Initiates the account view, passing relevent data and setting up buttons
 	public void initAccountView() throws Exception{
-		// collect the account data
+		// Collect the Accounts data & load the AccountUI
 		av.setDataAccounts(getAccountData());
 		av.loadAccountUI();
+		// Setting up the AccountUI button actions
 		// Back button loads the Admin menu
 		av.getBackButton().addActionListener(e -> initMenuView());
 		// Get the Account delete button & enable when a table selection is made
@@ -105,9 +106,8 @@ public class AdminSystemController extends Controller{
 							deleteButton.setEnabled(true);
 						}
 					});
-		// Listener to point to delete the account selected
 		av.getAccountAdd().addActionListener(e -> initAddAccountView());
-		
+		// Delete button passes the selected user to the deleteAccount method.
 		deleteButton.addActionListener(e -> {
 			Object[][] data = av.getDataAccounts();
 			JTable table = av.getAccountTable();
@@ -117,9 +117,12 @@ public class AdminSystemController extends Controller{
 		});
 	}
 	
+	// Initiates the department view, with relevant data & buttons
 	public void initDepartmentView() throws Exception {
+		// Pass relevant data & load the Department UI
 		av.setDataDepartments(getDepartmentData());
 		av.loadDepartmentUI();
+		// Setting up DepartmentUI button actions
 		av.getBackButton().addActionListener(e -> initMenuView());
 		av.getDepartmentAdd().addActionListener(e -> initAddDepartmentView());
 		JButton deleteButton = av.getDepartmentDelete();
@@ -137,9 +140,12 @@ public class AdminSystemController extends Controller{
 		});
 	}
 	
+	// Initiates the degree view, with relevant data & buttons
 	public void initDegreeView() throws Exception {
+		// Passing relevant data & loading degreeUI
 		av.setDataDegrees(getDegreeData());
 		av.loadDegreeUI();
+		// Setting up the DegreeUI button actions
 		av.getBackButton().addActionListener(e -> initMenuView());
 		av.getDegreeAdd().addActionListener(e -> initAddDegreeView());
 		JButton deleteButton = av.getDegreeDelete();
@@ -157,9 +163,12 @@ public class AdminSystemController extends Controller{
 		});
 	}
 	
+	// Initiates the module view, with relevant data & buttons
 	public void initModuleView() throws Exception {
+		// Passing data & loading the ModuleUI
 		av.setDataModules(getModuleData());
 		av.loadModuleUI();
+		// Setting up the ModuleUI buttons
 		av.getBackButton().addActionListener(e -> initMenuView());
 		av.getModuleAdd().addActionListener(e -> initAddModuleView());
 		JButton deleteButton = av.getModuleDelete();
@@ -195,18 +204,21 @@ public class AdminSystemController extends Controller{
 		});
 	}
 	
+	// Initiating the views that hold forms to edit/add new data
+	// Similar format in each
 	public void initAddAccountView() {
+		// If null, set up a new AddAccount view
 		if (addAccountView == null) {
 			addAccountView = new AddAccount(av.getFrame());
 		}
-		
+		// Removes existing admin UI & loads the addAccount form
 		removeAllUI();
 		try {
 			addAccountView.loadUI();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		
+		// Setting up the addAccount buttons
 		addAccountView.getBackButton().addActionListener(e -> {
 			addAccountView.removeUI();
 			try {
@@ -367,19 +379,18 @@ public class AdminSystemController extends Controller{
 		});
 	}
 	
+	// Collecting the data from the database that is relevant to respective parts of the system
 	public Object[][] getAccountData() throws Exception {
-		
-		String query = "SELECT userID, username, user_type FROM users LIMIT ?;";
-		ArrayList<String[]> values = new ArrayList<String[]>();
-		values.add(new String[] {"1000",""});
-		ArrayList<String[]> results = dc.executeQuery(query,values);
+		// Obtaining the data
+		String query = "SELECT userID, username, user_type FROM users;";
+		ArrayList<String[]> results = dc.executeQuery(query,null);
 		
 		ArrayList<User> users = new ArrayList<User>();
 		
 		for (int i = 0; i < results.size(); i++) {
 			users.add(new User(Integer.parseInt(results.get(i)[0]), results.get(i)[1], UserTypes.valueOf(results.get(i)[2].toUpperCase())));
 		}
-		
+		// Forming the data to a form that works with the tables
 		Object[][] data = new Object[results.size()][3];
 		
 		int row = 0;
@@ -394,18 +405,16 @@ public class AdminSystemController extends Controller{
 	}
 	
 	public Object[][] getDepartmentData() throws Exception {
-		
-		String query = "SELECT code, name FROM departments LIMIT ?;";
-		ArrayList<String[]> values = new ArrayList<String[]>();
-		values.add(new String[] {"100",""});
-		ArrayList<String[]> results = dc.executeQuery(query, values);
+		// Getting Data
+		String query = "SELECT code, name FROM departments;";
+		ArrayList<String[]> results = dc.executeQuery(query, null);
 		
 		ArrayList<Department> departments = new ArrayList<Department>();
 		
 		for (int i=0; i < results.size(); i++) {
 			departments.add(new Department(results.get(i)[0],results.get(i)[1]));
 		}
-		
+		// Setting it in table format
 		Object[][] data = new Object[results.size()][2];
 		int row = 0;
 		for (Department department : departments) {
@@ -418,18 +427,16 @@ public class AdminSystemController extends Controller{
 	}
 	
 	public Object[][] getModuleData() throws Exception {
-		
-		String query = new String("SELECT * FROM modules LIMIT ?;");
-		ArrayList<String[]> values = new ArrayList<String[]>();
-		values.add(new String[] {"1000", ""});
-		ArrayList<String[]> results = dc.executeQuery(query, values);
+		// get data
+		String query = new String("SELECT * FROM modules;");
+		ArrayList<String[]> results = dc.executeQuery(query, null);
 		
 		ArrayList<Module> modules = new ArrayList<Module>();
 		
 		for (int i=0; i < results.size(); i++) {
 			modules.add(new Module(results.get(i)[0],results.get(i)[1],Integer.parseInt(results.get(i)[2]),results.get(i)[3],GraduateType.valueOf(results.get(i)[4].toUpperCase())));
 		}
-		
+		// set the data up
 		Object[][] data = new Object[results.size()][5];
 		
 		int row = 0;
@@ -446,10 +453,12 @@ public class AdminSystemController extends Controller{
 	}
 	
 	public Object[][] getDegreeData() throws Exception {
+		// Getting the data
 		String degreeQuery = new String("SELECT * FROM degrees;");
 		String leadQuery = new String("SELECT * FROM leads;");
 		ArrayList<String[]> degreeResults = dc.executeQuery(degreeQuery, null);
 		ArrayList<String[]> leadResults = dc.executeQuery(leadQuery, null);
+		// Combining and cleaning it up for the DegreeUI table
 		Object[][] data = new Object[degreeResults.size()][5];
 		int row = 0;
 		for (String[] degree : degreeResults) {
@@ -481,10 +490,12 @@ public class AdminSystemController extends Controller{
 	}
 	
 	public Object[][] getApprovalData(String mCode) throws Exception {
+		// Get the data
 		String approvalQuery = "SELECT * FROM approval WHERE module_code = ?;";
 		ArrayList<String[]> values = new ArrayList<String[]>();
 		values.add(new String[] {mCode, "true"});
 		ArrayList<String[]> approvalResults = dc.executeQuery(approvalQuery, values);
+		// Forming the correct array for the EditModule table
 		Object[][] data = new Object[approvalResults.size()][4];
 		Integer row = 0;
 		for (String[] approval : approvalResults) {
@@ -497,6 +508,7 @@ public class AdminSystemController extends Controller{
 		return data;
 	}
 	
+	// Method to add a new account with the given details
 	public void addAccount(String[] details) {
 		try {
 			// Start compiling an error message for a detailed error
@@ -506,7 +518,6 @@ public class AdminSystemController extends Controller{
 			String salt;
 			String newPass;
 			String hashedPass;
-			// Obtaining usernames
 			// Checking if any field is empty
 			String[] detailTitles = new String[] {"First Name", "Second Name", "User Type", "Password", "Password Confirmation"};
 			for (int i=0; i<details.length ; i++) {
@@ -562,7 +573,6 @@ public class AdminSystemController extends Controller{
 		}
 	}
 	
-	
 	// Produces a Username for a user account based off of given name and type
 	public String makeUsername(String fn, String sn, UserTypes type) {
 		String base = "";
@@ -588,10 +598,11 @@ public class AdminSystemController extends Controller{
 		return base;
 	}
 	
-	
+	// Deletes the given user from the database
 	public void deleteAccount(User u) {
 		String userID = u.getUserID() + "";
 		String username = u.getUsername();
+		// Adding restrictions so the admin can't delete themself, nor the last account of a certain type
 		if (u.getUserID() == user.getUserID()) {
 			JOptionPane inputError = new JOptionPane("You cannot delete your own account");
 			JDialog dialog = inputError.createDialog("Failure");
@@ -620,7 +631,7 @@ public class AdminSystemController extends Controller{
 		}
 	}
 	
-	
+	// Counts the number of users of the given type - used in account deletion
 	public int typeCount(UserTypes t) {
 		Integer count = 0;
 		try {
@@ -635,10 +646,9 @@ public class AdminSystemController extends Controller{
 		return count;
 	}
 	
-	
+	// Works on adding the given department
 	public void addDepartment(Department d) {
 		if (d.getName().length() != 0 && d.getCode().length() != 0) {
-			// To do: Managing duplicate entries
 			try {
 				String query = "SELECT code, name FROM departments;";
 				ArrayList<String[]> values = new ArrayList<String[]>();
@@ -687,7 +697,7 @@ public class AdminSystemController extends Controller{
 		}
 	}
 	
-	
+	// Deleting the given department
 	public void deleteDepartment(Department d) {
 		String deptCode = d.getCode();
 		String deptName = d.getName();
@@ -709,7 +719,7 @@ public class AdminSystemController extends Controller{
 		}
 	}
 	
-	
+	// Carries out the removeUI function from all Admin views
 	public void removeAllUI() {
 		if (av != null)
 			av.removeUI();
@@ -725,7 +735,7 @@ public class AdminSystemController extends Controller{
 			editModuleView.removeUI();
 	}
 	
-	
+	// Works on adding the given degree to the database
 	public void addDegree(Degree d) {
 		try {
 			// Checking if the name is unique 
@@ -788,7 +798,7 @@ public class AdminSystemController extends Controller{
 		}
 	}
 	
-	
+	// Forms the degree code depending on what exists in the database
 	public String getDegreeCode(String leadCode, GraduateType type) {
 		String id = leadCode;
 		if (type == GraduateType.UNDERGRADUATE) {
@@ -814,6 +824,7 @@ public class AdminSystemController extends Controller{
 		return id;
 	}
 
+	// Works on deleting the given degree
 	public void deleteDegree(Degree d) {
 		String degreeCode = d.getCode();
 		String degreeName = d.getName();
@@ -880,6 +891,7 @@ public class AdminSystemController extends Controller{
 		}
 	}
 	
+	// Finding the module code to be used based off of user entry and what exists in the database
 	public String findCode(Module m) {
 		String code = "";
 		try {
