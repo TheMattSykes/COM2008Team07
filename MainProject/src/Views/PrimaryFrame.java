@@ -2,6 +2,10 @@ package Views;
 import java.awt.*;
 import javax.swing.*;
 
+/**
+ * PrimaryFrame
+ * Defines the primary frame of the application
+ */
 public class PrimaryFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 
@@ -18,8 +22,6 @@ public class PrimaryFrame extends JFrame {
 		Toolkit tk = Toolkit.getDefaultToolkit();
 		Dimension screenSize = tk.getScreenSize();
 		setSize(1000,800);
-		//setSize(screenSize.width/2, screenSize.height/2);
-		//setLocation(50,50);
 		setLocation(screenSize.width/2-getSize().width/2, screenSize.height/2-getSize().height/2);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
@@ -35,8 +37,6 @@ public class PrimaryFrame extends JFrame {
 		menuBar.setLayout(new GridBagLayout());
 		
 		GridBagConstraints menuConstraints = new GridBagConstraints();
-
-		// menuBar.setBorder(BorderFactory.createEmptyBorder(10, 10, 20, 10));
 		
 		logout = new JButton("Log Out");
 		
@@ -48,7 +48,6 @@ public class PrimaryFrame extends JFrame {
 		menuBar.add(logout, menuConstraints);
 		
 		mainContainer.add(banner, BorderLayout.NORTH);
-		// mainContainer.add(toolbar, BorderLayout.SOUTH);
 		
 		pack();
 	}

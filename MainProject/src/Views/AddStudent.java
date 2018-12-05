@@ -54,6 +54,7 @@ public class AddStudent extends JPanel {
 			frame.menuBar.remove(localButtons);
 	}
 	
+	// Get/Set methods
 	public JButton getBackButton() {
 		return backButton;
 	}

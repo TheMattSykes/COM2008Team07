@@ -16,13 +16,15 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
 
 import Models.Degree;
 import Models.Department;
 import Models.GraduateType;
-import Models.UserTypes;
 
+/**
+ * AddDegree View
+ * Defines form for adding a new degree to the database.
+ */
 public class AddDegree extends JPanel {
 	private static final long serialVersionUID = 1L;
 	PrimaryFrame frame;
@@ -43,6 +45,7 @@ public class AddDegree extends JPanel {
 		frame = pf;
 	}
 	
+	// Get/Set methods
 	public PrimaryFrame getFrame() {
 		return frame;
 	}
@@ -74,6 +77,7 @@ public class AddDegree extends JPanel {
 		return apply;
 	}
 	
+	// Gets new degree, specified in the form by the user
 	public Degree getNewDegree() {
 		Degree degree = new Degree();
 		degree.setName(degreeName.getText().trim());
@@ -103,6 +107,10 @@ public class AddDegree extends JPanel {
 		return code;
 	}
 	
+	/**
+	 * loadUI
+	 * Load and define the UI for adding a degree form.
+	 */
 	public void loadUI() {
 		degreeForm = new JPanel();
 		buttonPanel = new JPanel();

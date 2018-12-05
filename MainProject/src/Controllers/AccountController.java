@@ -102,14 +102,17 @@ public class AccountController extends Controller {
 			
 			if (studentViewer != null) {
 				sc.removeAllUI();
+				studentViewer = null;
 			} else if (registrarViewer != null) {
 				rc.removeAllUI();
+				registrarViewer = null;
 			} else if (adminViewer != null) {
 				ac.removeAllUI();
+				adminViewer = null;
 			} else if (teacherViewer != null) {
 				tc.removeAllUI();
+				teacherViewer = null;
 			}
-			
 			lv.viewLogoutChange();
 		}
 	}

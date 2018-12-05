@@ -9,13 +9,16 @@ import java.awt.Insets;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
 import Controllers.TableColumnAdjuster;
 
+/**
+ * AdminView
+ * Defines the default view for all users of type admin
+ */
 public class AdminView extends JPanel {
 	private static final long serialVersionUID = 1L;
 
@@ -62,6 +65,7 @@ public class AdminView extends JPanel {
 		frame = pf;
 	}
 	
+	// Get/Set methods
 	public void setDataAccounts(Object[][] a) {
 		accountsData = a;
 	}
@@ -207,6 +211,10 @@ public class AdminView extends JPanel {
 		}
 	}
 	
+	/**
+	 * loadMenuUI
+	 * Load and define the menu part of the UI
+	 */
 	public void loadMenuUI() {
 		// Clear the existing UI
 		removeUI();
@@ -237,6 +245,10 @@ public class AdminView extends JPanel {
 		frame.repaint();
 	}
 	
+	/**
+	 * loadAccountUI
+	 * Load and define the account part of the UI
+	 */
 	public void loadAccountUI() {
 		// Clear the existing UI
 		removeUI();
@@ -311,6 +323,10 @@ public class AdminView extends JPanel {
 		frame.repaint();
 	}
 	
+	/**
+	 * loadDepartmentUI
+	 * Load and define the department part of the UI
+	 */
 	public void loadDepartmentUI() {
 		// Clear the existing UI
 		removeUI();
@@ -382,6 +398,10 @@ public class AdminView extends JPanel {
 		frame.repaint();
 	}
 	
+	/**
+	 * loadDegreeUI
+	 * Load and define the degree part of the UI
+	 */
 	public void loadDegreeUI() {
 		// Clear the existing UI
 		removeUI();
@@ -453,6 +473,10 @@ public class AdminView extends JPanel {
 		frame.repaint();
 	}
 	
+	/**
+	 * loadModuleUI
+	 * Load and define the module part of the UI
+	 */
 	public void loadModuleUI() {
 		// Clear the existing UI
 		removeUI();
