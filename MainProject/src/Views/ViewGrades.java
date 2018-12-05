@@ -198,15 +198,23 @@ public class ViewGrades extends JPanel {
 		
 		DecimalFormat df = new DecimalFormat("#.00");
 		
-		for (int y = 0; y < student.getLevel(); y++) {
-			String formattedAverage = df.format(yearAverages[y]);
+		if (student.getLevel() != 6) {
+			for (int y = 0; y < student.getLevel(); y++) {
+				String formattedAverage = df.format(yearAverages[y]);
+				
+				JLabel yearResultsLabel = new JLabel("Year "+(y+1)+" Average: "+formattedAverage);
+				
+				resConstraints.insets = new Insets(10,10,10,10);
+				resConstraints.fill = GridBagConstraints.HORIZONTAL;
+				resConstraints.gridx = y;
+				resConstraints.gridy = 0;
+				
+				studentResults.add(yearResultsLabel, resConstraints);
+			}
+		} else {
+			String formattedAverage = df.format(yearAverages[5]);
 			
-			JLabel yearResultsLabel = new JLabel("Year "+(y+1)+" Average: "+formattedAverage);
-			
-			resConstraints.insets = new Insets(10,10,10,10);
-			resConstraints.fill = GridBagConstraints.HORIZONTAL;
-			resConstraints.gridx = y;
-			resConstraints.gridy = 0;
+			JLabel yearResultsLabel = new JLabel("Average: "+formattedAverage);
 			
 			studentResults.add(yearResultsLabel, resConstraints);
 		}

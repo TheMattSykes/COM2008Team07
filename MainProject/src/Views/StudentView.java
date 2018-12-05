@@ -81,8 +81,11 @@ public class StudentView extends JPanel {
 	 */
 	public void loadUI() {
 		
+		System.out.println("STARTING TESTS!");
+		
 		// Retrieve student information
 		String stuName = student.getTitle() + " " + student.getFirstName() + " " + student.getSecondName();
+		System.out.println("Name: "+stuName);
 		int regNumber = student.getRegNumber();
 		String degree = student.getDegree();
 		int year = student.getLevel();
@@ -112,6 +115,8 @@ public class StudentView extends JPanel {
 		studentDetails.add(tutorLabel);
 		studentDetails.add(statusLabel);
 		studentDetails.add(progressLabel);
+		
+		System.out.println("TEST END!");
 		
 		
 		// Define column names for table
@@ -179,7 +184,7 @@ public class StudentView extends JPanel {
 		
 		
 		
-		
+		System.out.println("STARTING TEST 2!");
 		JPanel studentResults = new JPanel();
 		
 		studentResults.setLayout(new GridBagLayout());
@@ -189,15 +194,23 @@ public class StudentView extends JPanel {
 		// Round values
 		DecimalFormat df = new DecimalFormat("#.00");
 		
-		for (int y = 0; y < student.getLevel(); y++) {
-			String formattedAverage = df.format(yearAverages[y]);
+		if (student.getLevel() != 6) {
+			for (int y = 0; y < student.getLevel(); y++) {
+				String formattedAverage = df.format(yearAverages[y]);
+				
+				JLabel yearResultsLabel = new JLabel("Year "+(y+1)+" Average: "+formattedAverage);
+				
+				resConstraints.insets = new Insets(10,10,10,10);
+				resConstraints.fill = GridBagConstraints.HORIZONTAL;
+				resConstraints.gridx = y;
+				resConstraints.gridy = 0;
+				
+				studentResults.add(yearResultsLabel, resConstraints);
+			}
+		} else {
+			String formattedAverage = df.format(yearAverages[5]);
 			
-			JLabel yearResultsLabel = new JLabel("Year "+(y+1)+" Average: "+formattedAverage);
-			
-			resConstraints.insets = new Insets(10,10,10,10);
-			resConstraints.fill = GridBagConstraints.HORIZONTAL;
-			resConstraints.gridx = y;
-			resConstraints.gridy = 0;
+			JLabel yearResultsLabel = new JLabel("Average: "+formattedAverage);
 			
 			studentResults.add(yearResultsLabel, resConstraints);
 		}

@@ -51,7 +51,7 @@ public class GradingUtils {
 	 * 
 	 * @param res
 	 */
-	public void studentResults(String[] res) {
+	public void studentResults(String[] res, int level) {
 		
 		// Generate new arrays
 		studentResults = new int[2];
@@ -61,7 +61,9 @@ public class GradingUtils {
 		if (res[0] != null && res[0] != "") {
 			studentResults[0] = (int) Float.parseFloat(res[0]);
 			
-			if (studentResults[0] >= 40) {
+			if (studentResults[0] >= 40 && level <= 4) {
+				studentGrades[0] = Grades.PASS;
+			} else if (studentResults[0] >= 50 && level == 6) {
 				studentGrades[0] = Grades.PASS;
 			} else {
 				studentGrades[0] = Grades.FAIL;
@@ -75,7 +77,9 @@ public class GradingUtils {
 		if (res[1] != null && res[1] != "") {
 			studentResults[1] = (int) Float.parseFloat(res[1]);
 			
-			if (studentResults[1] >= 40) {
+			if (studentResults[1] >= 40 && level <= 4) {
+				studentGrades[1] = Grades.PASS;
+			} else if (studentResults[0] >= 50 && level == 6) {
 				studentGrades[1] = Grades.PASS;
 			} else {
 				studentGrades[1] = Grades.FAIL;
@@ -100,7 +104,7 @@ public class GradingUtils {
 	 */
 	public Classification calculateClass(GraduateType type, Module[] mods, Student studentUser) {
 		
-		float[] levelTotals = new float[4];
+		float[] levelTotals = new float[6];
 		float postGradTotal = 0;
 		
 		Boolean fourYearCourse = false;
@@ -114,6 +118,7 @@ public class GradingUtils {
 		if (type == GraduateType.UNDERGRADUATE) {
 			yearCredits = 120;
 		} else {
+			System.out.println("POST GRAD DETERMINED");
 			yearCredits = 180;
 		}
 		
@@ -123,13 +128,11 @@ public class GradingUtils {
 			int[] scores = mod.getScores();
 			int score = getMax(scores);
 			int credits = mod.getCredits();
-			
 			if (level == 4) {
 				fourYearCourse = true;
 			}
-			
+
 			float weightedScore = (((float)credits / (float)yearCredits) * (float)score);
-			
 			
 			if (type == GraduateType.UNDERGRADUATE) {
 				levelTotals[level-1] += weightedScore;
@@ -143,6 +146,11 @@ public class GradingUtils {
 				}
 			} else {
 				postGradTotal += weightedScore;
+				levelTotals[5] += weightedScore;
+				
+				if (score < 50 && level == 4) {
+					degreeFailed = true;
+				}
 			}
 		}
 		

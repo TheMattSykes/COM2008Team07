@@ -161,7 +161,7 @@ public class StudentSystemController extends Controller {
 				
 				String[] res = new String[] {valueOne, valueTwo};
 				
-				su.studentResults(res);
+				su.studentResults(res, studentUser.getLevel());
 				
 				newModule.setScores(su.getStudentResults());
 				newModule.setGrades(su.getStudentGrades());
@@ -176,9 +176,17 @@ public class StudentSystemController extends Controller {
 		}
 		
 		
+		GraduateType type = null;
+		
+		if (studentUser.getLevel() <= 4) {
+			type = GraduateType.UNDERGRADUATE;
+		} else {
+			type = GraduateType.POSTGRADUATE;
+		}
+		
 		// Get classification and year average information
 		GradingUtils gu = new GradingUtils();
-		sv.setClassification(gu.calculateClass(GraduateType.UNDERGRADUATE, modules.toArray(new Module[modules.size()]), studentUser));
+		sv.setClassification(gu.calculateClass(type, modules.toArray(new Module[modules.size()]), studentUser));
 		sv.setYearAverages(gu.getYearAverages());
 		
 		

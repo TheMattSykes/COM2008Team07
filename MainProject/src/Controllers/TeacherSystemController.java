@@ -153,7 +153,7 @@ public class TeacherSystemController extends Controller {
 				
 				String[] results = new String[] {valueOne, valueTwo};
 				
-				gu.studentResults(results);
+				gu.studentResults(results, selectedStudent.getLevel());
 				
 				Grades[] studentGrades = gu.getStudentGrades();
 				int[] studentResults = gu.getStudentResults();
@@ -513,9 +513,18 @@ public class TeacherSystemController extends Controller {
 			}
 		}
 		
+		
+		GraduateType type = null;
+		
+		if (selectedStudent.getLevel() <= 4) {
+			type = GraduateType.UNDERGRADUATE;
+		} else {
+			type = GraduateType.POSTGRADUATE;
+		}
+		
 		GradingUtils gu = new GradingUtils();
 		
-		Classification classi = gu.calculateClass(GraduateType.UNDERGRADUATE, modules.toArray(new Module[modules.size()]), selectedStudent);
+		Classification classi = gu.calculateClass(type, modules.toArray(new Module[modules.size()]), selectedStudent);
 		
 		vg.setClassification(classi);
 		vg.setYearAverages(gu.getYearAverages());
