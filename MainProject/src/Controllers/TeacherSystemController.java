@@ -520,9 +520,12 @@ public class TeacherSystemController extends Controller {
 			}
 		}
 		
-		Classification classi = calculateClass(GraduateType.UNDERGRADUATE, modules.toArray(new Module[modules.size()]));
+		GradingUtils gu = new GradingUtils();
+		
+		Classification classi = gu.calculateClass(GraduateType.UNDERGRADUATE, modules.toArray(new Module[modules.size()]), selectedStudent);
 		
 		vg.setClassification(classi);
+		vg.setYearAverages(gu.getYearAverages());
 		
 		Object[][] data = new Object[modules.size()][9];
 		
@@ -556,125 +559,6 @@ public class TeacherSystemController extends Controller {
 		tableData = data;
 		
 		return data;
-	}
-	
-	/**
-	 * getMax()
-	 * Gets the biggest int, of an array of ints.
-	 * @param scores is the array of ints
-	 * @return the biggest int in the array
-	 */
-	public int getMax(int[] scores) {
-		int max = 0;
-		
-		for (int score : scores) {
-			if (score > max) {
-				max = score;
-			}
-		}
-		
-		return max;
-	}
-	
-	/**
-	 * calculateClass()
-	 * Calculates the degree classification of a student, given their graduate type and array of modules.
-	 * @param type is the type of degree the student is taking
-	 * @param mods is the array of modules the student is taking
-	 * @return the degree classification
-	 */
-	public Classification calculateClass(GraduateType type, Module[] mods) {
-		
-		float[] levelTotals = new float[4];
-		float postGradTotal = 0;
-		
-		Boolean fourYearCourse = false;
-		
-		Boolean degreeFailed = false;
-		
-		int yearCredits = 0;
-		
-		// Determine how many credits are in a year for graduate type
-		if (type == GraduateType.UNDERGRADUATE) {
-			yearCredits = 120;
-		} else {
-			yearCredits = 180;
-		}
-		
-		// Get all module scores by level
-		for (Module mod : mods) {
-			int level = mod.getLevel();
-			int[] scores = mod.getScores();
-			int score = getMax(scores);
-			int credits = mod.getCredits();
-			
-			if (level == 4) {
-				fourYearCourse = true;
-			}
-			
-			float weightedScore = (((float)credits / (float)yearCredits) * (float)score);
-			
-			
-			if (type == GraduateType.UNDERGRADUATE) {
-				levelTotals[level-1] += weightedScore;
-				
-				if (score < 40 && level != 4) {
-					degreeFailed = true;
-				} 
-				
-				if (score < 50 && level == 4) {
-					degreeFailed = true;
-				}
-			} else {
-				postGradTotal += weightedScore;
-			}
-		}
-		
-		vg.setYearAverages(levelTotals);
-		
-		float finalValue = 0;
-		
-		if (selectedStudent.getLevel() >= 3) {
-			if (type == GraduateType.UNDERGRADUATE) {
-				
-				if (!fourYearCourse) {
-					float convertedLv2Total = (float) ((1.0/3.0)*levelTotals[1]);
-					float convertedLv3Total = (float) ((2.0/3.0)*levelTotals[2]);
-					
-					finalValue = ( convertedLv2Total + convertedLv3Total );
-				} else {
-					finalValue = ( ((1/5)*levelTotals[1]) + ((2/5)*levelTotals[2]) + ((2/5)*levelTotals[3]) );
-				}
-				
-				if (finalValue < 39.5 || degreeFailed) {
-					return Classification.FAIL;
-				} else if (finalValue >= 39.5 && finalValue < 44.5) {
-					return Classification.PASS;
-				} else if (finalValue >= 44.5 && finalValue < 49.5) {
-					return Classification.THIRD;
-				} else if (finalValue >= 49.5 && finalValue < 59.5) {
-					return Classification.LOWER_SECOND;
-				} else if (finalValue >= 59.5 && finalValue < 69.5) {
-					return Classification.UPPER_SECOND;
-				} else {
-					return Classification.FIRST;
-				}
-			} else {
-				finalValue = postGradTotal;
-				
-				if (finalValue < 49.5) {
-					return Classification.FAIL;
-				} else if (finalValue >= 49.5 && finalValue < 59.5) {
-					return Classification.PASS;
-				} else if (finalValue >= 59.5 && finalValue < 69.5) {
-					return Classification.MERIT;
-				} else {
-					return Classification.DISTINCTION;
-				}
-			}
-		}
-		
-		return Classification.INCOMPLETE;
 	}
 	
 	/**
