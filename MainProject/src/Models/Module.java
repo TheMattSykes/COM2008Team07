@@ -22,6 +22,11 @@ public class Module {
 	
 	public Module() {}
 	
+	public Module(String c, String n) {
+		code = c;
+		name = n;
+	}
+	
 	public Module(String c, String n, int cred, int[] sc, Grades[] gr, String tp, int l, GraduateType ty, String d, String core) {
 		code = c;
 		name = n;
