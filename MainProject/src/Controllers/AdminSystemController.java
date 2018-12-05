@@ -13,6 +13,7 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 
+import Models.Approval;
 import Models.Degree;
 import Models.Department;
 import Models.GraduateType;
@@ -185,6 +186,7 @@ public class AdminSystemController extends Controller{
 			JTable table = av.getModuleTable();
 			int row = table.getSelectedRow();
 			Module targetModule = new Module((String)(data[row][0]), (String)(data[row][1]));
+			av.removeUI();
 			initEditModuleView(targetModule);
 		});
 	}
@@ -302,9 +304,9 @@ public class AdminSystemController extends Controller{
 			editModuleView = new EditModule(av.getFrame());
 		}
 		
-		av.removeUI();
+		removeAllUI();
 		try {
-			Object[][] approvals = getApprovalData(m);
+			Object[][] approvals = getApprovalData(m.getCode());
 			Object[][] degreesData = getDegreeData();
 			Degree[] degrees = new Degree[degreesData.length];
 			int i = 0;
@@ -315,10 +317,46 @@ public class AdminSystemController extends Controller{
 			editModuleView.setTableData(approvals);
 			editModuleView.setModule(m);
 			editModuleView.setDegrees(degrees);
+			editModuleView.loadUI();
 			
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+		JButton deleteButton = editModuleView.getDeleteButton();
+		JButton applyButton = editModuleView.getApplyButton();
+		JButton backButton = editModuleView.getBackButton();
+		JTable approvalTable = editModuleView.getApprovalTable();
+		
+		approvalTable.getSelectionModel().addListSelectionListener(e -> {
+			if (!deleteButton.isEnabled())
+				deleteButton.setEnabled(true);
+		});
+		
+		backButton.addActionListener(e -> {
+			editModuleView.removeUI();
+			try {
+				initModuleView();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		});
+		
+		applyButton.addActionListener(e -> {
+			addApproval(editModuleView.getNewApproval());
+			initEditModuleView(m);
+		});
+		
+		deleteButton.addActionListener(e -> {
+			try {
+				Object[][] data = getApprovalData(m.getCode());
+				int row = approvalTable.getSelectedRow();
+				Approval targetApproval = new Approval((String)data[row][0], (String)data[row][1], Integer.parseInt((String)data[row][2]), Boolean.valueOf((String)data[row][3]));
+				deleteApproval(targetApproval);
+				initEditModuleView(m);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		});
 	}
 	
 	public Object[][] getAccountData() throws Exception {
@@ -434,10 +472,10 @@ public class AdminSystemController extends Controller{
 		return data;
 	}
 	
-	public Object[][] getApprovalData(Module m) throws Exception {
+	public Object[][] getApprovalData(String mCode) throws Exception {
 		String approvalQuery = "SELECT * FROM approval WHERE module_code = ?;";
 		ArrayList<String[]> values = new ArrayList<String[]>();
-		values.add(new String[] {m.getCode(), "true"});
+		values.add(new String[] {mCode, "true"});
 		ArrayList<String[]> approvalResults = dc.executeQuery(approvalQuery, values);
 		Object[][] data = new Object[approvalResults.size()][4];
 		Integer row = 0;
@@ -675,6 +713,8 @@ public class AdminSystemController extends Controller{
 			addDegreeView.removeUI();
 		if (addModuleView != null)
 			addModuleView.removeUI();
+		if (editModuleView != null)
+			editModuleView.removeUI();
 	}
 	
 	
@@ -797,5 +837,59 @@ public class AdminSystemController extends Controller{
 	public void deleteModule(Module m) {
 		
 	}
+
+	public void addApproval(Approval a) {
+		try {
+			Object[][] data = getApprovalData(a.getModuleCode());
+			ArrayList<String> degrees = new ArrayList<String>();
+			for (int i = 0; i < data.length; i++) {
+				degrees.add((String)data[i][0]);
+			}
+			if (degrees.contains(a.getDegreeCode())) {
+				JOptionPane inputError = new JOptionPane("The module is already approved for the selected degree");
+				JDialog dialog = inputError.createDialog("Failure");
+				dialog.setAlwaysOnTop(true);
+				dialog.setVisible(true);
+			} else {
+				Object[] options = {"Yes", "No"};
+				int applyOption = JOptionPane.showOptionDialog(editModuleView.getFrame(), "Confirm approving module with code "+ a.getModuleCode() 
+						+ " onto the degree " + a.getDegreeCode(), "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, 
+						null, options, options[0]);
+				if (applyOption == 0) {
+					String query = "INSERT INTO approval VALUES(?,?,?,?)";
+					ArrayList<String[]> values = new ArrayList<String[]>();
+					values.add(new String[] {a.getDegreeCode(), "true"});
+					values.add(new String[] {a.getModuleCode(), "true"});
+					if (a.getCore())
+						values.add(new String[] {"1","false"});
+					else
+						values.add(new String[] {"0","false"});
+					values.add(new String[] {Integer.toString(a.getLevel()), "false"});
+					dc.executeQuery(query, values);
+				}
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
 	
+	public void deleteApproval(Approval a) {
+		String degreeCode = a.getDegreeCode();
+		String moduleCode = a.getModuleCode();
+		Object[] options = {"Yes", "No"};
+		int applyOption = JOptionPane.showOptionDialog(av.getFrame(), "Confirm removing approval of module "+ moduleCode 
+				+ " from the degree "+ degreeCode, "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, 
+				null, options, options[0]);
+		if (applyOption == 0) {
+			try {
+				String approvalQuery = "DELETE FROM approval WHERE degree_code = ? AND module_code = ?;";
+				ArrayList<String[]> approvalValues = new ArrayList<String[]>();
+				approvalValues.add(new String[] {a.getDegreeCode(), "true"});
+				approvalValues.add(new String[] {a.getModuleCode(), "true"});
+				dc.executeQuery(approvalQuery, approvalValues);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+	}
 }
