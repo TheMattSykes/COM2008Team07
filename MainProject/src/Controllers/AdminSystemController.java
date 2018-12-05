@@ -51,6 +51,7 @@ public class AdminSystemController extends Controller{
 
 	// Initiates the menu view and sets up the buttons defined in AdminView
 	public void initMenuView() {
+		removeAllUI();
 		// Launching the menuUI in the Admin View
 		av.loadMenuUI();
 		// Setting up the menu button actions
@@ -93,6 +94,7 @@ public class AdminSystemController extends Controller{
 	
 	// Initiates the account view, passing relevent data and setting up buttons
 	public void initAccountView() throws Exception{
+		removeAllUI();
 		// Collect the Accounts data & load the AccountUI
 		av.setDataAccounts(getAccountData());
 		av.loadAccountUI();
@@ -119,6 +121,7 @@ public class AdminSystemController extends Controller{
 	
 	// Initiates the department view, with relevant data & buttons
 	public void initDepartmentView() throws Exception {
+		removeAllUI();
 		// Pass relevant data & load the Department UI
 		av.setDataDepartments(getDepartmentData());
 		av.loadDepartmentUI();
@@ -142,6 +145,7 @@ public class AdminSystemController extends Controller{
 	
 	// Initiates the degree view, with relevant data & buttons
 	public void initDegreeView() throws Exception {
+		removeAllUI();
 		// Passing relevant data & loading degreeUI
 		av.setDataDegrees(getDegreeData());
 		av.loadDegreeUI();
@@ -165,6 +169,7 @@ public class AdminSystemController extends Controller{
 	
 	// Initiates the module view, with relevant data & buttons
 	public void initModuleView() throws Exception {
+		removeAllUI();
 		// Passing data & loading the ModuleUI
 		av.setDataModules(getModuleData());
 		av.loadModuleUI();
@@ -871,7 +876,7 @@ public class AdminSystemController extends Controller{
 				dialog.setVisible(true);
 			} else {
 				Object[] options = {"Yes", "No"};
-				int applyOption = JOptionPane.showOptionDialog(addDegreeView.getFrame(), "Confirm adding the module "+m.getName()+
+				int applyOption = JOptionPane.showOptionDialog(addModuleView.getFrame(), "Confirm adding the module "+m.getName()+
 						" with code "+m.getCode(), "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, 
 						null, options, options[0]);
 				if (applyOption == 0) {
