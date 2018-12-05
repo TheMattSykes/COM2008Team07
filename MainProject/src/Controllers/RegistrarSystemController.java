@@ -399,7 +399,7 @@ public class RegistrarSystemController extends Controller {
 			if (module.getLevel() == selectedStudent.getLevel()) {
 				totalCredits -= module.getCredits();
 				String creditsLabelText ="<html>Total number of credits for level "+selectedStudent.getLevel()+" are: ";
-				if (((selectedStudent.getLevel() > 0 || selectedStudent.getLevel() < 5) && totalCredits != 120) ||
+				if (((selectedStudent.getLevel() > 0 && selectedStudent.getLevel() < 5) && totalCredits != 120) ||
 					(selectedStudent.getLevel() == 6 && totalCredits != 180)) {
 					creditsLabelText += totalCredits+"<br/><font color='red'>The total number of credits for this level have to be ";
 					if (selectedStudent.getLevel() > 0 && selectedStudent.getLevel() < 5) {
@@ -444,7 +444,7 @@ public class RegistrarSystemController extends Controller {
 			enrolledModules.add(module);
 			totalCredits += module.getCredits();
 			String creditsLabelText ="<html>Total number of credits for level "+selectedStudent.getLevel()+" are: ";
-			if (((selectedStudent.getLevel() > 0 || selectedStudent.getLevel() < 5) && totalCredits != 120) ||
+			if (((selectedStudent.getLevel() > 0 && selectedStudent.getLevel() < 5) && totalCredits != 120) ||
 				(selectedStudent.getLevel() == 6 && totalCredits != 180)) {
 				creditsLabelText += totalCredits+"<br/><font color='red'>The total number of credits for this level have to be ";
 				if (selectedStudent.getLevel() > 0 && selectedStudent.getLevel() < 5) {
@@ -724,7 +724,7 @@ public class RegistrarSystemController extends Controller {
 		
 		String creditsLabelText ="<html>Total number of credits for level "+selectedStudent.getLevel()+" are: ";
 		JLabel creditsLabel = rm.getCreditsLabel();
-		if (((selectedStudent.getLevel() > 0 || selectedStudent.getLevel() < 5) && totalCredits != 120) ||
+		if (((selectedStudent.getLevel() > 0 && selectedStudent.getLevel() < 5) && totalCredits != 120) ||
 			(selectedStudent.getLevel() == 6 && totalCredits != 180)) {
 			creditsLabelText += totalCredits+"<br/><font color='red'>The total number of credits for this level have to be ";
 			if (selectedStudent.getLevel() > 0 && selectedStudent.getLevel() < 5) {
