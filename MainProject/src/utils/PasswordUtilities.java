@@ -59,9 +59,6 @@ public class PasswordUtilities {
 				hashValue.append(hexString);
 			}
 			
-			
-			System.out.println(hashValue.toString().toLowerCase());
-			
 			return hashValue.toString().toLowerCase();
 		} catch (NoSuchAlgorithmException e) {
 			JOptionPane.showMessageDialog(null, "Our password security systems are not compatible with your device"
