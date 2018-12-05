@@ -1,24 +1,24 @@
+/**
+ * StudentSystemController
+ * 
+ * Gathers student data from the database.
+ * Generate student details table form.
+ * 
+ */
+
 package Controllers;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
-import javax.swing.JButton;
+import javax.swing.JOptionPane;
 
-import Models.Classification;
 import Models.Grades;
 import Models.GraduateType;
 import Models.Module;
 import Models.Student;
 import Models.User;
-import Views.LoginView;
-import Views.PrimaryFrame;
 import Views.StudentView;
 import utils.GradingUtils;
-
-import java.util.Collection;
-import java.util.Collections;
 
 public class StudentSystemController extends Controller {
 	
@@ -40,9 +40,14 @@ public class StudentSystemController extends Controller {
 		return user;
 	}
 	
+	/**
+	 * setupStudent
+	 * 
+	 * Retrieve students' information from the database.
+	 * @return
+	 * @throws Exception
+	 */
 	public Student setupStudent() throws Exception {
-		System.out.println("Setting up new student...");
-		
 		Student student = null;
 		
 		DatabaseController dc = new DatabaseController();
@@ -55,8 +60,6 @@ public class StudentSystemController extends Controller {
 		
 		Boolean exists = false;
 		
-		String[] queries = {query};
-		
 		ArrayList<String[]> allResults = dc.executeQuery(query,values);
 		String[] results = null;
 		
@@ -68,6 +71,7 @@ public class StudentSystemController extends Controller {
 			exists = (results.length > 0);
 		}
 		
+		// If the student exists set information
 		if (exists) {
 			student = new Student();
 			
@@ -80,25 +84,37 @@ public class StudentSystemController extends Controller {
 			student.setTutor(results[6]);
 			student.setPeriod(results[7].charAt(0));
 			student.setLevel(Integer.parseInt(results[8]));
-			System.out.println("Reg Number: "+results[0]);
+			student.setRegistered(results[10]);
+			student.setProgress(results[11]);
 			
 			sv.setStudent(student);
+		} else {
+			JOptionPane.showMessageDialog(null, "Account not linked to student. Please contact IT desk.", "Student Error", JOptionPane.ERROR_MESSAGE);
+			System.exit(0);
 		}
 		
 		return student;
 	}
 	
+	/**
+	 * Initial View
+	 * @throws Exception
+	 */
 	public void initView() throws Exception {
 		sv.setData(getTableData());
 		sv.loadUI();
 	}
 	
-	
+	/**
+	 * getTableData
+	 * 
+	 * Retrieve students' module data.
+	 * Setup information for table format.
+	 * @return
+	 * @throws Exception
+	 */
 	public Object[][] getTableData() throws Exception {
 		DatabaseController dc = new DatabaseController();
-		
-		
-		Boolean exists = false;
 		
 		String query = String.format("SELECT m.module_code,m.module_name,m.credits,e.grade1,e.grade2,a.level,m.teaching_period,m.graduation_level " + 
 				"FROM modules AS m, enrolled AS e, approval AS a " + 
@@ -108,40 +124,33 @@ public class StudentSystemController extends Controller {
 		
 		values.add(new String[]{Integer.toString(studentUser.getRegNumber()),"false"});
 		
-		
-		String[] queries = {query};
-		
 		ArrayList<String[]> allResults = dc.executeQuery(query,values);
-		String[] results = null;
 		
 		ArrayList<Module> modules = new ArrayList<Module>();
 		
+		// If exists
 		if (allResults.size() > 0) {
 			
 			int count = 0;
+			
+			// Use each result
 			for (String[] result : allResults) {
-				System.out.println("RESULT: "+count);
 				count++;
 				Module newModule = new Module();
 				
 				String code = result[0];
 				newModule.setCode(code);
 				
-				//for (int i = 0; i < result.length; i++) {
-					//System.out.println("Result No. "+i+": "+result[i]);
-				//}
-				
 				newModule.setName(result[1]);
 				
 				newModule.setCredits(Integer.parseInt(result[2]));
-				
-				int[] studentResults = new int[2];
 				
 				GradingUtils su = new GradingUtils();
 				
 				String valueOne = "";
 				String valueTwo = "";
 				
+				// Check grades exist
 				if (result[3] != null && result[3] != "") {
 					valueOne = result[3].toString();
 				}
@@ -167,10 +176,13 @@ public class StudentSystemController extends Controller {
 		}
 		
 		
+		// Get classification and year average information
 		GradingUtils gu = new GradingUtils();
 		sv.setClassification(gu.calculateClass(GraduateType.UNDERGRADUATE, modules.toArray(new Module[modules.size()]), studentUser));
 		sv.setYearAverages(gu.getYearAverages());
 		
+		
+		// Set table data
 		Object[][] data = new Object[modules.size()][8];
 		
 		int row = 0;

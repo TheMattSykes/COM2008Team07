@@ -1,17 +1,20 @@
+/**
+ * Database Controller
+ * 
+ * Establishes a connection with the database.
+ * Executes queries to the database and returns results to classes which instantiate this one.
+ */
+
 package Controllers;
-import java.awt.Window;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 
-import javax.swing.JDialog;
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 
 public class DatabaseController {
 	private Connection con = null;
@@ -21,24 +24,21 @@ public class DatabaseController {
 		
 		ArrayList<String[]> output = new ArrayList<String[]>();
 		
-		Boolean isLogin = query.toLowerCase().contains("select * from users where username = ?");
-		
 		try {
 			
 			// Initiate connection with database
 			DriverManager.setLoginTimeout(10);
 			con = DriverManager.getConnection(db);
-			System.out.println("DATABASE CONNECTION ESTABILISHED");
 			
 			//TODO: Sanitise input to protect from SQL injection
 			
-			System.out.println("\t[DATABASE] Starting query processing...");
-			System.out.println("\t[DATABASE] Query input: "+query);
 			String startOfQuery = query.substring(0, 6); // All required starts of statements are 6 chars long
 			
 			PreparedStatement stmt = null;
 			
 			try {
+				
+				// Prepare statement and protect against SQL injection.
 				stmt = con.prepareStatement(query);
 				
 				if (values != null) {
@@ -52,6 +52,7 @@ public class DatabaseController {
 						
 						int dbColumnNo = itemNo + 1;
 						
+						// If not a string assume value is an int
 						if (!typeString) {
 							stmt.setInt(dbColumnNo, Integer.valueOf(value));
 						} else {
@@ -66,10 +67,7 @@ public class DatabaseController {
 				} else if (startOfQuery.contains("SELECT")) {
 					// Return a list of results with query
 					
-					System.out.println("\t[DATABASE] Executing query...");
 					ResultSet res = stmt.executeQuery();
-					System.out.println("\t[DATABASE] Query executed");
-					System.out.println("\t[DATABASE] Processing output...");
 					
 					// Get the number of columns in the table through MetaData
 					ResultSetMetaData meta = res.getMetaData();
@@ -87,9 +85,6 @@ public class DatabaseController {
 						output.add(nextRow);
 					}
 					
-					// Append array to list of arrays
-					System.out.println("\t[DATABASE] Output processed");
-					
 					// Close ResultSet
 					res.close();
 				} else {
@@ -105,8 +100,6 @@ public class DatabaseController {
 				if (stmt != null) stmt.close();
 			}
 			
-			System.out.println("\t[DATABASE] Query processed");
-			
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 			
@@ -118,6 +111,7 @@ public class DatabaseController {
 				errorMessage = "Unable to connect to the database. Please ensure you are connected to the campus network.";
 			}
 			
+			// Error Message
 			JOptionPane.showMessageDialog(null, errorMessage, "Database Connection Error", JOptionPane.ERROR_MESSAGE);
 			System.out.println("[DATABASE ERROR!] CONNECTION ERROR"+ex);
 		} finally {
@@ -125,7 +119,6 @@ public class DatabaseController {
 				con.close();
 				
 				if (con.isClosed()) {
-					System.out.println("DATABASE CONNECTION TERMINATED");
 				} else {
 					System.out.println("ERROR CLOSING CONNECTION");
 				}

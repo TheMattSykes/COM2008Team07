@@ -1,24 +1,24 @@
+/**
+ * AdminSystemController
+ * 
+ * ...
+ */
+
 package Controllers;
 
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 
-import Models.Classification;
 import Models.Degree;
 import Models.Department;
-import Models.Grades;
 import Models.GraduateType;
 import Models.Module;
 import Models.User;
 import Models.UserTypes;
-import Models.Views;
 import Views.AddAccount;
 import Views.AddDegree;
 import Views.AddDepartment;
@@ -28,10 +28,8 @@ import Views.EditModule;
 import Views.LoginView;
 import Views.PrimaryFrame;
 import Views.StudentView;
-import utils.PasswordUtilities;
 
-import java.util.Collection;
-import java.util.Collections;
+import utils.PasswordUtilities;
 
 public class AdminSystemController extends Controller{
 
@@ -465,10 +463,7 @@ public class AdminSystemController extends Controller{
 			String salt;
 			String newPass;
 			String hashedPass;
-			ArrayList<String[]> results = new ArrayList<String[]>();
 			// Obtaining usernames
-			String query = "SELECT username FROM users;";
-			results = dc.executeQuery(query, null);
 			// Checking if any field is empty
 			String[] detailTitles = new String[] {"First Name", "Second Name", "User Type", "Password", "Password Confirmation"};
 			for (int i=0; i<details.length ; i++) {
@@ -491,7 +486,6 @@ public class AdminSystemController extends Controller{
 			
 			if ( !error ) {
 				// Compiling the user data into a new user.
-				Integer id = results.size()+1;
 				UserTypes type =  UserTypes.valueOf(details[2]);
 				String username = makeUsername(details[0], details[1], type);
 				// Finding the relevant password data
@@ -504,9 +498,8 @@ public class AdminSystemController extends Controller{
 						null, options, options[0]);
 				if (applyOption == 0) {
 					// carry out query & redirect back to accounts view
-					String addQuery = "INSERT INTO users VALUES(?,?,?,?,?)";
+					String addQuery = "INSERT INTO users(username,password,user_type,salt) VALUES(?,?,?,?)";
 					ArrayList<String[]> values = new ArrayList<String[]>();
-					values.add(new String[] {"" + id, "false"});
 					values.add(new String[] {username, "true"});
 					values.add(new String[] {hashedPass, "true"});
 					values.add(new String[] {type.toString().toLowerCase(), "true"});

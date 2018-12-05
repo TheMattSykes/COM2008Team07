@@ -32,7 +32,6 @@ public class RegistrarView extends JPanel {
 	private JButton editStudent;
 	private JButton deleteStudent;
 	private JButton modulesButton;
-	private JButton logoutButton;
 	private JTable table;
 	
 	public RegistrarView(PrimaryFrame pf) {
@@ -77,10 +76,6 @@ public class RegistrarView extends JPanel {
 
 	public JButton getModulesButton() {
 		return modulesButton;
-	}
-	
-	public JButton getLogoutButton() {
-		return logoutButton;
 	}
 	
 	/**
@@ -178,8 +173,6 @@ public class RegistrarView extends JPanel {
 		registrarButtons.add(deleteStudent, menuConstraints);
 		menuConstraints.gridx = 3;
 		registrarButtons.add(modulesButton, menuConstraints);
-		
-		logoutButton = (JButton) frame.menuBar.getComponent(0);
 		
 		menuConstraints.gridx = 0;
 		frame.menuBar.add(registrarButtons, menuConstraints);

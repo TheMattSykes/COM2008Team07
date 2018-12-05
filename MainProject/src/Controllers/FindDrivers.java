@@ -1,3 +1,9 @@
+/**
+ * FindDrivers Class
+ * 
+ * Locates JDBC driver in project file.
+ */
+
 package Controllers;
 import java.sql.*;
 import java.util.*;

@@ -1,3 +1,9 @@
+/**
+ * GradingUtils
+ * 
+ * Has methods for classifying results and checking result inputs.
+ */
+
 package utils;
 
 import Models.Classification;
@@ -24,7 +30,7 @@ public class GradingUtils {
 		return studentGrades;
 	}
 	
-	
+	// Get maximum in array of int scores
 	public int getMax(int[] scores) {
 		int max = 0;
 		
@@ -37,11 +43,21 @@ public class GradingUtils {
 		return max;
 	}
 	
+	/**
+	 * studentResults
+	 * 
+	 * Takes student results and converts them into ints and grades.
+	 * If not present in database then show as undefined.
+	 * 
+	 * @param res
+	 */
 	public void studentResults(String[] res) {
 		
+		// Generate new arrays
 		studentResults = new int[2];
 		studentGrades = new Grades[2];
 		
+		// First result
 		if (res[0] != null && res[0] != "") {
 			studentResults[0] = (int) Float.parseFloat(res[0]);
 			
@@ -55,6 +71,7 @@ public class GradingUtils {
 			studentGrades[0] = Grades.UNDEFINED;
 		}
 		
+		// Resit result
 		if (res[1] != null && res[1] != "") {
 			studentResults[1] = (int) Float.parseFloat(res[1]);
 			
@@ -69,6 +86,18 @@ public class GradingUtils {
 		}
 	}
 	
+	
+	/**
+	 * calculateClass
+	 * 
+	 * Calculate a student's degree classification.
+	 * Considers duration of degree and student type.
+	 * 
+	 * @param type
+	 * @param mods
+	 * @param studentUser
+	 * @return
+	 */
 	public Classification calculateClass(GraduateType type, Module[] mods, Student studentUser) {
 		
 		float[] levelTotals = new float[4];
@@ -76,6 +105,7 @@ public class GradingUtils {
 		
 		Boolean fourYearCourse = false;
 		
+		// Failed if not enough credits gained or fail in module.
 		Boolean degreeFailed = false;
 		
 		int yearCredits = 0;
@@ -116,28 +146,31 @@ public class GradingUtils {
 			}
 		}
 		
-		
+		// Store totals for each level as averages
 		yearAverages = levelTotals;
 		
 		
 		float finalValue = 0;
 		
+		// If student is at level three or above, calculate class.
 		if (studentUser.getLevel() >= 3) {
 			if (type == GraduateType.UNDERGRADUATE) {
 				
 				if (!fourYearCourse) {
+					
+					// Three year course then 1/3 for year 2 and 2/3 for year 3
 					float convertedLv2Total = (float) ((1.0/3.0)*levelTotals[1]);
 					float convertedLv3Total = (float) ((2.0/3.0)*levelTotals[2]);
 					
+					// Calculate final value
 					finalValue = ( convertedLv2Total + convertedLv3Total );
-					
-					System.out.println("YEAR 2 Total: "+levelTotals[1]+"    (1/3 Version): "+convertedLv2Total);
-					System.out.println("YEAR 3 Total: "+levelTotals[2]+"    (1/3 Version): "+convertedLv3Total);
-					System.out.println("Final Value: "+finalValue);
 				} else {
+					
+					// Four year course then 1/5 for year 2 and 2/5 for year 3 and 2/5 for year 4
 					finalValue = ( ((1/5)*levelTotals[1]) + ((2/5)*levelTotals[2]) + ((2/5)*levelTotals[3]) );
 				}
 				
+				// Classify degree based on final value
 				if (finalValue < 39.5 || degreeFailed) {
 					return Classification.FAIL;
 				} else if (finalValue >= 39.5 && finalValue < 44.5) {
@@ -152,6 +185,8 @@ public class GradingUtils {
 					return Classification.FIRST;
 				}
 			} else {
+				// Postgraduate classification
+				
 				finalValue = postGradTotal;
 				
 				if (finalValue < 49.5) {
@@ -166,6 +201,7 @@ public class GradingUtils {
 			}
 		}
 		
+		// Degree incomplete otherwise
 		return Classification.INCOMPLETE;
 	}
 }

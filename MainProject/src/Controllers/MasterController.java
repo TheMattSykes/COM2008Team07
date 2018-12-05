@@ -1,3 +1,10 @@
+/**
+ * MasterController
+ * 
+ * Instantiates a login controller which manages further controllers.
+ * Sets the frame size.
+ */
+
 package Controllers;
 import javax.swing.*;
 
@@ -5,18 +12,19 @@ import Models.User;
 import Views.LoggedInView;
 import Views.LoginView;
 import Views.PrimaryFrame;
-import Views.StudentView;
-
-import java.awt.*;
 
 public class MasterController {
 	
+	/**
+	 * Start UI from relevant controllers
+	 * @param mainUser
+	 */
 	public void runUI(User mainUser) {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				LoggedInView menuView = new LoggedInView();
 				
-				JPanel menuUI = menuView.loggedInUI(mainUser);
+				menuView.loggedInUI(mainUser);
 				
 				PrimaryFrame mainFrame = new PrimaryFrame("University System");
 				

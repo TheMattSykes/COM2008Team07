@@ -152,24 +152,23 @@ public class RegistrarSystemController extends Controller {
 		
 		if (deleteOption == 0) {
 			String regNumber = Integer.toString(selectedStudent.getRegNumber());
-			//String query = "DELETE students, users FROM students INNER JOIN users ON students.userID=users.userID WHERE students.reg_number = ?";
 			// It's a shame that our account isn't authorised to do cascading deletions in the DB...
-			String query = "SELECT userID FROM students WHERE reg_number = ?";
+			String query = "SELECT userID FROM students WHERE reg_number = ?;";
 			ArrayList<String[]> values = new ArrayList<String[]>();
 			values.add(new String[] {regNumber, "false"});
 			ArrayList<String[]> results = dc.executeQuery(query, values);
 			String userID = results.get(0)[0];
-			query = "UPDATE students SET userID = NULL WHERE reg_number = ?";
+			query = "UPDATE students SET userID = NULL WHERE reg_number = ?;";
 			dc.executeQuery(query, values);
-			query = "DELETE FROM enrolled WHERE reg_number = ?";
+			query = "DELETE FROM enrolled WHERE reg_number = ?;";
 			dc.executeQuery(query, values);
 			if (userID != null) {
-				query = "DELETE FROM users WHERE userID = ?";
+				query = "DELETE FROM users WHERE userID = ?;";
 				values = new ArrayList<String[]>();
 				values.add(new String[] {userID, "false"});
 				dc.executeQuery(query, values);
 			}
-			query = "DELETE FROM students WHERE reg_number = ?";
+			query = "DELETE FROM students WHERE reg_number = ?;";
 			values = new ArrayList<String[]>();
 			values.add(new String[] {regNumber, "false"});
 			dc.executeQuery(query, values);
@@ -206,7 +205,7 @@ public class RegistrarSystemController extends Controller {
 				if (student != null && student.isComplete()) {
 					// Get number of emails already in the system, which are the same as this
 					String username = student.getFirstName().substring(0, 1).toLowerCase()+student.getSecondName().toLowerCase();
-					String query = "SELECT * FROM students WHERE email LIKE '"+username+"%'";
+					String query = "SELECT * FROM students WHERE email LIKE '"+username+"%';";
 					ArrayList<String[]> values = new ArrayList<String[]>();
 					ArrayList<String[]> results = dc.executeQuery(query, values);
 					System.out.println("Email results size: "+results.size());
@@ -214,7 +213,7 @@ public class RegistrarSystemController extends Controller {
 					username += (results.size()+1);
 					
 					// Get user corresponding to this student
-					query = "SELECT * FROM users WHERE username = ?";
+					query = "SELECT * FROM users WHERE username = ?;";
 					values.add(new String[] {username, "true"});
 					ArrayList<String[]> user = dc.executeQuery(query, values);
 					
@@ -231,7 +230,7 @@ public class RegistrarSystemController extends Controller {
 						if (applyOption == 0) {
 							student.setCode(generateRandomReg());
 							try {
-								query = "INSERT INTO students VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+								query = "INSERT INTO students VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 								values = new ArrayList<String[]>();
 								
 								// Each value String[] has (1) the data, (2) boolean, which denotes whether it is a string
@@ -311,7 +310,7 @@ public class RegistrarSystemController extends Controller {
 					if (applyOption == 0) {
 						try {
 							String query = "UPDATE students SET title = ?, surname = ?, forename = ?, degree = ?, "
-										 + "tutor = ?, period = ?, level = ?, registered = ? WHERE reg_number = ?";
+										 + "tutor = ?, period = ?, level = ?, registered = ? WHERE reg_number = ?;";
 							ArrayList<String[]> values = new ArrayList<String[]>();
 							
 							// Each value String[] has (1) the data, (2) boolean, which denotes whether it is a string
@@ -491,7 +490,7 @@ public class RegistrarSystemController extends Controller {
 									query += ", ?";
 									values.add(new String[] {removables.get(i).getCode(),"true"});
 								}
-								query += ")";							
+								query += ");";							
 								
 								dc.executeQuery(query, values);
 							}
@@ -508,7 +507,8 @@ public class RegistrarSystemController extends Controller {
 									query += ", (?, ?, NULL, NULL)";
 									values.add(new String[] {Integer.toString(selectedStudent.getRegNumber()), "false"});
 									values.add(new String[] {addables.get(i).getCode(),"true"});
-								}						
+								}
+								query += ";";
 								
 								dc.executeQuery(query, values);
 							}
@@ -587,9 +587,9 @@ public class RegistrarSystemController extends Controller {
 	 */
 	public Object[][] getStudentsData() throws Exception {
 		
-		String query = "SELECT * FROM students LIMIT ?";
+		String query = "SELECT * FROM students LIMIT ?;";
 		ArrayList<String[]> values = new ArrayList<String[]>();
-		values.add(new String[] {"1000", ""});
+		values.add(new String[] {"1000", "false"});
 		ArrayList<String[]> results = dc.executeQuery(query, values);
 		
 		ArrayList<Student> students = new ArrayList<Student>();
@@ -629,9 +629,9 @@ public class RegistrarSystemController extends Controller {
 	 * @throws Exception
 	 */
 	public String[] getAvailableDegrees() throws Exception {
-		String query = "SELECT degree_code FROM degrees LIMIT ?";
+		String query = "SELECT degree_code FROM degrees LIMIT ?;";
 		ArrayList<String[]> values = new ArrayList<String[]>();
-		values.add(new String[] {"1000", ""});
+		values.add(new String[] {"1000", "false"});
 		ArrayList<String[]> results = dc.executeQuery(query, values);
 		String[] availableDegrees = new String[results.size()];
 		
@@ -651,7 +651,7 @@ public class RegistrarSystemController extends Controller {
 	public ArrayList<Module> getEnrolledModules() throws Exception {		
 		String query = String.format("SELECT enrolled.module_code, enrolled.grade1, enrolled.grade2, modules.module_name, modules.credits, modules.teaching_period," + 
 				" modules.graduation_level, approval.core, approval.level FROM enrolled INNER JOIN modules ON enrolled.module_code=modules.module_code INNER JOIN" +
-				" approval ON enrolled.module_code=approval.module_code WHERE enrolled.reg_number = ? AND approval.degree_code = ?");
+				" approval ON enrolled.module_code=approval.module_code WHERE enrolled.reg_number = ? AND approval.degree_code = ?;");
 		
 		ArrayList<String[]> values = new ArrayList<String[]>();
 		values.add(new String[]{Integer.toString(selectedStudent.getRegNumber()),"false"});		
@@ -752,7 +752,7 @@ public class RegistrarSystemController extends Controller {
 	 */
 	public ArrayList<Module> getAvailableModules() throws Exception {
 		String query = String.format("SELECT approval.module_code, approval.core, approval.level, modules.module_name, modules.credits, modules.teaching_period," + 
-				" modules.graduation_level FROM approval INNER JOIN modules ON approval.module_code=modules.module_code WHERE approval.degree_code = ? AND approval.level = ?");
+				" modules.graduation_level FROM approval INNER JOIN modules ON approval.module_code=modules.module_code WHERE approval.degree_code = ? AND approval.level = ?;");
 		
 		ArrayList<String[]> values = new ArrayList<String[]>();
 		values.add(new String[]{selectedStudent.getDegree(),"true"});

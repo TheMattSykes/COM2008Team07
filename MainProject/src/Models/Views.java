@@ -1,3 +1,7 @@
+/**
+ * Enum Views
+ */
+
 package Models;
 
 public enum Views {

@@ -1,7 +1,5 @@
 package Controllers;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.JTable;
 import javax.swing.JButton;
@@ -478,9 +476,7 @@ public class TeacherSystemController extends Controller {
 	 */
 	public Object[][] getTableData() throws Exception {
 		DatabaseController dc = new DatabaseController();
-		
-		Boolean exists = true;
-		
+				
 		String query = String.format("SELECT m.module_code,m.module_name,m.credits,e.grade1,e.grade2,a.level,m.teaching_period,m.graduation_level " + 
 				"FROM modules AS m, enrolled AS e, approval AS a " + 
 				"WHERE e.reg_number = ? AND e.module_code = m.module_code AND a.module_code = m.module_code ORDER BY module_code;");
@@ -489,11 +485,7 @@ public class TeacherSystemController extends Controller {
 		
 		values.add(new String[]{Integer.toString(selectedStudent.getRegNumber()),"true"});
 		
-		
-		String[] queries = {query};
-		
 		ArrayList<String[]> allResults = dc.executeQuery(query,values);
-		String[] results = null;
 		
 		ArrayList<Module> modules = new ArrayList<Module>();
 		

@@ -1,3 +1,7 @@
+/**
+ * Enum for Classification Types
+ */
+
 package Models;
 
 public enum Classification {

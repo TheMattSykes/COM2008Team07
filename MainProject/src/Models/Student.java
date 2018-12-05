@@ -1,7 +1,14 @@
+/**
+ * Student Model
+ * 
+ * Defines attributes and methods for students.
+ */
+
 package Models;
 
 public class Student {
 
+	// Attributes
 	private int regNumber;
 	private String title;
 	private String firstName;
@@ -16,6 +23,7 @@ public class Student {
 	
 	public Student() {}
 	
+	// Polymorphic alternative constructor
 	public Student(int r, String t, String fn, String sn, String d, String e, String tu, char p, int l, String reg, String prog) {
 		regNumber = r;
 		title = t;
@@ -30,6 +38,7 @@ public class Student {
 		progress = prog;
 	}
 	
+	// Get/set methods
 	public int getRegNumber() {
 		return regNumber;
 	}
@@ -120,6 +129,7 @@ public class Student {
 		progress = inputProg;
 	}
 	
+	// Check if student data is complete
 	public boolean isComplete() {
 		if (title != null && firstName.length() > 0 && firstName.length() <= 50 &&
 			secondName.length() > 0 && secondName.length() <= 50 && degree != null &&

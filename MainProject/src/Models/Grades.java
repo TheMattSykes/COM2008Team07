@@ -1,3 +1,7 @@
+/**
+ * Enum for Grades
+ */
+
 package Models;
 
 public enum Grades {
