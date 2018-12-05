@@ -132,19 +132,12 @@ public class TeacherSystemController extends Controller {
 	        		JTable table = vg.getTable();
 				selectedModule = new Module();
 				int row = table.getSelectedRow();
-				System.out.println("SELECTED ROW: "+row);
 				
 				selectedModule.setCode((String)tableData[row][0]);
-				System.out.println(selectedModule.getCode());
 				selectedModule.setName((String)tableData[row][1]);
 				selectedModule.setCredits((int)tableData[row][2]);
-				//studentResults[0] = (int)tableData[row][3];
-				
-				//Grades[] studentGrades = new Grades[2];
-				//studentGrades[0] = Grades.valueOf(tableData[row][4]));
 				
 				
-				System.out.println("TEST D PASS");
 				GradingUtils gu = new GradingUtils();
 				
 				String valueOne = "";
@@ -152,39 +145,23 @@ public class TeacherSystemController extends Controller {
 				
 				if (tableData[row][3] != null && tableData[row][3] != "") {
 					valueOne = tableData[row][3].toString();
-					System.out.println("v1: "+valueOne);
 				}
 				
 				if (tableData[row][5] != null && tableData[row][5] != "") {
 					valueTwo = tableData[row][5].toString();
-					System.out.println("v2: "+valueTwo);
 				}
 				
 				String[] results = new String[] {valueOne, valueTwo};
 				
 				gu.studentResults(results);
 				
-				System.out.println("TEST E PASS");
-				
 				Grades[] studentGrades = gu.getStudentGrades();
 				int[] studentResults = gu.getStudentResults();
 				
-				
-				/*
-				if (tableData[row][5] != null && tableData[row][6] != null) {
-					studentResults[1] = (int)tableData[row][5];
-					studentGrades[1] = (Grades)(tableData[row][6]);
-				} else {
-					studentResults[1] = 0;
-					studentGrades[1] = Grades.UNDEFINED;
-				}*/
-				
-				System.out.println("TEST B PASSED");
 				selectedModule.setScores(studentResults);
 				selectedModule.setGrades(studentGrades);
 				selectedModule.setLevel((int)tableData[row][7]);
 				selectedModule.setTeachingPeriod((String)tableData[row][8]);
-				System.out.println("TEST C PASSED");
 				changeView(Views.EDITGRADES);
 			} catch (Exception ex) {
 				ex.printStackTrace();
@@ -314,7 +291,6 @@ public class TeacherSystemController extends Controller {
 		// Action listener for Apply button
 		eg.getApplyButton().addActionListener(e -> {
 			try {
-				System.out.println("APPLY BUTTON PRESSED");
 				selectedModule = editGrades(selectedModule);
 				String query = "";
 				ArrayList<String[]> values = new ArrayList<String[]>();
@@ -493,16 +469,11 @@ public class TeacherSystemController extends Controller {
 			
 			int count = 0;
 			for (String[] result : allResults) {
-				System.out.println("RESULT: "+count);
 				count++;
 				Module newModule = new Module();
 				
 				String code = result[0];
 				newModule.setCode(code);
-				
-				for (int i = 0; i < result.length; i++) {
-					System.out.println("Result No. "+i+": "+result[i]);
-				}
 				
 				newModule.setName(result[1]);
 				
@@ -563,9 +534,7 @@ public class TeacherSystemController extends Controller {
 			
 			int[] scores = module.getScores();
 			
-			System.out.println("STARTING TEST SCORES");
 			Grades[] grades = module.getGrades();
-			System.out.println("TEST SCORES PASSED");
 			
 			data[row][3] = scores[0];
 			data[row][4] = grades[0].toString();
@@ -673,10 +642,6 @@ public class TeacherSystemController extends Controller {
 					float convertedLv3Total = (float) ((2.0/3.0)*levelTotals[2]);
 					
 					finalValue = ( convertedLv2Total + convertedLv3Total );
-					
-					System.out.println("YEAR 2 Total: "+levelTotals[1]+"    (1/3 Version): "+convertedLv2Total);
-					System.out.println("YEAR 3 Total: "+levelTotals[2]+"    (1/3 Version): "+convertedLv3Total);
-					System.out.println("Final Value: "+finalValue);
 				} else {
 					finalValue = ( ((1/5)*levelTotals[1]) + ((2/5)*levelTotals[2]) + ((2/5)*levelTotals[3]) );
 				}
