@@ -11,7 +11,9 @@ import javax.swing.table.*;
 /*
  *	Class to manage the widths of colunmns in a table.
  *
+ *	REFERENCES:
  *  Source : https://tips4java.wordpress.com/2008/11/10/table-column-adjuster/
+ *  Accessed in: November 2018.
  *
  *  Various properties control how the width of the column is calculated.
  *  Another property controls whether column width calculation should be dynamic.

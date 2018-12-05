@@ -1,10 +1,15 @@
+/**
+ * AddAccount View
+ * 
+ * Defines form for adding a new account to the system and database.
+ */
+
 package Views;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -14,10 +19,11 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import Models.User;
 import Models.UserTypes;
 
 public class AddAccount extends JPanel {
+	
+	// Attributes for view
 	private static final long serialVersionUID = 1L;
 	PrimaryFrame frame;
 	private JPanel accountForm;
@@ -35,6 +41,8 @@ public class AddAccount extends JPanel {
 		frame = pf;
 	}
 	
+	
+	// Get/set methods
 	public PrimaryFrame getFrame() {
 		return frame;
 	}
@@ -43,6 +51,7 @@ public class AddAccount extends JPanel {
 		frame.getContentPane().removeAll();
 	}
 	
+	// Remove the UI
 	public void removeUI() {
 		if (accountForm != null) {
 			frame.remove(accountForm);
@@ -71,9 +80,20 @@ public class AddAccount extends JPanel {
 		return values;
 	}
 	
+	
+	/**
+	 * loadUI
+	 * 
+	 * Load and define the UI for adding an account form.
+	 * @throws Exception
+	 */
 	public void loadUI() throws Exception {
+		
+		// Instantiate panels
 		accountForm = new JPanel();
 		buttonPanel = new JPanel();
+		
+		// Set layout information
 		buttonPanel.setLayout(new GridBagLayout());
 		
 		GridBagConstraints formConstraints = new GridBagConstraints();
@@ -81,6 +101,7 @@ public class AddAccount extends JPanel {
 		formConstraints.insets = new Insets(20,20,20,20);
 		formConstraints.fill = GridBagConstraints.HORIZONTAL;
 		
+		// Set columns
 		JPanel formLeft = new JPanel();
 		JPanel formRight = new JPanel();
 		BoxLayout twoColumns = new BoxLayout (accountForm, BoxLayout.X_AXIS);

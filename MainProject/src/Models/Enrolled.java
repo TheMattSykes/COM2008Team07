@@ -1,3 +1,9 @@
+/**
+ * Enrolled Model
+ * 
+ * Defines attributes and methods for student module codes and results.
+ */
+
 package Models;
 
 public class Enrolled {

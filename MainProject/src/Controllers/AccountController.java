@@ -7,16 +7,8 @@
 
 package Controllers;
 
-import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 // import javax.xml.bind.DatatypeConverter;
@@ -32,20 +24,16 @@ import Views.TeacherView;
 import utils.PasswordUtilities;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Random;
 
 
 public class AccountController extends Controller {
 	private LoginView lv;
-	private JPanel menuBar;
 	
 	private StudentView studentViewer = null;
 	private RegistrarView registrarViewer = null;
 	private AdminView adminViewer = null;
 	private TeacherView teacherViewer = null;
-	
-	private static PasswordUtilities pu;
+
 	private RegistrarSystemController rc;
 	private AdminSystemController ac;
 	private StudentSystemController sc;
@@ -55,8 +43,6 @@ public class AccountController extends Controller {
 		super(mainUser);
 		
 		lv = lview;
-		
-		pu = new PasswordUtilities();
 		
 		initView();
 	}
@@ -167,9 +153,6 @@ public class AccountController extends Controller {
 		
 		values.add(new String[]{username,"true"});
 		
-		
-		String[] queries = {query};
-		
 		ArrayList<String[]> allResults = dc.executeQuery(query,values);
 		String[] results = null;
 		
@@ -194,7 +177,7 @@ public class AccountController extends Controller {
 		}
 		
 		if (salt != null) {
-			password = pu.hash(password + salt);
+			password = PasswordUtilities.hash(password + salt);
 		}
 		
 		if ((username.equals(usernameInDB)) && (password.equals(passwordInDB)) && exists) {

@@ -1,6 +1,14 @@
+/**
+ * Module Model
+ * 
+ * Defines attributes and methods for modules.
+ */
+
 package Models;
 
 public class Module {
+	
+	// Attributes
 	private String code;
 	private String name;
 	private int credits;
@@ -26,6 +34,7 @@ public class Module {
 		department = d;
 	}
 	
+	// Polymorphic alternative constructor
 	public Module(String c, String n, int cred, String tp, GraduateType ty) {
 		code = c;
 		name = n;
@@ -34,6 +43,8 @@ public class Module {
 		type = ty;
 	}
 	
+	
+	// Get/set methods
 	public String getCode() {
 		return code;
 	}
@@ -115,7 +126,6 @@ public class Module {
 	}
 	
 	public String toString() {
-		//return code + " - " + name + " (Grade: "+getMaxGrade()+ ")";
 		return code;
 	}
 	
@@ -127,6 +137,7 @@ public class Module {
 		department = inputDepartment;
 	}
 	
+	// Check whether a module is core or optional
 	public Boolean isCore() {
 		if (core != null) {
 			if (core.toLowerCase().equals("yes") || core.toLowerCase().equals("true")) {

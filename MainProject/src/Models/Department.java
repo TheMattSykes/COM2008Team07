@@ -1,3 +1,9 @@
+/**
+ * Department Model
+ * 
+ * Defines attributes and methods for departments.
+ */
+
 package Models;
 
 public class Department {

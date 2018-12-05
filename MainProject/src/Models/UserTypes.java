@@ -1,3 +1,7 @@
+/**
+ * Enum UserTypes
+ */
+
 package Models;
 
 public enum UserTypes {

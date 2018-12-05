@@ -1,7 +1,14 @@
+/**
+ * Teacher Model
+ * 
+ * Defines attributes and methods for teachers.
+ */
+
 package Models;
 
 public class Teacher {
 
+	// Attributes
 	private int teacherID;
 	private String departmentName;
 	private String title;
@@ -10,6 +17,7 @@ public class Teacher {
 	
 	public Teacher() {}
 	
+	// Polymorphic alternative constructor
 	public Teacher(int ti, String dn, String t, String fn, String sn) {
 		teacherID = ti;
 		departmentName = dn;
@@ -18,6 +26,7 @@ public class Teacher {
 		secondName = sn;
 	}
 	
+	// Get/set methods
 	public int getTeacherID() {
 		return teacherID;
 	}

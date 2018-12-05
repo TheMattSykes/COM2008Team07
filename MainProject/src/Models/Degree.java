@@ -1,8 +1,14 @@
+/**
+ * Degree Model
+ */
+
 package Models;
 
 import java.util.ArrayList;
 
 public class Degree {
+	
+	// Attributes
 	private String code;
 	private String name;
 	private Integer level;
@@ -30,6 +36,7 @@ public class Degree {
 		leadDept = d;
 	}
 	
+	// Polymorphic alternative constructor
 	public Degree (String c, String n, Integer l, Boolean i, String gt, Department ld, ArrayList<Department> ad) {
 		code = c;
 		name = n;
@@ -40,6 +47,8 @@ public class Degree {
 		assistingDepts = ad;
 	}
 	
+	
+	// Set attribute functions
 	public void setCode(String c) {
 		code = c;
 	}

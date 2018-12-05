@@ -1,3 +1,11 @@
+/**
+ * PasswordUtilities
+ * 
+ * Hashes using SHA-512 a string.
+ * Generates a random salt to add to a password.
+ * Checks if a password is sufficient stength.
+ */
+
 package utils;
 
 import java.io.UnsupportedEncodingException;
@@ -112,8 +120,6 @@ public class PasswordUtilities {
 			
 			String query = String.format("SELECT salt FROM users");
 			
-			String[] queries = {query};
-			
 			ArrayList<String[]> allResults = dc.executeQuery(query,null);
 			
 			if(allResults.size() < 0) {
@@ -179,7 +185,7 @@ public class PasswordUtilities {
 		
 		
 		// If all test are passed then return true and display dialog box
-		if (containsCapital && containsLowerCase && containsSymbol && !containsPassword) {
+		if (acceptableLength && containsCapital && containsLowerCase && containsSymbol && !containsPassword) {
 			JOptionPane.showMessageDialog(null, "Password Accepted");
 			return true;
 		} else {
