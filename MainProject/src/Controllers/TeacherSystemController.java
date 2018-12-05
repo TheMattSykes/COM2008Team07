@@ -206,9 +206,6 @@ public class TeacherSystemController extends Controller {
 		int score1 = 0;
 		int score2 = 0;
 		
-		Boolean score1valid = false;
-		Boolean score2valid = false;
-		
 		Grades grade1 = Grades.UNDEFINED;
 		Grades grade2 = Grades.UNDEFINED;
 		
@@ -218,7 +215,6 @@ public class TeacherSystemController extends Controller {
 				
 				if (score1try >= 0 && score1try <= 100) {
 					
-					score1valid = true;
 					score1 = score1try;
 					
 					if (score1try >= 40) {
@@ -242,7 +238,6 @@ public class TeacherSystemController extends Controller {
 				
 				if (score2try >= 0 && score2try <= 100) {
 					
-					score2valid = true;
 					score2 = score2try;
 					
 					if (score2try >= 40) {
@@ -467,9 +462,7 @@ public class TeacherSystemController extends Controller {
 		
 		if (allResults.size() > 0) {
 			
-			int count = 0;
 			for (String[] result : allResults) {
-				count++;
 				Module newModule = new Module();
 				
 				String code = result[0];
