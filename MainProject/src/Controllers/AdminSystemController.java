@@ -189,6 +189,10 @@ public class AdminSystemController extends Controller{
 			av.removeUI();
 			initEditModuleView(targetModule);
 		});
+		
+		av.getModuleAdd().addActionListener(e -> {
+			initAddModuleView();
+		});
 	}
 	
 	public void initAddAccountView() {
@@ -196,7 +200,7 @@ public class AdminSystemController extends Controller{
 			addAccountView = new AddAccount(av.getFrame());
 		}
 		
-		av.removeUI();
+		removeAllUI();
 		try {
 			addAccountView.loadUI();
 		} catch (Exception ex) {
@@ -222,7 +226,7 @@ public class AdminSystemController extends Controller{
 			addDeptView = new AddDepartment(av.getFrame());
 		}
 		
-		av.removeUI();
+		removeAllUI();
 		try {
 			addDeptView.loadUI();
 		} catch (Exception ex) {
@@ -247,7 +251,7 @@ public class AdminSystemController extends Controller{
 		if (addDegreeView == null) {
 			addDegreeView = new AddDegree(av.getFrame());
 		}
-		av.removeUI();
+		removeAllUI();
 		try {
 			addDegreeView.setDeptData(getDepartmentData());
 			addDegreeView.loadUI();
@@ -274,7 +278,7 @@ public class AdminSystemController extends Controller{
 			addModuleView = new AddModule(av.getFrame());
 		}
 		
-		av.removeUI();
+		removeAllUI();
 		try {
 			Object[][] departments = getDepartmentData();
 			String[] deptNames = new String[departments.length];
@@ -296,6 +300,10 @@ public class AdminSystemController extends Controller{
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
+		});
+		
+		addModuleView.getApplyButton().addActionListener(e -> {
+			addModule(addModuleView.getNewModule());		
 		});
 	}
 	
@@ -728,19 +736,19 @@ public class AdminSystemController extends Controller{
 				names.add(result.get(i)[1]);
 			}
 			if (names.contains(d.getName())) {
-				JOptionPane inputError = new JOptionPane("There is already a module with that name, please make sure the name is unique");
+				JOptionPane inputError = new JOptionPane("There is already a degree with that name, please make sure the name is unique");
 				JDialog dialog = inputError.createDialog("Failure");
 				dialog.setAlwaysOnTop(true);
 				dialog.setVisible(true);
 			} else {
 				// Asking for confirmation before entering the new degree into the table
+				d.setCode(getDegreeCode(d.getLead().getCode(), d.getType()));
 				Object[] options = {"Yes", "No"};
-				int applyOption = JOptionPane.showOptionDialog(addDegreeView.getFrame(), "Confirm adding the department "+d.getName()+
+				int applyOption = JOptionPane.showOptionDialog(addDegreeView.getFrame(), "Confirm adding the degree "+d.getName()+
 						" with code "+d.getCode(), "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, 
 						null, options, options[0]);
 				if (applyOption == 0) {
 					// Inserting new degrees into the Degrees table
-					d.setCode(getDegreeCode(d.getLead().getCode(), d.getType()));
 					String query = "INSERT INTO degrees VALUES (?,?,?);";
 					ArrayList<String[]> values = new ArrayList<String[]>();
 					values.add(new String[] {d.getCode(), "true"});
@@ -831,11 +839,103 @@ public class AdminSystemController extends Controller{
 	}
 	
 	public void addModule(Module m) {
-		
+		m.setCode(findCode(m));
+		System.out.println(m.getCode());
+		try {
+			String testQuery = "SELECT * FROM modules";
+			ArrayList<String[]> results = dc.executeQuery(testQuery, null);
+			ArrayList<String> moduleNames = new ArrayList<String>();
+			for (String[] result : results) {
+				moduleNames.add(result[1]);
+			}
+			if (m.getName()==""||m.getName()==null||m.getCredits()==0) {
+				JOptionPane inputError = new JOptionPane("A field may have been left empty, or credits as 0, please make sure each field as an entered value");
+				JDialog dialog = inputError.createDialog("Failure");
+				dialog.setAlwaysOnTop(true);
+				dialog.setVisible(true);
+			} else if (moduleNames.contains(m.getName())) {
+				JOptionPane inputError = new JOptionPane("There is already a module with that name, please make sure the name is unique");
+				JDialog dialog = inputError.createDialog("Failure");
+				dialog.setAlwaysOnTop(true);
+				dialog.setVisible(true);
+			} else {
+				Object[] options = {"Yes", "No"};
+				int applyOption = JOptionPane.showOptionDialog(addDegreeView.getFrame(), "Confirm adding the module "+m.getName()+
+						" with code "+m.getCode(), "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, 
+						null, options, options[0]);
+				if (applyOption == 0) {
+					String query = "INSERT INTO modules VALUES(?,?,?,?,?)";
+					ArrayList<String[]> values = new ArrayList<String[]>();
+					values.add(new String[] {m.getCode(), "true"});
+					values.add(new String[] {m.getName(), "true"});
+					values.add(new String[] {Integer.toString(m.getCredits()), "false"});
+					values.add(new String[] {m.getTeachingPeriod(), "true"});
+					values.add(new String[] {m.getType().toString(), "true"});
+					dc.executeQuery(query, values);
+					initModuleView();
+				}
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+	
+	public String findCode(Module m) {
+		String code = "";
+		try {
+		String deptName = m.getDepartment();
+		Object[][] deptData = getDepartmentData();
+		for (Object[] dept : deptData) {
+			if (dept[1].equals(deptName)) 
+				code += dept[0];
+		}
+		code += Integer.toString(m.getLevel());
+		String query = "SELECT * FROM modules WHERE module_code LIKE '"+code+"%';";
+		ArrayList<String[]> results = dc.executeQuery(query, null);
+		String lastCode = "";
+		if (results.size() < 1) {
+			lastCode = "NIL1000";
+		} else {
+			lastCode = results.get(results.size()-1)[0];
+		}
+		Integer number = Integer.parseInt(lastCode.substring(4));
+		String codeNum = "";
+		if (number < 9) {
+			codeNum = "00"+(number+1);
+		} else if (number < 99) {
+			codeNum = "0"+(number+1);
+		} else {
+			codeNum = Integer.toString(number+1);
+		}
+		code += codeNum;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return code;
 	}
 	
 	public void deleteModule(Module m) {
-		
+		String moduleCode = m.getCode();
+		String moduleName = m.getName();
+		Object[] options = {"Yes", "No"};
+		int applyOption = JOptionPane.showOptionDialog(av.getFrame(), "Confirm deleting the module "+moduleName+
+				" with code "+moduleCode, "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, 
+				null, options, options[0]);
+		if (applyOption == 0) {
+			try {
+				String moduleQuery = "DELETE FROM modules WHERE module_code = ?;";
+				ArrayList<String[]> modValues = new ArrayList<String[]>();
+				modValues.add(new String[] {m.getCode(), "true"});
+				String approvalQuery = "DELETE FROM approval WHERE module_code = ?;";
+				ArrayList<String[]> appValues = new ArrayList<String[]>();
+				appValues.add(new String[] {m.getCode(), "true"});
+				dc.executeQuery(moduleQuery, modValues);
+				dc.executeQuery(approvalQuery, appValues);
+				initModuleView();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
 	}
 
 	public void addApproval(Approval a) {

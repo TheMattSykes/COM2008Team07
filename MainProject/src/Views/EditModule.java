@@ -215,8 +215,7 @@ public class EditModule extends JPanel {
 	    // Level Choice
 	    JPanel levelPanel = new JPanel();
 	    JLabel levelLabel = new JLabel("Level: ");
-	    Integer[] levels = {1,2,3,4,5,6};
-	    levelList = new JComboBox<Integer>(levels);
+	    levelList = new JComboBox<Integer>(new Integer[] {1,2,3,4,5,6,7,8,9});
 	    formConst.gridx = 0;
 	    formConst.gridy = 0;
 	    levelPanel.add(levelLabel, formConst);

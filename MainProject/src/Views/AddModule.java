@@ -27,14 +27,12 @@ public class AddModule extends JPanel {
 	private JButton backButton;
 	private JButton applyButton;
 	private String[] availableDepartment;
-	private JTextField codeTextField;
 	private JTextField nameTextField;
 	private JTextField credsTextField;
 	private JComboBox<String> periodDropdown;
-	private JComboBox<Integer> levelDropdown;
 	private JComboBox<String> typeDropdown;
+	private JComboBox<Integer> levelList;
 	private JComboBox<String> deptDropdown;
-	private JComboBox<String> coreDropdown;
 	
 	public AddModule(PrimaryFrame pf) {
 		frame = pf;
@@ -69,20 +67,16 @@ public class AddModule extends JPanel {
 	
 	public Module getNewModule() {
 		Module module = new Module();
-		String code = codeTextField.getText().trim();
-        code = code.toUpperCase();
-		module.setCode(code);
 		String moduleName = nameTextField.getText().trim();
 		if (moduleName.length() > 0)
 			moduleName = moduleName.substring(0, 1).toUpperCase()+moduleName.substring(1);
 		module.setName(moduleName);
 		int credits = Integer.parseInt(credsTextField.getText());
 		module.setCredits(credits);
+		module.setLevel((int)levelList.getSelectedItem());
 		module.setTeachingPeriod((String)periodDropdown.getSelectedItem());
-		module.setLevel((int)levelDropdown.getSelectedItem());
-		module.setType((GraduateType)typeDropdown.getSelectedItem());
+		module.setType(GraduateType.valueOf(((String)typeDropdown.getSelectedItem()).toUpperCase()));
 		module.setDepartment((String)deptDropdown.getSelectedItem());
-		module.setCore((String)coreDropdown.getSelectedItem());
 		return module;
 	}
 	
@@ -109,17 +103,6 @@ public class AddModule extends JPanel {
 		formRight.setLayout(rightColumn);
 		
 		Dimension textFieldSize = new Dimension (300, 20);
-		
-		// Module code
-		JPanel codePanel = new JPanel();
-		JLabel codeLabel = new JLabel("Module Code: ");
-		codeTextField = new JTextField();
-		codeTextField.setPreferredSize(textFieldSize);
-		formConstraints.gridx = 0;
-		codePanel.add(codeLabel, formConstraints);
-		formConstraints.gridx = 1;
-		codePanel.add(codeTextField, formConstraints);
-		formLeft.add(codePanel);
 		
 		// Module name
 		JPanel namePanel = new JPanel();
@@ -153,16 +136,6 @@ public class AddModule extends JPanel {
 		periodPanel.add(periodDropdown, formConstraints);
 		formLeft.add(periodPanel);
 		
-		// Level
-		JPanel levelPanel = new JPanel();
-		JLabel levelLabel = new JLabel("Level: ");
-		levelDropdown = new JComboBox<Integer>(new Integer[] {1,2,3,4,5,6,7,8,9});
-		formConstraints.gridx = 0;
-		levelPanel.add(levelLabel, formConstraints);
-		formConstraints.gridx = 1;
-		levelPanel.add(levelDropdown, formConstraints);
-		formRight.add(levelPanel);
-		
 		// Graduate Type
 		JPanel typePanel = new JPanel();
 		JLabel typeLabel = new JLabel("Graduate Type: ");
@@ -173,6 +146,16 @@ public class AddModule extends JPanel {
 		typePanel.add(typeDropdown, formConstraints);
 		formRight.add(typePanel);
 		
+	    // Level Choice
+	    JPanel levelPanel = new JPanel();
+	    JLabel levelLabel = new JLabel("Level: ");
+	    levelList = new JComboBox<Integer>(new Integer[] {1,2,3,4,5,6,7,8,9});
+	    formConstraints.gridx = 0;
+	    levelPanel.add(levelLabel, formConstraints);
+	    formConstraints.gridx = 1;
+	    levelPanel.add(levelList, formConstraints);
+	    formRight.add(levelPanel);
+	    
 		// Department
 		JPanel deptPanel = new JPanel();
 		JLabel deptLabel = new JLabel("Department: ");
@@ -182,16 +165,6 @@ public class AddModule extends JPanel {
 		formConstraints.gridx = 1;
 		deptPanel.add(deptDropdown, formConstraints);
 		formRight.add(deptPanel);
-		
-		// isCore
-		JPanel corePanel = new JPanel();
-		JLabel coreLabel = new JLabel("Core: ");
-		coreDropdown = new JComboBox<String>(new String[] {"yes","no"});
-		formConstraints.gridx = 0;
-		corePanel.add(coreLabel, formConstraints);
-		formConstraints.gridx = 1;
-		corePanel.add(coreDropdown, formConstraints);
-		formRight.add(corePanel);
 		
 		form.add(formLeft);
 		form.add(formRight);
