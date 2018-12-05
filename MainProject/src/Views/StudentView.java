@@ -81,11 +81,8 @@ public class StudentView extends JPanel {
 	 */
 	public void loadUI() {
 		
-		System.out.println("STARTING TESTS!");
-		
 		// Retrieve student information
 		String stuName = student.getTitle() + " " + student.getFirstName() + " " + student.getSecondName();
-		System.out.println("Name: "+stuName);
 		int regNumber = student.getRegNumber();
 		String degree = student.getDegree();
 		int year = student.getLevel();
@@ -115,8 +112,6 @@ public class StudentView extends JPanel {
 		studentDetails.add(tutorLabel);
 		studentDetails.add(statusLabel);
 		studentDetails.add(progressLabel);
-		
-		System.out.println("TEST END!");
 		
 		
 		// Define column names for table
@@ -182,9 +177,6 @@ public class StudentView extends JPanel {
 		stuConstraints.gridy = 1;
 		studentInfo.add(scrollPane, stuConstraints);
 		
-		
-		
-		System.out.println("STARTING TEST 2!");
 		JPanel studentResults = new JPanel();
 		
 		studentResults.setLayout(new GridBagLayout());
