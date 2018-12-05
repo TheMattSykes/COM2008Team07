@@ -135,7 +135,6 @@ public class StudentSystemController extends Controller {
 			
 			// Use each result
 			for (String[] result : allResults) {
-				System.out.println("RESULT: "+count);
 				count++;
 				Module newModule = new Module();
 				
