@@ -55,6 +55,7 @@ public class AdminView extends JPanel {
 	JPanel moduleButtons;
 	JButton moduleAdd;
 	JButton moduleDelete;
+	JButton moduleEdit;
 	JTable moduleTable;
 	
 	public AdminView(PrimaryFrame pf) {
@@ -162,6 +163,10 @@ public class AdminView extends JPanel {
 	
 	public JButton getModuleDelete() {
 		return moduleDelete;
+	}
+	
+	public JButton getModuleEdit() {
+		return moduleEdit;
 	}
 	
 	public JTable getModuleTable() {
@@ -459,6 +464,8 @@ public class AdminView extends JPanel {
 		moduleAdd = new JButton("Add");
 		moduleDelete = new JButton("Delete");
 		moduleDelete.setEnabled(false);
+		moduleEdit = new JButton("Edit");
+		moduleEdit.setEnabled(false);
 		back = new JButton("Back");
 		
 		GridBagConstraints buttonConstraints = new GridBagConstraints();
@@ -471,6 +478,8 @@ public class AdminView extends JPanel {
 		buttonConstraints.gridx = 1;
 		moduleButtons.add(moduleDelete, buttonConstraints);
 		buttonConstraints.gridx = 2;
+		moduleButtons.add(moduleEdit, buttonConstraints);
+		buttonConstraints.gridx = 3;
 		moduleButtons.add(back, buttonConstraints);
 		buttonConstraints.gridx = 0;
 		frame.menuBar.add(moduleButtons, buttonConstraints);

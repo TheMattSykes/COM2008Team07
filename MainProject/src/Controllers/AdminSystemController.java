@@ -24,6 +24,7 @@ import Views.AddDegree;
 import Views.AddDepartment;
 import Views.AddModule;
 import Views.AdminView;
+import Views.EditModule;
 import Views.LoginView;
 import Views.PrimaryFrame;
 import Views.StudentView;
@@ -39,6 +40,7 @@ public class AdminSystemController extends Controller{
 	private AddDepartment addDeptView;
 	private AddDegree addDegreeView;
 	private AddModule addModuleView;
+	private EditModule editModuleView;
 	private DatabaseController dc;
 	//private Views currentView;
 	
@@ -164,6 +166,32 @@ public class AdminSystemController extends Controller{
 		av.loadModuleUI();
 		av.getBackButton().addActionListener(e -> initMenuView());
 		av.getModuleAdd().addActionListener(e -> initAddModuleView());
+		JButton deleteButton = av.getModuleDelete();
+		JButton editButton = av.getModuleEdit();
+		av.getModuleTable().getSelectionModel().addListSelectionListener(e -> {
+			if(!deleteButton.isEnabled()) {
+				deleteButton.setEnabled(true);
+			}
+			if(!editButton.isEnabled()) {
+				editButton.setEnabled(true);
+			}
+		});
+		
+		deleteButton.addActionListener(e -> {
+			Object[][] data = av.getDataModules();
+			JTable table = av.getModuleTable();
+			int row = table.getSelectedRow();
+			Module targetModule = new Module((String)(data[row][0]), (String)(data[row][1]));
+			deleteModule(targetModule);
+		});
+		
+		editButton.addActionListener(e -> {
+			Object[][] data = av.getDataModules();
+			JTable table = av.getModuleTable();
+			int row = table.getSelectedRow();
+			Module targetModule = new Module((String)(data[row][0]), (String)(data[row][1]));
+			initEditModuleView(targetModule);
+		});
 	}
 	
 	public void initAddAccountView() {
@@ -274,6 +302,30 @@ public class AdminSystemController extends Controller{
 		});
 	}
 	
+	public void initEditModuleView(Module m) {
+		if (editModuleView == null) {
+			editModuleView = new EditModule(av.getFrame());
+		}
+		
+		av.removeUI();
+		try {
+			Object[][] approvals = getApprovalData(m);
+			Object[][] degreesData = getDegreeData();
+			Degree[] degrees = new Degree[degreesData.length];
+			int i = 0;
+			for (Object[] degree : degreesData) {
+				degrees[i]=new Degree((String)(degree[0]), (String)(degree[1]));
+				i++;
+			}
+			editModuleView.setTableData(approvals);
+			editModuleView.setModule(m);
+			editModuleView.setDegrees(degrees);
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+	
 	public Object[][] getAccountData() throws Exception {
 		
 		String query = "SELECT userID, username, user_type FROM users LIMIT ?;";
@@ -382,6 +434,23 @@ public class AdminSystemController extends Controller{
 				}
 				data[row][4] = assistString;
 			}
+			row++;
+		}
+		return data;
+	}
+	
+	public Object[][] getApprovalData(Module m) throws Exception {
+		String approvalQuery = "SELECT * FROM approval WHERE module_code = ?;";
+		ArrayList<String[]> values = new ArrayList<String[]>();
+		values.add(new String[] {m.getCode(), "true"});
+		ArrayList<String[]> approvalResults = dc.executeQuery(approvalQuery, values);
+		Object[][] data = new Object[approvalResults.size()][4];
+		Integer row = 0;
+		for (String[] approval : approvalResults) {
+			data[row][0] = approval[0];
+			data[row][1] = approval[1];
+			data[row][2] = approval[2];
+			data[row][3] = approval[3];
 			row++;
 		}
 		return data;
