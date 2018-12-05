@@ -132,19 +132,12 @@ public class TeacherSystemController extends Controller {
 	        		JTable table = vg.getTable();
 				selectedModule = new Module();
 				int row = table.getSelectedRow();
-				System.out.println("SELECTED ROW: "+row);
 				
 				selectedModule.setCode((String)tableData[row][0]);
-				System.out.println(selectedModule.getCode());
 				selectedModule.setName((String)tableData[row][1]);
 				selectedModule.setCredits((int)tableData[row][2]);
-				//studentResults[0] = (int)tableData[row][3];
-				
-				//Grades[] studentGrades = new Grades[2];
-				//studentGrades[0] = Grades.valueOf(tableData[row][4]));
 				
 				
-				System.out.println("TEST D PASS");
 				GradingUtils gu = new GradingUtils();
 				
 				String valueOne = "";
@@ -152,39 +145,23 @@ public class TeacherSystemController extends Controller {
 				
 				if (tableData[row][3] != null && tableData[row][3] != "") {
 					valueOne = tableData[row][3].toString();
-					System.out.println("v1: "+valueOne);
 				}
 				
 				if (tableData[row][5] != null && tableData[row][5] != "") {
 					valueTwo = tableData[row][5].toString();
-					System.out.println("v2: "+valueTwo);
 				}
 				
 				String[] results = new String[] {valueOne, valueTwo};
 				
 				gu.studentResults(results);
 				
-				System.out.println("TEST E PASS");
-				
 				Grades[] studentGrades = gu.getStudentGrades();
 				int[] studentResults = gu.getStudentResults();
 				
-				
-				/*
-				if (tableData[row][5] != null && tableData[row][6] != null) {
-					studentResults[1] = (int)tableData[row][5];
-					studentGrades[1] = (Grades)(tableData[row][6]);
-				} else {
-					studentResults[1] = 0;
-					studentGrades[1] = Grades.UNDEFINED;
-				}*/
-				
-				System.out.println("TEST B PASSED");
 				selectedModule.setScores(studentResults);
 				selectedModule.setGrades(studentGrades);
 				selectedModule.setLevel((int)tableData[row][7]);
 				selectedModule.setTeachingPeriod((String)tableData[row][8]);
-				System.out.println("TEST C PASSED");
 				changeView(Views.EDITGRADES);
 			} catch (Exception ex) {
 				ex.printStackTrace();
@@ -229,9 +206,6 @@ public class TeacherSystemController extends Controller {
 		int score1 = 0;
 		int score2 = 0;
 		
-		Boolean score1valid = false;
-		Boolean score2valid = false;
-		
 		Grades grade1 = Grades.UNDEFINED;
 		Grades grade2 = Grades.UNDEFINED;
 		
@@ -241,7 +215,6 @@ public class TeacherSystemController extends Controller {
 				
 				if (score1try >= 0 && score1try <= 100) {
 					
-					score1valid = true;
 					score1 = score1try;
 					
 					if (score1try >= 40) {
@@ -265,7 +238,6 @@ public class TeacherSystemController extends Controller {
 				
 				if (score2try >= 0 && score2try <= 100) {
 					
-					score2valid = true;
 					score2 = score2try;
 					
 					if (score2try >= 40) {
@@ -314,7 +286,6 @@ public class TeacherSystemController extends Controller {
 		// Action listener for Apply button
 		eg.getApplyButton().addActionListener(e -> {
 			try {
-				System.out.println("APPLY BUTTON PRESSED");
 				selectedModule = editGrades(selectedModule);
 				String query = "";
 				ArrayList<String[]> values = new ArrayList<String[]>();
@@ -491,9 +462,7 @@ public class TeacherSystemController extends Controller {
 		
 		if (allResults.size() > 0) {
 			
-			int count = 0;
 			for (String[] result : allResults) {
-				count++;
 				Module newModule = new Module();
 				
 				String code = result[0];
@@ -544,9 +513,12 @@ public class TeacherSystemController extends Controller {
 			}
 		}
 		
-		Classification classi = calculateClass(GraduateType.UNDERGRADUATE, modules.toArray(new Module[modules.size()]));
+		GradingUtils gu = new GradingUtils();
+		
+		Classification classi = gu.calculateClass(GraduateType.UNDERGRADUATE, modules.toArray(new Module[modules.size()]), selectedStudent);
 		
 		vg.setClassification(classi);
+		vg.setYearAverages(gu.getYearAverages());
 		
 		Object[][] data = new Object[modules.size()][9];
 		
@@ -583,6 +555,7 @@ public class TeacherSystemController extends Controller {
 	}
 	
 	/**
+<<<<<<< HEAD
 	 * getMax()
 	 * Gets the biggest int, of an array of ints.
 	 * @param scores is the array of ints
@@ -702,6 +675,8 @@ public class TeacherSystemController extends Controller {
 	}
 	
 	/**
+=======
+>>>>>>> 6a9658a6907bd9a6f39a83ca803fba7bbfc2c7c7
 	 * removeAllUI()
 	 * Removes all the UI of the teacher (used when logging out).
 	 */
