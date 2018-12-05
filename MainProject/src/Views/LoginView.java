@@ -4,12 +4,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Random;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -17,12 +12,13 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import Controllers.AccountController;
-import Controllers.StudentSystemController;
-import Models.User;
-
+/**
+ * LoginView
+ * Defines the view all users of the system see at the start, before logging in
+ */
 public class LoginView extends JPanel {
-	
+	private static final long serialVersionUID = 1L;
+
 	private PrimaryFrame frame;
 	
 	private JPanel loginForm;
@@ -33,23 +29,6 @@ public class LoginView extends JPanel {
 	
 	public LoginView(PrimaryFrame mf) {
 		frame = mf;
-	}
-	
-	public PrimaryFrame getFrame() {
-		return frame;
-	}
-	
-	
-	public JButton getLoginButton() {
-		return loginButton;
-	}
-	
-	public JTextField getNameField() {
-		return nameField;
-	}
-	
-	public JPasswordField getPasswordField() {
-		return passwordField;
 	}
 	
 	public void viewChange() {
@@ -65,9 +44,28 @@ public class LoginView extends JPanel {
 		frame.repaint();
 	}
 	
-	public void loginUI() {
-		// LoginController ls = new LoginController();
-		
+	// Get/Set methods
+	public PrimaryFrame getFrame() {
+		return frame;
+	}	
+	
+	public JButton getLoginButton() {
+		return loginButton;
+	}
+	
+	public JTextField getNameField() {
+		return nameField;
+	}
+	
+	public JPasswordField getPasswordField() {
+		return passwordField;
+	}
+	
+	/**
+	 * loginUI
+	 * Load and define the UI for logging in
+	 */
+	public void loginUI() {		
 		loginForm = new JPanel();
 		
 		loginForm.setLayout(new GridBagLayout());

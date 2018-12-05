@@ -493,16 +493,11 @@ public class TeacherSystemController extends Controller {
 			
 			int count = 0;
 			for (String[] result : allResults) {
-				System.out.println("RESULT: "+count);
 				count++;
 				Module newModule = new Module();
 				
 				String code = result[0];
 				newModule.setCode(code);
-				
-				for (int i = 0; i < result.length; i++) {
-					System.out.println("Result No. "+i+": "+result[i]);
-				}
 				
 				newModule.setName(result[1]);
 				
@@ -563,9 +558,7 @@ public class TeacherSystemController extends Controller {
 			
 			int[] scores = module.getScores();
 			
-			System.out.println("STARTING TEST SCORES");
 			Grades[] grades = module.getGrades();
-			System.out.println("TEST SCORES PASSED");
 			
 			data[row][3] = scores[0];
 			data[row][4] = grades[0].toString();
@@ -673,10 +666,6 @@ public class TeacherSystemController extends Controller {
 					float convertedLv3Total = (float) ((2.0/3.0)*levelTotals[2]);
 					
 					finalValue = ( convertedLv2Total + convertedLv3Total );
-					
-					System.out.println("YEAR 2 Total: "+levelTotals[1]+"    (1/3 Version): "+convertedLv2Total);
-					System.out.println("YEAR 3 Total: "+levelTotals[2]+"    (1/3 Version): "+convertedLv3Total);
-					System.out.println("Final Value: "+finalValue);
 				} else {
 					finalValue = ( ((1/5)*levelTotals[1]) + ((2/5)*levelTotals[2]) + ((2/5)*levelTotals[3]) );
 				}

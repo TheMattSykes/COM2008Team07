@@ -46,14 +46,27 @@ public class ViewGrades extends JPanel {
 		frame = pf;
 	}
 	
+	public void viewChange() {
+		frame.getContentPane().removeAll();
+	}
+	
+	public void removeUI() {
+		frame.remove(studentInfo);
+		frame.menuBar.remove(teacherButtons);
+		if (studentInfo != null)
+			frame.remove(studentInfo);
+		if (teacherButtons != null)
+			frame.remove(teacherButtons);
+	}
+	
+	// Get/Set methods
 	public PrimaryFrame getFrame() {
 		return frame;
 	}
 	
 	public JTable getTable() {
 		return table;
-	}
-	
+	}	
 	
 	public void setData(Object[][] d) {
 		data = d;
@@ -81,19 +94,6 @@ public class ViewGrades extends JPanel {
 	
 	public JButton getBackButton() {
 		return backButton;
-	}
-	
-	public void viewChange() {
-		frame.getContentPane().removeAll();
-	}
-	
-	public void removeUI() {
-		frame.remove(studentInfo);
-		frame.menuBar.remove(teacherButtons);
-		if (studentInfo != null)
-			frame.remove(studentInfo);
-		if (teacherButtons != null)
-			frame.remove(teacherButtons);
 	}
 	
 	/**
@@ -191,7 +191,6 @@ public class ViewGrades extends JPanel {
 		studentInfo.add(scrollPane, stuConstraints);
 		
 		JPanel studentResults = new JPanel();
-		// studentDetails.setLayout(new GridLayout((1+(yearAverages.length)),1));
 		
 		studentResults.setLayout(new GridBagLayout());
 		
@@ -225,7 +224,7 @@ public class ViewGrades extends JPanel {
 		stuConstraints.gridy = 2;
 		studentInfo.add(studentResults, stuConstraints);
 		
-		// edit grades,year progress and back buttons
+		// Edit grades, year progression and back buttons
 		teacherButtons = new JPanel();
 		teacherButtons.setLayout(new GridBagLayout());
 				

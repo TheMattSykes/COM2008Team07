@@ -2,8 +2,6 @@ package Views;
 
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -26,17 +24,12 @@ public class Progress extends JPanel {
 	private JPanel form;
 	private JPanel localButtons;
 	private JButton backButton;
-	private JButton logoutButton;
 	private JButton applyButton;
 	private JComboBox<String> progressDropdown;
 	private Student student;
 	
 	public Progress(PrimaryFrame pf) {
 		frame = pf;
-	}
-	
-	public PrimaryFrame getFrame() {
-		return frame;
 	}
 	
 	public void viewChange() {
@@ -50,16 +43,17 @@ public class Progress extends JPanel {
 			frame.menuBar.remove(localButtons);
 	}
 	
+	// Get/Set methods
+	public PrimaryFrame getFrame() {
+		return frame;
+	}
+	
 	public JButton getBackButton() {
 		return backButton;
 	}
 	
 	public JButton getApplyButton() {
 		return applyButton;
-	}
-	
-	public JButton getLogoutButton() {
-		return logoutButton;
 	}
 	
 	public void setStudent(Student stu) {
@@ -127,16 +121,6 @@ public class Progress extends JPanel {
 		backButton = new JButton("Back");
 		menuConstraints.gridx = 1;
 		localButtons.add(backButton, menuConstraints);
-		
-		// Remove UI, when logout is pressed
-		JButton logout = (JButton) frame.menuBar.getComponent(0);
-		logout.addActionListener(
-				new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						removeUI();
-					}
-				}
-		);
 		
 		menuConstraints.gridx = 0;
 		frame.menuBar.add(localButtons, menuConstraints);

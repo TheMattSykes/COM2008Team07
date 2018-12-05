@@ -30,7 +30,6 @@ public class TeacherView extends JPanel {
 	private JPanel teacherInfo;
 	private JPanel teacherButtons;
 	private JButton viewGrades;
-	private JButton logoutButton;
 	private JTable table;
 	
 	public TeacherView(PrimaryFrame pf) {
@@ -70,10 +69,6 @@ public class TeacherView extends JPanel {
 	
 	public JButton getViewButton() {
 		return viewGrades;
-	}
-	
-	public JButton getLogoutButton() {
-		return logoutButton;
 	}
 	
 	/**
@@ -162,9 +157,6 @@ public class TeacherView extends JPanel {
 		
 		menuConstraints.gridx = 0;
 		teacherButtons.add(viewGrades, menuConstraints);
-		menuConstraints.gridx = 1;
-		
-		logoutButton = (JButton) frame.menuBar.getComponent(0);
 		
 		menuConstraints.gridx = 0;
 		frame.menuBar.add(teacherButtons, menuConstraints);

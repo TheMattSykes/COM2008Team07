@@ -7,11 +7,13 @@ import java.awt.Insets;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
 
 import Models.User;
 
+/**
+ * LoggedInView
+ * Defines the view for the user to see, once logged in
+ */
 public class LoggedInView {
 	
 	public JPanel loggedInUI(User mainUser) {

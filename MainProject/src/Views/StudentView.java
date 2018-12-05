@@ -13,25 +13,23 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
-import java.awt.Window;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 
-import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.table.TableColumn;
 
 import Controllers.TableColumnAdjuster;
 import Models.Classification;
-import Models.Grades;
-import Models.GraduateType;
-import Models.Module;
 import Models.Student;
 
+/**
+ * StudentView
+ * Defines the default view for all students, which they see after logging in
+ */
 public class StudentView extends JPanel {
+	private static final long serialVersionUID = 1L;
 	
 	private PrimaryFrame frame;
 	private Object[][] data;
@@ -46,6 +44,15 @@ public class StudentView extends JPanel {
 		frame = pf;
 	}
 	
+	public void viewChange() {
+		frame.getContentPane().removeAll();
+	}
+	
+	public void removeUI() {
+		frame.remove(studentInfo);
+	}
+	
+	// Get/Set methods
 	public PrimaryFrame getFrame() {
 		return frame;
 	}
@@ -66,16 +73,6 @@ public class StudentView extends JPanel {
 	
 	public void setYearAverages(float[] av) {
 		yearAverages = av;
-	}
-	
-	
-	
-	public void viewChange() {
-		frame.getContentPane().removeAll();
-	}
-	
-	public void removeUI() {
-		frame.remove(studentInfo);
 	}
 	
 	/**

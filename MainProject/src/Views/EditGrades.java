@@ -3,8 +3,6 @@ package Views;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -26,7 +24,6 @@ public class EditGrades extends JPanel {
 	private JPanel form;
 	private JPanel localButtons;
 	private JButton backButton;
-	private JButton logoutButton;
 	private JButton applyButton;
 	private JTextField grade1TextField;
 	private JTextField grade2TextField;
@@ -34,18 +31,6 @@ public class EditGrades extends JPanel {
 	
 	public EditGrades(PrimaryFrame pf) {
 		frame = pf;
-	}
-	
-	public PrimaryFrame getFrame() {
-		return frame;
-	}
-	
-	public JTextField getG1TextField() {
-		return grade1TextField;
-	}
-	
-	public JTextField getG2TextField() {
-		return grade2TextField;
 	}
 	
 	public void viewChange() {
@@ -59,16 +44,25 @@ public class EditGrades extends JPanel {
 			frame.menuBar.remove(localButtons);
 	}
 	
+	// Get/Set methods
+	public PrimaryFrame getFrame() {
+		return frame;
+	}
+	
+	public JTextField getG1TextField() {
+		return grade1TextField;
+	}
+	
+	public JTextField getG2TextField() {
+		return grade2TextField;
+	}
+	
 	public JButton getBackButton() {
 		return backButton;
 	}
 	
 	public JButton getApplyButton() {
 		return applyButton;
-	}
-	
-	public JButton getLogoutButton() {
-		return logoutButton;
 	}
 	
 	public void setSelectedModule(Module sm) {
@@ -152,16 +146,6 @@ public class EditGrades extends JPanel {
 		backButton = new JButton("Back");
 		menuConstraints.gridx = 1;
 		localButtons.add(backButton, menuConstraints);
-		
-		// Remove UI, when logout is pressed
-		JButton logout = (JButton) frame.menuBar.getComponent(0);
-		logout.addActionListener(
-				new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						removeUI();
-					}
-				}
-		);
 		
 		menuConstraints.gridx = 0;
 		frame.menuBar.add(localButtons, menuConstraints);

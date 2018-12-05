@@ -169,7 +169,6 @@ public class AccountController extends Controller {
 		
 		if (exists) {
 			userID = results[0];
-			System.out.println("UID: "+userID);
 			usernameInDB = results[1];
 			passwordInDB = results[2];
 			userType = results[3];

@@ -3,10 +3,7 @@ package Views;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -17,11 +14,14 @@ import javax.swing.JTextField;
 
 import Models.Department;
 
+/**
+ * AddDepartment View
+ * Defines form for adding a new department to the database.
+ */
 public class AddDepartment extends JPanel {
 	private static final long serialVersionUID = 1L;
 	PrimaryFrame frame;
 	JPanel form;
-	//private JPanel formButtons;
 	private JPanel localButtons;
 	private JButton backButton;
 	private JButton applyButton;
@@ -30,10 +30,6 @@ public class AddDepartment extends JPanel {
 	
 	public AddDepartment(PrimaryFrame pf) {
 		frame = pf;
-	}
-	
-	public PrimaryFrame getFrame() {
-		return frame;
 	}
 	
 	public void viewChange() {
@@ -47,6 +43,11 @@ public class AddDepartment extends JPanel {
 			frame.menuBar.remove(localButtons);
 	}
 	
+	// Get/Set methods
+	public PrimaryFrame getFrame() {
+		return frame;
+	}
+	
 	public JButton getBackButton() {
 		return backButton;
 	}
@@ -55,6 +56,7 @@ public class AddDepartment extends JPanel {
 		return applyButton;
 	}
 	
+	// Gets the new department, specified in the form by the user
 	public Department getNewDepartment() {
 		Department department = new Department();
 		String departmentName = nameTextField.getText().trim();
@@ -67,9 +69,12 @@ public class AddDepartment extends JPanel {
 		return department;
 	}
 	
+	/**
+	 * loadUI
+	 * Load and define the UI for adding a department form.
+	 * @throws Exception
+	 */
 	public void loadUI() throws Exception {
-		//formButtons = new JPanel();
-		//formButtons.setLayout(new GridBagLayout());
 		form = new JPanel();
 		form.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
 		
@@ -127,16 +132,6 @@ public class AddDepartment extends JPanel {
 		backButton = new JButton("Back");
 		menuConstraints.gridx = 1;
 		localButtons.add(backButton, menuConstraints);
-		
-		// Remove UI, when logout is pressed
-		JButton logout = (JButton) frame.menuBar.getComponent(0);
-		logout.addActionListener(
-			new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					removeUI();
-				}
-			}
-		);
 		
 		menuConstraints.gridx = 0;
 		frame.menuBar.add(localButtons, menuConstraints);
