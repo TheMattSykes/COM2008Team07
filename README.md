@@ -3,3 +3,5 @@
 This project was designed to teach the principles of secure software development using Java.
 
 This university system has a student/teacher login, student/module management and exam results viewer.
+
+Project awarded: 64% 2.1.
